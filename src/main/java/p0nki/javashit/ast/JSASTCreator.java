@@ -99,6 +99,17 @@ public class JSASTCreator {
             }
             tokens.expect(JSTokenType.RIGHT_BRACE);
             return new JSMapNode(map);
+        } else if (top == JSTokenType.LEFT_BRACKET) {
+            tokens.expect(JSTokenType.LEFT_BRACKET);
+            List<JSASTNode> list = new ArrayList<>();
+            while (true) {
+                if (tokens.peek().getType() == JSTokenType.RIGHT_BRACKET) break;
+                list.add(parseExpression(tokens));
+                if (tokens.peek().getType() == JSTokenType.RIGHT_BRACKET) break;
+                tokens.expect(JSTokenType.COMMA);
+            }
+            tokens.expect(JSTokenType.RIGHT_BRACKET);
+            return new JSArrayNode(list);
         } else if (top == JSTokenType.BEGIN_STRING) {
             tokens.expect(JSTokenType.BEGIN_STRING);
             JSLiteralToken token = tokens.expect(JSTokenType.LITERAL);
@@ -169,7 +180,7 @@ public class JSASTCreator {
                 }
             }
         }
-        if(let)throw new JSParseException("Expected assignment with `let`");
+        if (let) throw new JSParseException("Expected assignment with `let`");
         return left;
     }
 

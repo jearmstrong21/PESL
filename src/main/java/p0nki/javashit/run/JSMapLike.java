@@ -6,9 +6,9 @@ import java.util.Set;
 
 public interface JSMapLike {
 
-    JSObject get(String key) throws JSReferenceException;
+    JSObject get(String key) throws JSEvalException;
 
-    void set(String key, JSObject value);
+    void set(String key, JSObject value) throws JSEvalException;
 
     Set<String> keys();
 

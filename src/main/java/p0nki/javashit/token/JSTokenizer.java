@@ -58,7 +58,7 @@ public class JSTokenizer {
                     buffer += ch;
                     continue;
                 }
-                if (ch == ' ') {
+                if (ch == ' ' || ch == '\n' || ch == '\t') {
                     flush();
                 } else if (ch == '+') {
                     flush();

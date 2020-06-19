@@ -64,18 +64,27 @@ public class MainTests {
             }
         }));
 //        ast(ctx, "function(x) { println(2+x) } (4)");
-        ast(ctx, "add = function(x,y) { return x + y }");
-        ast(ctx, "add(5,4)");
-        ast(ctx, "i=5");
-        ast(ctx, "pure = function( ) { let i = 3 return i }");
-        ast(ctx, "pure()");
-        ast(ctx, "i");
-        ast(ctx, "impure = function(){i=3 return i}");
-        ast(ctx, "impure()");
-        ast(ctx, "i");
+//        ast(ctx, "add = function(x,y) { return x + y }");
+//        ast(ctx, "add(5,4)");
+//        ast(ctx, "i=5");
+//        ast(ctx, "pure = function( ) { let i = 3 return i }");
+//        ast(ctx, "pure()");
+//        ast(ctx, "i");
+//        ast(ctx, "impure = function(){i=3 return i}");
+//        ast(ctx, "impure()");
+//        ast(ctx, "i");
+//        ast(ctx, "my_object = {func: function(a) { return 3 + a * 5}}");
+//        ast(ctx, "my_object.func(5)");
 
-        ast(ctx, "a\nb = 5");
-        ast(ctx, "a\nb * a\nb");
+        ast(ctx, "x = [3, 4, \"hello world\"]");
+        ast(ctx, "x.length()");
+        ast(ctx, "x.push(5)");
+        ast(ctx, "x.length()");
+        ast(ctx, "x");
+
+//        ast(ctx, "a\nb = 5");
+//        ast(ctx, "a\nb * a\nb");
+
         // in order of importance:
 
         // TODO: arrays
