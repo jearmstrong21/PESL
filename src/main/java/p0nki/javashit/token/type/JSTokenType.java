@@ -25,6 +25,10 @@ public enum JSTokenType {
     NULL,
     UNDEFINED,
     LET,
-    COMPARATIVE_OP
-
+    COMPARATIVE_OP,
+    FOR,
+    IF,
+    ELSE,
+    TRUE,
+    FALSE
 }

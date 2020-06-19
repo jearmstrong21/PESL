@@ -121,15 +121,26 @@ public class MainTests {
 //        ast(ctx, "a\nb = 5");
 //        ast(ctx, "a\nb * a\nb");
 
-        ast(ctx, "5 < 4");
-        ast(ctx, "5 < 4 ^ 4 < 5");
-        ast(ctx, "4 < 5");
-        ast(ctx, "x = 4 < 5");
-        ast(ctx, "y = 5 < 4");
-        ast(ctx, "x");
-        ast(ctx, "y");
-        ast(ctx, "x & y");
-        ast(ctx, "return 5");
+//        ast(ctx, "5 < 4");
+//        ast(ctx, "5 < 4 ^ 4 < 5");
+//        ast(ctx, "4 < 5");
+//        ast(ctx, "x = 4 < 5");
+//        ast(ctx, "y = 5 < 4");
+//        ast(ctx, "x");
+//        ast(ctx, "y");
+//        ast(ctx, "x & y");
+//        ast(ctx, "return 5");
+
+        ast(ctx, "i = 5");
+        ast(ctx, "i=i+1");
+        ast(ctx, "i");
+
+//        ast(ctx, "for(i=1;i<5;i=i+1){println(i)}");
+//        ast(ctx, "if(5 > 4) { println(true) }");
+
+        ast(ctx, "factorial = function(x) { if(x>1){return x*factorial(x-1)}else{return 1}}");
+        ast(ctx, "for(let i=1;i<11;i=i+1){println(factorial(i))}");
+
 
         // in order of importance:
 

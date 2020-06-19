@@ -34,6 +34,11 @@ public class JSTokenizer {
             else if (buffer.equals("undefined")) tokens.push(JSTokenType.UNDEFINED);
             else if (buffer.equals("let")) tokens.push(JSTokenType.LET);
             else if (buffer.equals("is")) tokens.push(new JSOperatorToken(JSOperatorType.EQUALS));
+            else if (buffer.equals("for")) tokens.push(JSTokenType.FOR);
+            else if (buffer.equals("if")) tokens.push(JSTokenType.IF);
+            else if (buffer.equals("else")) tokens.push(JSTokenType.ELSE);
+            else if (buffer.equals("true")) tokens.push(JSTokenType.TRUE);
+            else if (buffer.equals("false")) tokens.push(JSTokenType.FALSE);
             else tokens.push(new JSLiteralToken(buffer));
             buffer = "";
         }

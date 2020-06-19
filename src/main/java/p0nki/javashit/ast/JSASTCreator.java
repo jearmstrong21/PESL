@@ -21,7 +21,7 @@ public class JSASTCreator {
         List<JSASTNode> nodes = new ArrayList<>();
         while (tokens.peek().getType() != JSTokenType.RIGHT_BRACE) {
             nodes.add(parseExpression(tokens));
-            if (tokens.peek().getType() == JSTokenType.SEMICOLON) tokens.expect(JSTokenType.SEMICOLON);
+//            if (tokens.peek().getType() == JSTokenType.SEMICOLON) tokens.expect(JSTokenType.SEMICOLON);
         }
         tokens.expect(JSTokenType.RIGHT_BRACE);
         return new JSBodyNode(nodes, catchReturn);
@@ -35,6 +35,12 @@ public class JSASTCreator {
         } else if (top == JSTokenType.NULL) {
             tokens.expect(JSTokenType.NULL);
             return new JSLiteralNode(JSNullObject.INSTANCE);
+        } else if (top == JSTokenType.TRUE) {
+            tokens.expect(JSTokenType.TRUE);
+            return new JSLiteralNode(new JSBooleanObject(true));
+        } else if (top == JSTokenType.FALSE) {
+            tokens.expect(JSTokenType.FALSE);
+            return new JSLiteralNode(new JSBooleanObject(false));
         } else if (top == JSTokenType.RETURN) {
             tokens.expect(JSTokenType.RETURN);
             return new JSReturnNode(parseExpression(tokens));
@@ -62,9 +68,34 @@ public class JSASTCreator {
             return new JSLiteralNode(new JSNumberObject(token.getValue()));
         } else if (top == JSTokenType.LEFT_PAREN) {
             tokens.expect(JSTokenType.LEFT_PAREN);
-            JSASTNode node = parseAdditive(tokens);
+            JSASTNode node = parseExpression(tokens);
             tokens.expect(JSTokenType.RIGHT_PAREN);
             return node;
+        } else if (top == JSTokenType.FOR) {
+            tokens.expect(JSTokenType.FOR);
+            tokens.expect(JSTokenType.LEFT_PAREN);
+            JSASTNode first = parseExpression(tokens);
+            if (tokens.peek().getType() == JSTokenType.COLON) {
+                throw new UnsupportedOperationException("For-in loops are not yet supported");
+            }
+            tokens.expect(JSTokenType.SEMICOLON);
+            JSASTNode condition = parseExpression(tokens);
+            tokens.expect(JSTokenType.SEMICOLON);
+            JSASTNode increment = parseExpression(tokens);
+            tokens.expect(JSTokenType.RIGHT_PAREN);
+            JSASTNode body = parseBracketedCode(tokens, false);
+            return new JSForNode(first, condition, increment, body);
+        } else if (top == JSTokenType.IF) {
+            tokens.expect(JSTokenType.IF);
+            tokens.expect(JSTokenType.LEFT_PAREN);
+            JSASTNode condition = parseExpression(tokens);
+            tokens.expect(JSTokenType.RIGHT_PAREN);
+            JSASTNode then = parseBracketedCode(tokens, false);
+            if (tokens.hasAny() && tokens.peek().getType() == JSTokenType.ELSE) {
+                tokens.expect(JSTokenType.ELSE);
+                return new JSIfNode(condition, then, parseBracketedCode(tokens, false));
+            }
+            return new JSIfNode(condition, then, null);
         } else if (top == JSTokenType.LITERAL) {
             JSLiteralToken token = tokens.expect(JSTokenType.LITERAL);
             JSASTNode access = new JSAccessPropertyNode(null, new JSLiteralNode(new JSStringObject(token.getValue())));
