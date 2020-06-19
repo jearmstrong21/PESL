@@ -4,6 +4,7 @@ public enum JSTokenType {
 
     ADDITIVE_OP,
     MULTIPLICATIVE_OP,
+    BOOLEAN_OP,
     NUMBER,
     LEFT_PAREN,
     RIGHT_PAREN,
@@ -23,6 +24,7 @@ public enum JSTokenType {
     RETURN,
     NULL,
     UNDEFINED,
-    LET
+    LET,
+    COMPARATIVE_OP
 
 }

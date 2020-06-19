@@ -163,14 +163,32 @@ public class JSASTCreator {
         return left;
     }
 
+    private JSASTNode parseComparative(JSTokenList tokens) throws JSParseException {
+        JSASTNode left = parseAdditive(tokens);
+        while (tokens.hasAny() && tokens.peek().getType() == JSTokenType.COMPARATIVE_OP) {
+            JSOperatorToken token = tokens.expect(JSTokenType.COMPARATIVE_OP);
+            left = new JSOperatorNode(new JSASTNode[]{left, parseAdditive(tokens)}, token.getOpType());
+        }
+        return left;
+    }
+
+    private JSASTNode parseBoolean(JSTokenList tokens) throws JSParseException {
+        JSASTNode left = parseComparative(tokens);
+        while (tokens.hasAny() && tokens.peek().getType() == JSTokenType.BOOLEAN_OP) {
+            JSOperatorToken token = tokens.expect(JSTokenType.BOOLEAN_OP);
+            left = new JSOperatorNode(new JSASTNode[]{left, parseComparative(tokens)}, token.getOpType());
+        }
+        return left;
+    }
+
     public JSASTNode parseExpression(JSTokenList tokens) throws JSParseException {
         boolean let = tokens.peek().getType() == JSTokenType.LET;
         if (let) tokens.expect(JSTokenType.LET);
-        JSASTNode left = parseAdditive(tokens);
+        JSASTNode left = parseBoolean(tokens);
         if (tokens.hasAny()) {
             if (tokens.peek().getType() == JSTokenType.EQUALS_SIGN) {
                 tokens.expect(JSTokenType.EQUALS_SIGN);
-                JSASTNode right = parseAdditive(tokens);
+                JSASTNode right = parseBoolean(tokens);
                 if (left instanceof JSAccessPropertyNode) {
                     JSASTNode value = ((JSAccessPropertyNode) left).getValue();
                     JSASTNode key = ((JSAccessPropertyNode) left).getKey();

@@ -21,6 +21,11 @@ public abstract class JSObject {
         throw new JSEvalException("Cannot cast " + type().toString() + " to NUMBER");
     }
 
+    public final JSBooleanObject asBoolean() throws JSEvalException {
+        if (this instanceof JSBooleanObject) return (JSBooleanObject) this;
+        throw new JSEvalException("Cannot cast " + type().toString() + " to BOOLEAN");
+    }
+
     public final JSMapLike asMapLike() throws JSEvalException {
         if (this instanceof JSMapLike) return (JSMapLike) this;
         throw new JSEvalException("Cannot cast " + type().toString() + " to [maplike]");

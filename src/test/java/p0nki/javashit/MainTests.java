@@ -114,16 +114,24 @@ public class MainTests {
 //        ast(ctx, "my_object.func(5)");
 
 //        ast(ctx, "Math");
-        ast(ctx, "f = function() {println(arguments)}");
-        ast(ctx, "f(3, 4)");
-        ast(ctx, "f()");
+//        ast(ctx, "f = function() {println(arguments)}");
+//        ast(ctx, "f(3, 4)");
+//        ast(ctx, "f()");
 
 //        ast(ctx, "a\nb = 5");
 //        ast(ctx, "a\nb * a\nb");
 
-        // in order of importance:
+        ast(ctx, "5 < 4");
+        ast(ctx, "5 < 4 ^ 4 < 5");
+        ast(ctx, "4 < 5");
+        ast(ctx, "x = 4 < 5");
+        ast(ctx, "y = 5 < 4");
+        ast(ctx, "x");
+        ast(ctx, "y");
+        ast(ctx, "x & y");
+        ast(ctx, "return 5");
 
-        // TODO: `arguments` keyword in functions
+        // in order of importance:
 
         // TODO: `global` (with a new token type) object which represents the global ctx
         // TODO: try/catch, easy to implement, catch JSEvalException and pass in the stringliteral specified by it into the catch

@@ -1,10 +1,10 @@
 package p0nki.javashit.object;
 
-public class JSBoolean extends JSObject {
+public class JSBooleanObject extends JSObject {
 
     private final boolean value;
 
-    public JSBoolean(boolean value) {
+    public JSBooleanObject(boolean value) {
         this.value = value;
     }
 

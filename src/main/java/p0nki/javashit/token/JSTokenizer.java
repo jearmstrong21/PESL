@@ -33,6 +33,7 @@ public class JSTokenizer {
             else if (buffer.equals("null")) tokens.push(JSTokenType.NULL);
             else if (buffer.equals("undefined")) tokens.push(JSTokenType.UNDEFINED);
             else if (buffer.equals("let")) tokens.push(JSTokenType.LET);
+            else if (buffer.equals("is")) tokens.push(new JSOperatorToken(JSOperatorType.EQUALS));
             else tokens.push(new JSLiteralToken(buffer));
             buffer = "";
         }
@@ -72,6 +73,21 @@ public class JSTokenizer {
                 } else if (ch == '/') {
                     flush();
                     tokens.push(new JSOperatorToken(JSOperatorType.DIV));
+                } else if (ch == '&') {
+                    flush();
+                    tokens.push(new JSOperatorToken(JSOperatorType.AND));
+                } else if (ch == '|') {
+                    flush();
+                    tokens.push(new JSOperatorToken(JSOperatorType.OR));
+                } else if (ch == '^') {
+                    flush();
+                    tokens.push(new JSOperatorToken(JSOperatorType.XOR));
+                } else if (ch == '<') {
+                    flush();
+                    tokens.push(new JSOperatorToken(JSOperatorType.LESS_THAN));
+                } else if (ch == '>') {
+                    flush();
+                    tokens.push(new JSOperatorToken(JSOperatorType.MORE_THAN));
                 } else if (ch == '(') {
                     flush();
                     tokens.push(JSTokenType.LEFT_PAREN);
