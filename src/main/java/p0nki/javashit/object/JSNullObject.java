@@ -18,4 +18,9 @@ public class JSNullObject extends JSObject {
     public JSObjectType type() {
         return JSObjectType.NULL;
     }
+
+    @Override
+    public String castToString() {
+        return "null";
+    }
 }

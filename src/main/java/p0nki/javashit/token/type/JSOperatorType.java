@@ -11,7 +11,7 @@ public enum JSOperatorType {
         if (a instanceof JSNumberObject && b instanceof JSNumberObject) {
             return new JSNumberObject(((JSNumberObject) a).getValue() + ((JSNumberObject) b).getValue());
         } else {
-            return new JSStringObject(a.stringify() + b.stringify());
+            return new JSStringObject(a.castToString() + b.castToString());
         }
     }, JSTokenType.ADDITIVE_OP),
     SUB(process((a, b) -> a - b), JSTokenType.ADDITIVE_OP),

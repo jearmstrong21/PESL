@@ -34,13 +34,14 @@ public class JSEqualsNode implements JSASTNode {
 
     @Override
     public void print(IndentedLogger logger) {
-        logger.println("EQUALS");
+        logger.println("EQUALS_NODE");
         logger.println("MAPLIKE");
         logger.pushprint(maplike);
         logger.println("KEY");
         logger.pushprint(key);
         logger.println("EQUALS");
         logger.pushprint(equals);
+//        System.out.println("--- " + equals);
     }
 
 }

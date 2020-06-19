@@ -22,4 +22,9 @@ public class JSNumberObject extends JSObject {
         return JSObjectType.NUMBER;
     }
 
+    @Override
+    public String castToString() {
+        return value+"";
+    }
+
 }

@@ -28,6 +28,11 @@ public class JSMapNode implements JSASTNode {
 
     @Override
     public void print(IndentedLogger logger) {
-
+        logger.println("MAP LITERAL (SIZE " + nodes.size() + ")");
+        nodes.forEach((key, value) -> {
+            logger.println("KEY) " + key);
+            logger.println("VALUE)");
+            logger.pushprint(value);
+        });
     }
 }

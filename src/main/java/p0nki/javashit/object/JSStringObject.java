@@ -21,4 +21,9 @@ public class JSStringObject extends JSObject {
     public JSObjectType type() {
         return JSObjectType.STRING;
     }
+
+    @Override
+    public String castToString() {
+        return value;
+    }
 }

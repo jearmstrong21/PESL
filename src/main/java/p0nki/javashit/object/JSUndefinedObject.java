@@ -17,4 +17,9 @@ public class JSUndefinedObject extends JSObject {
     public JSObjectType type() {
         return JSObjectType.UNDEFINED;
     }
+
+    @Override
+    public String castToString() {
+        return "undefined";
+    }
 }

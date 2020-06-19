@@ -9,6 +9,8 @@ public abstract class JSObject {
 
     public abstract JSObjectType type();
 
+    public abstract String castToString();
+
     @Override
     public final String toString() {
         return stringify();

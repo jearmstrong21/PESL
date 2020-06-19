@@ -48,4 +48,9 @@ public class JSMap extends JSObject implements JSMapLike {
     public JSObjectType type() {
         return JSObjectType.MAP;
     }
+
+    @Override
+    public String castToString() {
+        return stringify();
+    }
 }
