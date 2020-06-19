@@ -20,6 +20,11 @@ public class JSMap extends JSObject implements JSMapLike {
         this.map = map;
     }
 
+    public JSMap builderSet(String key, JSObject value) {
+        map.put(key, value);
+        return this;
+    }
+
     @Override
     public JSObject get(String key) {
         return map.getOrDefault(key, JSUndefinedObject.INSTANCE);

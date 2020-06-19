@@ -1,12 +1,14 @@
 package p0nki.javashit.ast.nodes;
 
 import p0nki.javashit.ast.IndentedLogger;
+import p0nki.javashit.object.JSArray;
 import p0nki.javashit.object.JSFunction;
 import p0nki.javashit.object.JSObject;
 import p0nki.javashit.object.JSUndefinedObject;
 import p0nki.javashit.run.JSContext;
 import p0nki.javashit.run.JSEvalException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JSFunctionInvokeNode implements JSASTNode {
@@ -23,14 +25,19 @@ public class JSFunctionInvokeNode implements JSASTNode {
     public JSObject evaluate(JSContext context) throws JSEvalException {
         JSFunction functionValue = function.evaluate(context).asFunction();
         JSContext newContext = context.push();
+        List<JSObject> evaluatedArguments = new ArrayList<>();
+        for (int i = 0; i < arguments.size(); i++) {
+            evaluatedArguments.add(arguments.get(i).evaluate(context));
+        }
         // TODO: `arguments` parameter, add arrays for this
         for (int i = 0; i < functionValue.getArgumentNames().size(); i++) {
             if (i < arguments.size()) {
-                newContext.set(functionValue.getArgumentNames().get(i), arguments.get(i).evaluate(context));
+                newContext.set(functionValue.getArgumentNames().get(i), evaluatedArguments.get(i));
             } else {
                 newContext.set(functionValue.getArgumentNames().get(i), JSUndefinedObject.INSTANCE);
             }
         }
+        newContext.set("arguments", new JSArray(evaluatedArguments));
         return functionValue.getNode().evaluate(newContext);
     }
 

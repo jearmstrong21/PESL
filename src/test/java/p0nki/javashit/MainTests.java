@@ -5,9 +5,7 @@ import p0nki.javashit.ast.IndentedLogger;
 import p0nki.javashit.ast.JSASTCreator;
 import p0nki.javashit.ast.JSParseException;
 import p0nki.javashit.ast.nodes.JSASTNode;
-import p0nki.javashit.object.JSFunction;
-import p0nki.javashit.object.JSObject;
-import p0nki.javashit.object.JSUndefinedObject;
+import p0nki.javashit.object.*;
 import p0nki.javashit.run.JSContext;
 import p0nki.javashit.run.JSEvalException;
 import p0nki.javashit.token.JSTokenList;
@@ -60,9 +58,48 @@ public class MainTests {
 
             @Override
             public void print(IndentedLogger logger) {
-                logger.println("PRINTLN FUNCTION");
+                logger.println("PRINTLN");
             }
         }));
+        ctx.set("Math", new JSMap(new HashMap<>())
+                .builderSet("random", new JSFunction(new ArrayList<>(), new JSASTNode() {
+                    @Override
+                    public JSObject evaluate(JSContext context) {
+                        return new JSNumberObject(Math.random());
+                    }
+
+                    @Override
+                    public void print(IndentedLogger logger) {
+                        logger.println("MATH::RANDOM");
+                    }
+                }))
+                .builderSet("sqrt", new JSFunction(new ArrayList<String>() {{
+                    add("value");
+                }}, new JSASTNode() {
+                    @Override
+                    public JSObject evaluate(JSContext context) throws JSEvalException {
+                        return new JSNumberObject(Math.sqrt(context.get("value").asNumber().getValue()));
+                    }
+
+                    @Override
+                    public void print(IndentedLogger logger) {
+                        logger.println("MATH::SQRT");
+                    }
+                }))
+                .builderSet("floor", new JSFunction(new ArrayList<String>() {{
+                    add("value");
+                }}, new JSASTNode() {
+                    @Override
+                    public JSObject evaluate(JSContext context) throws JSEvalException {
+                        return new JSNumberObject(Math.floor(context.get("value").asNumber().getValue()));
+                    }
+
+                    @Override
+                    public void print(IndentedLogger logger) {
+                        logger.println("MATH::FLOOR");
+                    }
+                }))
+        );
 //        ast(ctx, "function(x) { println(2+x) } (4)");
 //        ast(ctx, "add = function(x,y) { return x + y }");
 //        ast(ctx, "add(5,4)");
@@ -76,18 +113,16 @@ public class MainTests {
 //        ast(ctx, "my_object = {func: function(a) { return 3 + a * 5}}");
 //        ast(ctx, "my_object.func(5)");
 
-        ast(ctx, "x = [3, 4, \"hello world\"]");
-        ast(ctx, "x.length()");
-        ast(ctx, "x.push(5)");
-        ast(ctx, "x.length()");
-        ast(ctx, "x");
+//        ast(ctx, "Math");
+        ast(ctx, "f = function() {println(arguments)}");
+        ast(ctx, "f(3, 4)");
+        ast(ctx, "f()");
 
 //        ast(ctx, "a\nb = 5");
 //        ast(ctx, "a\nb * a\nb");
 
         // in order of importance:
 
-        // TODO: arrays
         // TODO: `arguments` keyword in functions
 
         // TODO: `global` (with a new token type) object which represents the global ctx

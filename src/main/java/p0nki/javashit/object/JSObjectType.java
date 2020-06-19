@@ -8,6 +8,7 @@ public enum JSObjectType {
     UNDEFINED,
     MAP,
     FUNCTION,
-    ARRAY
+    ARRAY,
+    BOOLEAN
 
 }
