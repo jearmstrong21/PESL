@@ -11,11 +11,13 @@ public class JSEqualsNode implements JSASTNode {
     private final JSASTNode maplike;
     private final JSASTNode key;
     private final JSASTNode equals;
+    private final boolean let;
 
-    public JSEqualsNode(JSASTNode maplike, JSASTNode key, JSASTNode equals) {
+    public JSEqualsNode(JSASTNode maplike, JSASTNode key, JSASTNode equals, boolean let) {
         this.maplike = maplike;
         this.key = key;
         this.equals = equals;
+        this.let = let;
     }
 
     @Override
@@ -28,7 +30,11 @@ public class JSEqualsNode implements JSASTNode {
         }
         String keyValue = key.evaluate(context).asString().getValue();
         JSObject equalsValue = equals.evaluate(context);
-        maplikeValue.set(keyValue, equalsValue);
+        if (let && maplikeValue instanceof JSContext) {
+            ((JSContext) maplikeValue).let(keyValue, equalsValue);
+        } else {
+            maplikeValue.set(keyValue, equalsValue);
+        }
         return equalsValue;
     }
 

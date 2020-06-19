@@ -6,6 +6,7 @@ public enum JSObjectType {
     NUMBER,
     NULL,
     UNDEFINED,
-    MAP
+    MAP,
+    FUNCTION
 
 }

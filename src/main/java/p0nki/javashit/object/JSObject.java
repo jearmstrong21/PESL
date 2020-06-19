@@ -31,4 +31,9 @@ public abstract class JSObject {
         throw new JSEvalException("Cannot cast " + type().toString() + " to STRING");
     }
 
+    public final JSFunction asFunction() throws JSEvalException {
+        if (this instanceof JSFunction) return (JSFunction) this;
+        throw new JSEvalException("Cannot cast " + type().toString() + " to FUNCTION");
+    }
+
 }

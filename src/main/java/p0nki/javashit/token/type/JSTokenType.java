@@ -18,6 +18,11 @@ public enum JSTokenType {
     LEFT_BRACKET,
     RIGHT_BRACKET,
     BEGIN_STRING,
-    END_STRING
+    END_STRING,
+    FUNCTION,
+    RETURN,
+    NULL,
+    UNDEFINED,
+    LET
 
 }

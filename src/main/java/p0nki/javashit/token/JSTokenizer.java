@@ -23,14 +23,17 @@ public class JSTokenizer {
             parse();
         }
 
-        private void flush() throws JSTokenizeException {
+        private void flush() {
             buffer = buffer.trim();
             if (buffer.equals("")) return;
             OptionalDouble optionalDouble = Utilities.parseDouble(buffer);
             if (optionalDouble.isPresent()) tokens.push(new JSNumToken(optionalDouble.getAsDouble()));
-            else {
-                tokens.push(new JSLiteralToken(buffer));
-            }
+            else if (buffer.equals("function")) tokens.push(JSTokenType.FUNCTION);
+            else if (buffer.equals("return")) tokens.push(JSTokenType.RETURN);
+            else if (buffer.equals("null")) tokens.push(JSTokenType.NULL);
+            else if (buffer.equals("undefined")) tokens.push(JSTokenType.UNDEFINED);
+            else if (buffer.equals("let")) tokens.push(JSTokenType.LET);
+            else tokens.push(new JSLiteralToken(buffer));
             buffer = "";
         }
 

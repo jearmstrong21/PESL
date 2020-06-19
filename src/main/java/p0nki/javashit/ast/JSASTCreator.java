@@ -1,12 +1,13 @@
 package p0nki.javashit.ast;
 
 import p0nki.javashit.ast.nodes.*;
-import p0nki.javashit.object.JSNumberObject;
-import p0nki.javashit.object.JSStringObject;
+import p0nki.javashit.object.*;
 import p0nki.javashit.token.JSTokenList;
 import p0nki.javashit.token.type.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class JSASTCreator {
@@ -15,9 +16,48 @@ public class JSASTCreator {
 
     }
 
-    private JSASTNode parsePrimary(JSTokenList tokens) throws JSParseException {
+    private JSASTNode parseBracketedCode(JSTokenList tokens, boolean catchReturn) throws JSParseException {
+        tokens.expect(JSTokenType.LEFT_BRACE);
+        List<JSASTNode> nodes = new ArrayList<>();
+        while (tokens.peek().getType() != JSTokenType.RIGHT_BRACE) {
+            nodes.add(parseExpression(tokens));
+            if (tokens.peek().getType() == JSTokenType.SEMICOLON) tokens.expect(JSTokenType.SEMICOLON);
+        }
+        tokens.expect(JSTokenType.RIGHT_BRACE);
+        return new JSBodyNode(nodes, catchReturn);
+    }
+
+    private JSASTNode parsePrimary1(JSTokenList tokens) throws JSParseException {
         JSTokenType top = tokens.peek().getType();
-        if (top == JSTokenType.NUMBER) {
+        if (top == JSTokenType.UNDEFINED) {
+            tokens.expect(JSTokenType.UNDEFINED);
+            return new JSLiteralNode(JSUndefinedObject.INSTANCE);
+        } else if (top == JSTokenType.NULL) {
+            tokens.expect(JSTokenType.NULL);
+            return new JSLiteralNode(JSNullObject.INSTANCE);
+        } else if (top == JSTokenType.RETURN) {
+            tokens.expect(JSTokenType.RETURN);
+            return new JSReturnNode(parseExpression(tokens));
+        } else if (top == JSTokenType.FUNCTION) {
+            tokens.expect(JSTokenType.FUNCTION);
+            tokens.expect(JSTokenType.LEFT_PAREN);
+            List<String> argNames = new ArrayList<>();
+            if (tokens.peek().getType() == JSTokenType.RIGHT_PAREN) {
+                tokens.expect(JSTokenType.RIGHT_PAREN);
+            } else {
+                while (true) {
+                    JSLiteralToken literalToken = tokens.expect(JSTokenType.LITERAL);
+                    argNames.add(literalToken.getValue());
+                    if (tokens.peek().getType() == JSTokenType.COMMA) {
+                        tokens.expect(JSTokenType.COMMA);
+                    } else {
+                        tokens.expect(JSTokenType.RIGHT_PAREN);
+                        break;
+                    }
+                }
+            }
+            return new JSLiteralNode(new JSFunction(argNames, parseBracketedCode(tokens, true)));
+        } else if (top == JSTokenType.NUMBER) {
             JSNumToken token = tokens.expect(JSTokenType.NUMBER);
             return new JSLiteralNode(new JSNumberObject(token.getValue()));
         } else if (top == JSTokenType.LEFT_PAREN) {
@@ -69,6 +109,31 @@ public class JSASTCreator {
         }
     }
 
+    private JSASTNode parsePrimary(JSTokenList tokens) throws JSParseException {
+        JSASTNode node = parsePrimary1(tokens);
+        if (tokens.hasAny()) {
+            if (tokens.peek().getType() == JSTokenType.LEFT_PAREN) {
+                tokens.expect(JSTokenType.LEFT_PAREN);
+                List<JSASTNode> arguments = new ArrayList<>();
+                while (true) {
+                    if (tokens.peek().getType() == JSTokenType.RIGHT_PAREN) {
+                        tokens.expect(JSTokenType.RIGHT_PAREN);
+                        break;
+                    }
+                    arguments.add(parseExpression(tokens));
+                    if (tokens.peek().getType() == JSTokenType.COMMA) {
+                        tokens.expect(JSTokenType.COMMA);
+                    } else {
+                        tokens.expect(JSTokenType.RIGHT_PAREN);
+                        break;
+                    }
+                }
+                return new JSFunctionInvokeNode(node, arguments);
+            }
+        }
+        return node;
+    }
+
     private JSASTNode parseMultiplicative(JSTokenList tokens) throws JSParseException {
         JSASTNode left = parsePrimary(tokens);
         while (tokens.hasAny() && tokens.peek().getType() == JSTokenType.MULTIPLICATIVE_OP) {
@@ -88,6 +153,8 @@ public class JSASTCreator {
     }
 
     public JSASTNode parseExpression(JSTokenList tokens) throws JSParseException {
+        boolean let = tokens.peek().getType() == JSTokenType.LET;
+        if (let) tokens.expect(JSTokenType.LET);
         JSASTNode left = parseAdditive(tokens);
         if (tokens.hasAny()) {
             if (tokens.peek().getType() == JSTokenType.EQUALS_SIGN) {
@@ -96,12 +163,13 @@ public class JSASTCreator {
                 if (left instanceof JSAccessPropertyNode) {
                     JSASTNode value = ((JSAccessPropertyNode) left).getValue();
                     JSASTNode key = ((JSAccessPropertyNode) left).getKey();
-                    return new JSEqualsNode(value, key, right);
+                    return new JSEqualsNode(value, key, right, let);
                 } else {
                     throw new JSParseException("Expected lvalue on left side of `=`");
                 }
             }
         }
+        if(let)throw new JSParseException("Expected assignment with `let`");
         return left;
     }
 

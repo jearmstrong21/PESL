@@ -4,6 +4,7 @@ import p0nki.javashit.object.JSObject;
 import p0nki.javashit.object.JSUndefinedObject;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,9 +25,25 @@ public class JSContext implements JSMapLike {
         throw new JSReferenceException("Reference exception `" + key + "`");
     }
 
+    public JSContext push() {
+        return new JSContext(this, new HashMap<>());
+    }
+
+    public void let(String key, JSObject value) {
+        objects.put(key, value);
+    }
+
     @Override
     public void set(String key, JSObject value) {
-        objects.put(key, value);
+        JSContext ctx = this;
+        while (ctx != null && !ctx.keys().contains(key)) {
+            ctx = ctx.parent;
+        }
+        if (ctx == null) {
+            objects.put(key, value);
+        } else {
+            ctx.objects.put(key, value);
+        }
     }
 
     @Override
