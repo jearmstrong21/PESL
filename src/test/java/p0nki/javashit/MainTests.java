@@ -1,6 +1,7 @@
 package p0nki.javashit;
 
 import org.junit.Test;
+import p0nki.javashit.ast.IndentedLogger;
 import p0nki.javashit.ast.JSASTCreator;
 import p0nki.javashit.ast.JSParseException;
 import p0nki.javashit.ast.nodes.JSASTNode;
@@ -29,7 +30,7 @@ public class MainTests {
         JSTokenList tokens = tokenizer.tokenize(str);
         JSASTCreator astCreator = new JSASTCreator();
         JSASTNode node = astCreator.parseExpression(tokens);
-//        node.print(new IndentedLogger());
+        node.print(new IndentedLogger());
         System.out.println("<- " + str);
         System.out.println("-> " + node.evaluate(ctx));
 //        ctx.keys().forEach(key -> {

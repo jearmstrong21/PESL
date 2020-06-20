@@ -68,6 +68,7 @@ public class JSASTCreator {
             tokens.expect(JSTokenType.RETURN);
             return new JSReturnNode(parseExpression(tokens));
         } else if (top == JSTokenType.FUNCTION) {
+            //  TODO GET MAXS BIRTHDAY PRESENT DO THIS FIRSTER
             tokens.expect(JSTokenType.FUNCTION);
             tokens.expect(JSTokenType.LEFT_PAREN);
             List<String> argNames = new ArrayList<>();
@@ -85,7 +86,7 @@ public class JSASTCreator {
                     }
                 }
             }
-            return new JSLiteralNode(new JSFunction(argNames, parseBracketedCode(tokens, true)));
+            return new JSFunctionDeclarationNode(argNames, parseBracketedCode(tokens, true));
         } else if (top == JSTokenType.TRY) {
             tokens.expect(JSTokenType.TRY);
             JSASTNode tryBody = parseBracketedCode(tokens, false);
