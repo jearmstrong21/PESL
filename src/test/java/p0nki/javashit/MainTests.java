@@ -175,13 +175,17 @@ public class MainTests {
 //        ast(ctx, "z=f(3)");
 //        ast(ctx, "z(5)");
 
-        ast(ctx, "my_class = function(initCounter) { return { counter:initCounter, increment: function() {this.counter=this.counter+1}, decrement: function() {this.counter=this.counter-1}, get: function(){return this.counter}}}");
-        ast(ctx, "my_class(5)");
-        ast(ctx, "obj = my_class(5)");
-        ast(ctx, "obj.increment()");
-        ast(ctx, "obj.decrement()");
-        ast(ctx, "obj.decrement()");
-        ast(ctx, "obj");
+//        ast(ctx, "my_class = function(initCounter) { return { counter:initCounter, increment: function() {this.counter=this.counter+1}, decrement: function() {this.counter=this.counter-1}, get: function(){return this.counter}, set: function(newValue){this.counter=newValue}}}");
+//        ast(ctx, "my_class(5)");
+//        ast(ctx, "obj = my_class(5)");
+//        ast(ctx, "obj.increment()");
+//        ast(ctx, "obj.get()");
+//        ast(ctx, "obj.set(10)");
+//        ast(ctx, "obj.get()");
+
+        ast(ctx, "arr = [5, 4, {x: 1, y: 2}]");
+        ast(ctx, "foreach(value:arr){println(value)}");
+        ast(ctx, "foreach(value,index:arr){println(index+\" \"+value)}");
 
         // in order of importance:
 

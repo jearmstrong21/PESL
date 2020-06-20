@@ -101,17 +101,29 @@ public class JSASTCreator {
         } else if (top == JSTokenType.FOR) {
             tokens.expect(JSTokenType.FOR);
             tokens.expect(JSTokenType.LEFT_PAREN);
-            JSASTNode first = parseExpression(tokens);
-            if (tokens.peek().getType() == JSTokenType.COLON) {
-                throw new UnsupportedOperationException("For-in loops are not yet supported");
-            }
+            JSASTNode init = parseExpression(tokens);
             tokens.expect(JSTokenType.SEMICOLON);
             JSASTNode condition = parseExpression(tokens);
             tokens.expect(JSTokenType.SEMICOLON);
             JSASTNode increment = parseExpression(tokens);
             tokens.expect(JSTokenType.RIGHT_PAREN);
             JSASTNode body = parseBracketedCode(tokens, false);
-            return new JSForNode(first, condition, increment, body);
+            return new JSForNode(init, condition, increment, body);
+        } else if (top == JSTokenType.FOREACH) {
+            tokens.expect(JSTokenType.FOREACH);
+            tokens.expect(JSTokenType.LEFT_PAREN);
+            JSLiteralToken varNameToken = tokens.expect(JSTokenType.LITERAL);
+            String indexName = null;
+            if (tokens.peek().getType() == JSTokenType.COMMA) {
+                tokens.expect(JSTokenType.COMMA);
+                JSLiteralToken indexNameToken = tokens.expect(JSTokenType.LITERAL);
+                indexName = indexNameToken.getValue();
+            }
+            tokens.expect(JSTokenType.COLON);
+            JSASTNode array = parseExpression(tokens);
+            tokens.expect(JSTokenType.RIGHT_PAREN);
+            JSASTNode body = parseBracketedCode(tokens, false);
+            return new JSForEachNode(varNameToken.getValue(), indexName, array, body);
         } else if (top == JSTokenType.IF) {
             tokens.expect(JSTokenType.IF);
             tokens.expect(JSTokenType.LEFT_PAREN);

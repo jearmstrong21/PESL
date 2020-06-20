@@ -43,6 +43,7 @@ public class JSTokenizer {
             else if (buffer.equals("try")) tokens.push(JSTokenType.TRY);
             else if (buffer.equals("catch")) tokens.push(JSTokenType.CATCH);
             else if (buffer.equals("this")) tokens.push(JSTokenType.THIS);
+            else if (buffer.equals("foreach")) tokens.push(JSTokenType.FOREACH);
             else tokens.push(new JSLiteralToken(buffer));
             buffer = "";
         }
