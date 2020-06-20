@@ -13,10 +13,12 @@ import java.util.List;
 
 public class JSFunctionInvokeNode implements JSASTNode {
 
+    private final JSASTNode thisNode;
     private final JSASTNode function;
     private final List<JSASTNode> arguments;
 
-    public JSFunctionInvokeNode(JSASTNode function, List<JSASTNode> arguments) {
+    public JSFunctionInvokeNode(JSASTNode thisNode, JSASTNode function, List<JSASTNode> arguments) {
+        this.thisNode = thisNode;
         this.function = function;
         this.arguments = arguments;
     }
@@ -38,6 +40,11 @@ public class JSFunctionInvokeNode implements JSASTNode {
             }
         }
         newContext.set("arguments", new JSArray(evaluatedArguments));
+        if (function instanceof JSAccessPropertyNode) {
+            JSASTNode obj = ((JSAccessPropertyNode) function).getValue();
+            if(obj==null)newContext.setThis(JSUndefinedObject.INSTANCE);
+            else newContext.setThis(((JSAccessPropertyNode) function).getValue().evaluate(context));
+        }
         return functionValue.getNode().evaluate(newContext);
     }
 

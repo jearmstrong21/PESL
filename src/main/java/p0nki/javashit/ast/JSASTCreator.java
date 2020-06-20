@@ -27,9 +27,27 @@ public class JSASTCreator {
         return new JSBodyNode(nodes, catchReturn);
     }
 
+    private JSASTNode parseAccess(JSASTNode access, JSTokenList tokens) throws JSParseException {
+        while (tokens.hasAny() && (tokens.peek().getType() == JSTokenType.DOT || tokens.peek().getType() == JSTokenType.LEFT_BRACKET)) {
+            JSToken accessor = tokens.pop();
+            if (accessor.getType() == JSTokenType.DOT) {
+                JSLiteralToken token1 = tokens.expect(JSTokenType.LITERAL);
+                access = new JSAccessPropertyNode(access, new JSLiteralNode(new JSStringObject(token1.getValue())));
+            } else {
+                JSASTNode key = parseExpression(tokens);
+                tokens.expect(JSTokenType.RIGHT_BRACKET);
+                access = new JSAccessPropertyNode(access, key);
+            }
+        }
+        return access;
+    }
+
     private JSASTNode parsePrimary1(JSTokenList tokens) throws JSParseException {
         JSTokenType top = tokens.peek().getType();
-        if (top == JSTokenType.UNDEFINED) {
+        if (top == JSTokenType.THIS) {
+            tokens.expect(JSTokenType.THIS);
+            return parseAccess(new JSThisNode(), tokens);
+        } else if (top == JSTokenType.UNDEFINED) {
             tokens.expect(JSTokenType.UNDEFINED);
             return new JSLiteralNode(JSUndefinedObject.INSTANCE);
         } else if (top == JSTokenType.NULL) {
@@ -111,18 +129,7 @@ public class JSASTCreator {
         } else if (top == JSTokenType.LITERAL) {
             JSLiteralToken token = tokens.expect(JSTokenType.LITERAL);
             JSASTNode access = new JSAccessPropertyNode(null, new JSLiteralNode(new JSStringObject(token.getValue())));
-            while (tokens.hasAny() && (tokens.peek().getType() == JSTokenType.DOT || tokens.peek().getType() == JSTokenType.LEFT_BRACKET)) {
-                JSToken accessor = tokens.pop();
-                if (accessor.getType() == JSTokenType.DOT) {
-                    JSLiteralToken token1 = tokens.expect(JSTokenType.LITERAL);
-                    access = new JSAccessPropertyNode(access, new JSLiteralNode(new JSStringObject(token1.getValue())));
-                } else {
-                    JSASTNode key = parseExpression(tokens);
-                    tokens.expect(JSTokenType.RIGHT_BRACKET);
-                    access = new JSAccessPropertyNode(access, key);
-                }
-            }
-            return access;
+            return parseAccess(access, tokens);
         } else if (top == JSTokenType.LEFT_BRACE) {
             tokens.expect(JSTokenType.LEFT_BRACE);
             Map<String, JSASTNode> map = new HashMap<>();
@@ -182,7 +189,8 @@ public class JSASTCreator {
                         break;
                     }
                 }
-                return new JSFunctionInvokeNode(node, arguments);
+                JSASTNode thisNode = new JSThisNode();
+                return new JSFunctionInvokeNode(thisNode, node, arguments);
             }
         }
         return node;

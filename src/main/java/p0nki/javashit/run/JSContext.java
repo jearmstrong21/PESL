@@ -10,6 +10,7 @@ import java.util.Set;
 
 public class JSContext implements JSMapLike {
 
+    private JSObject thisValue = JSUndefinedObject.INSTANCE;
     private final JSContext parent;
     private final Map<String, JSObject> objects;
 
@@ -33,6 +34,14 @@ public class JSContext implements JSMapLike {
         objects.put(key, value);
     }
 
+    public void setThis(JSObject thisValue) {
+        this.thisValue = thisValue;
+    }
+
+    public JSObject getThis() {
+        return thisValue;
+    }
+
     @Override
     public void set(String key, JSObject value) {
         JSContext ctx = this;
@@ -49,10 +58,6 @@ public class JSContext implements JSMapLike {
     @Override
     public Set<String> keys() {
         return Collections.unmodifiableSet(objects.keySet());
-    }
-
-    public JSObject getThis() {
-        return JSUndefinedObject.INSTANCE;
     }
 
 }

@@ -140,10 +140,15 @@ public class MainTests {
 //        ast(ctx, "i=i+1");
 //        ast(ctx, "i");
 
-        ast(ctx, "dir(\"test\")");
-        ast(ctx, "dir([5, 4])");
-        ast(ctx, "dir({x: 5, y: 4})");
-        ast(ctx, "dir(dir)");
+//        ast(ctx, "dir(\"test\")");
+//        ast(ctx, "dir([5, 4])");
+//        ast(ctx, "dir({x: 5, y: 4})");
+//        ast(ctx, "dir(dir)");
+
+        ast(ctx, "z = {increment: function() { this.x = this.x + 1 }, x: 4}");
+        ast(ctx, "z");
+        ast(ctx, "z.increment()");
+        ast(ctx, "z");
 
 //        ast(ctx, "for(i=1;i<5;i=i+1){println(i)}");
 //        ast(ctx, "if(5 > 4) { println(true) }");
