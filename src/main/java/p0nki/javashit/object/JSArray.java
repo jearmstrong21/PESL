@@ -1,12 +1,8 @@
 package p0nki.javashit.object;
 
-import p0nki.javashit.ast.IndentedLogger;
-import p0nki.javashit.ast.nodes.JSASTNode;
-import p0nki.javashit.run.JSContext;
 import p0nki.javashit.run.JSEvalException;
 import p0nki.javashit.run.JSMapLike;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -22,49 +18,30 @@ public class JSArray extends JSObject implements JSMapLike {
 
     public JSArray(List<JSObject> values) {
         this.values = values;
-        push = new JSFunction(new ArrayList<String>() {{
-            add("value");
-        }}, new JSASTNode() {
-            @Override
-            public JSObject evaluate(JSContext context) throws JSEvalException {
-                JSObject value = context.get("value");
-                values.add(value);
-                return value;
-            }
-
-            @Override
-            public void print(IndentedLogger logger) {
-                logger.println("ARRAY::PUSH");
-            }
+        push = JSFunction.of("ARRAY::push", arguments -> {
+            JSEvalException.validateArgumentList(arguments, 1);
+            values.add(arguments.get(0));
+            return JSUndefinedObject.INSTANCE;
         });
-        pop = new JSFunction(new ArrayList<>(), new JSASTNode() {
-            @Override
-            public JSObject evaluate(JSContext context) throws JSEvalException {
-                if (values.size() == 0) throw JSEvalException.arrayIndexOutOfBounds(-1, 0);
-                return values.remove(values.size() - 1);
-            }
-
-            @Override
-            public void print(IndentedLogger logger) {
-                logger.println("ARRAY::POP");
-            }
+        pop = JSFunction.of("ARRAY::pop", arguments -> {
+            JSEvalException.validateArgumentList(arguments, 0);
+            if (values.size() == 0) throw JSEvalException.indexOutOfBounds(-1, 0);
+            values.remove(values.size() - 1);
+            return JSUndefinedObject.INSTANCE;
         });
-        length = new JSFunction(new ArrayList<>(), new JSASTNode() {
-            @Override
-            public JSObject evaluate(JSContext context) {
-                return new JSNumberObject(values.size());
-            }
-
-            @Override
-            public void print(IndentedLogger logger) {
-                logger.println("ARRAY::LENGTH");
-            }
+        length = JSFunction.of("ARRAY::length", arguments -> {
+            JSEvalException.validateArgumentList(arguments, 0);
+            return new JSNumberObject(values.size());
         });
     }
 
     @Override
     public String stringify() {
         return "[" + values.stream().map(JSObject::stringify).collect(Collectors.joining(", ")) + "]";
+    }
+
+    public List<JSObject> getValues() {
+        return values;
     }
 
     @Override
@@ -83,22 +60,18 @@ public class JSArray extends JSObject implements JSMapLike {
         if (key.equals("pop")) return pop;
         if (key.equals("length")) return length;
         try {
-            int i = Integer.parseInt(key);
-            if (i < 0 || i >= values.size()) throw JSEvalException.arrayIndexOutOfBounds(i, values.size());
-            return values.get(i);
+            return values.get(JSEvalException.checkIndexOutOfBounds(Integer.parseInt(key), values.size()));
         } catch (NumberFormatException nfe) {
-            throw JSEvalException.expectedNumber(key);
+            return JSUndefinedObject.INSTANCE;
         }
     }
 
     @Override
     public void set(String key, JSObject value) throws JSEvalException {
         try {
-            int i = Integer.parseInt(key);
-            if (i < 0 || i >= values.size()) throw JSEvalException.arrayIndexOutOfBounds(i, values.size());
-            values.set(i, value);
+            values.set(JSEvalException.checkIndexOutOfBounds(Integer.parseInt(key), values.size()), value);
         } catch (NumberFormatException nfe) {
-            throw JSEvalException.expectedNumber(key);
+            throw JSEvalException.cannotSetKey(key);
         }
     }
 

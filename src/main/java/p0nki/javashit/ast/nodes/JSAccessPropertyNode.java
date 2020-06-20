@@ -37,4 +37,5 @@ public class JSAccessPropertyNode implements JSASTNode {
         logger.println("KEY)");
         logger.pushprint(key);
     }
+
 }

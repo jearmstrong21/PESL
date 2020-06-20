@@ -30,5 +30,9 @@ public enum JSTokenType {
     IF,
     ELSE,
     TRUE,
-    FALSE
+    FALSE,
+    THROW,
+    TRY,
+    CATCH,
+    THIS
 }

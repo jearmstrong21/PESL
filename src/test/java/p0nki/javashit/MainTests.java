@@ -14,6 +14,7 @@ import p0nki.javashit.token.JSTokenizer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class MainTests {
 
@@ -100,6 +101,10 @@ public class MainTests {
                     }
                 }))
         );
+        ctx.set("dir", JSFunction.of("dir", arguments -> {
+            JSEvalException.validateArgumentList(arguments, 1);
+            return new JSArray(arguments.get(0).asMapLike().keys().stream().map(JSStringObject::new).collect(Collectors.toList()));
+        }));
 //        ast(ctx, "function(x) { println(2+x) } (4)");
 //        ast(ctx, "add = function(x,y) { return x + y }");
 //        ast(ctx, "add(5,4)");
@@ -131,16 +136,33 @@ public class MainTests {
 //        ast(ctx, "x & y");
 //        ast(ctx, "return 5");
 
-        ast(ctx, "i = 5");
-        ast(ctx, "i=i+1");
-        ast(ctx, "i");
+//        ast(ctx, "i = 5");
+//        ast(ctx, "i=i+1");
+//        ast(ctx, "i");
+
+        ast(ctx, "dir(\"test\")");
+        ast(ctx, "dir([5, 4])");
+        ast(ctx, "dir({x: 5, y: 4})");
+        ast(ctx, "dir(dir)");
 
 //        ast(ctx, "for(i=1;i<5;i=i+1){println(i)}");
 //        ast(ctx, "if(5 > 4) { println(true) }");
 
-        ast(ctx, "factorial = function(x) { if(x>1){return x*factorial(x-1)}else{return 1}}");
-        ast(ctx, "for(let i=1;i<11;i=i+1){println(factorial(i))}");
+//        ast(ctx, "factorial = function(x) { if(x>1){return x*factorial(x-1)}else{return 1}}");
+//        ast(ctx, "for(let i=1;i<11;i=i+1){println(factorial(i))}");
 
+//        ast(ctx, "throw { x : 5 }");
+
+//        ast(ctx, "i = 5");
+//        ast(ctx, "f = function(i) { }");
+//        ast(ctx, "f(10)");
+//        ast(ctx, "i");
+
+//        ast(ctx, "try { throw Math.random() } catch(exc) { println(exc) }");
+//        ast(ctx, "i = 1");
+//        ast(ctx, "try { throw Math.random() } catch (i) { i = 5 println(i) }");
+//        ast(ctx, "i");
+//        ast(ctx, "try { throw 5 } catch (exc) { println(\"ISSUE \" + exc) }");
 
         // in order of importance:
 
@@ -148,8 +170,6 @@ public class MainTests {
         // TODO: try/catch, easy to implement, catch JSEvalException and pass in the stringliteral specified by it into the catch
 
         // TODO: function binding to `this`
-
-        // TODO: variable shadowing with special keyword? is this too hard to implement?
 
         // TODO: value listeners which listen for a value change
 //        tokenize( "println(5)");

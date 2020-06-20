@@ -32,9 +32,9 @@ public class JSFunctionInvokeNode implements JSASTNode {
         // TODO: `arguments` parameter, add arrays for this
         for (int i = 0; i < functionValue.getArgumentNames().size(); i++) {
             if (i < arguments.size()) {
-                newContext.set(functionValue.getArgumentNames().get(i), evaluatedArguments.get(i));
+                newContext.let(functionValue.getArgumentNames().get(i), evaluatedArguments.get(i));
             } else {
-                newContext.set(functionValue.getArgumentNames().get(i), JSUndefinedObject.INSTANCE);
+                newContext.let(functionValue.getArgumentNames().get(i), JSUndefinedObject.INSTANCE);
             }
         }
         newContext.set("arguments", new JSArray(evaluatedArguments));

@@ -63,6 +63,15 @@ public class JSASTCreator {
                 }
             }
             return new JSLiteralNode(new JSFunction(argNames, parseBracketedCode(tokens, true)));
+        } else if (top == JSTokenType.TRY) {
+            tokens.expect(JSTokenType.TRY);
+            JSASTNode tryBody = parseBracketedCode(tokens, false);
+            tokens.expect(JSTokenType.CATCH);
+            tokens.expect(JSTokenType.LEFT_PAREN);
+            JSLiteralToken literal = tokens.expect(JSTokenType.LITERAL);
+            tokens.expect(JSTokenType.RIGHT_PAREN);
+            JSASTNode catchBody = parseBracketedCode(tokens, false);
+            return new JSTryNode(tryBody, literal.getValue(), catchBody);
         } else if (top == JSTokenType.NUMBER) {
             JSNumToken token = tokens.expect(JSTokenType.NUMBER);
             return new JSLiteralNode(new JSNumberObject(token.getValue()));
@@ -96,6 +105,9 @@ public class JSASTCreator {
                 return new JSIfNode(condition, then, parseBracketedCode(tokens, false));
             }
             return new JSIfNode(condition, then, null);
+        } else if (top == JSTokenType.THROW) {
+            tokens.expect(JSTokenType.THROW);
+            return new JSThrowNode(parseExpression(tokens));
         } else if (top == JSTokenType.LITERAL) {
             JSLiteralToken token = tokens.expect(JSTokenType.LITERAL);
             JSASTNode access = new JSAccessPropertyNode(null, new JSLiteralNode(new JSStringObject(token.getValue())));

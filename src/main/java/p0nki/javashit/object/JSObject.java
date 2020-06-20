@@ -41,4 +41,9 @@ public abstract class JSObject {
         throw new JSEvalException("Cannot cast " + type().toString() + " to FUNCTION");
     }
 
+    public final JSArray asArray() throws JSEvalException {
+        if (this instanceof JSArray) return (JSArray) this;
+        throw new JSEvalException("Cannot cast " + type().toString() + " to ARRAY");
+    }
+
 }
