@@ -117,23 +117,50 @@ public class MainTests {
                     }
                     return new JSNumberObject(max);
                 }))
+                .builderSet("any", JSFunction.of("MATH::any", arguments -> {
+                    if (arguments.size() == 0) throw JSEvalException.INVALID_ARGUMENT_LIST;
+                    if (arguments.get(0) instanceof JSArray) arguments = ((JSArray) arguments.get(0)).getValues();
+                    boolean value = arguments.get(0).asBoolean().getValue();
+                    for (int i = 1; i < arguments.size() && !value; i++) {
+                        value = arguments.get(i).asBoolean().getValue();
+                    }
+                    return new JSBooleanObject(value);
+                }))
+                .builderSet("all", JSFunction.of("MATH::all", arguments -> {
+                    if (arguments.size() == 0) throw JSEvalException.INVALID_ARGUMENT_LIST;
+                    if (arguments.get(0) instanceof JSArray) arguments = ((JSArray) arguments.get(0)).getValues();
+                    boolean value = arguments.get(0).asBoolean().getValue();
+                    for (int i = 1; i < arguments.size() && value; i++) {
+                        value = arguments.get(i).asBoolean().getValue();
+                    }
+                    return new JSBooleanObject(value);
+                }))
         );
         ctx.set("dir", JSFunction.of("dir", arguments -> {
             JSEvalException.validArgumentListLength(arguments, 1);
             return new JSArray(arguments.get(0).asMapLike().keys().stream().map(JSStringObject::new).collect(Collectors.toList()));
         }));
 
-        ast(ctx, "Math");
-        ast(ctx, "Math.min(5, 10, -3)");
-        ast(ctx, "!true ^ false");
-        ast(ctx, "!false ^ false");
-        ast(ctx, "!(false & false)");
-        ast(ctx, "!false & true");
-        ast(ctx, "5 +- 3 +- 4");
+//        ast(ctx, "Math");
+//        ast(ctx, "Math.min(5, 10, -3)");
+//        ast(ctx, "!true ^ false");
+//        ast(ctx, "!false ^ false");
+//        ast(ctx, "!(false & false)");
+//        ast(ctx, "!false & true");
+//        ast(ctx, "5 +- 3 +- 4");
 
 //        ast(ctx, "function(x) { println(2+x) } (4)");
 //        ast(ctx, "add = function(x,y) { return x + y }");
 //        ast(ctx, "add(5,4)");
+
+        ast(ctx, "Math.any(true, false)");
+        ast(ctx, "Math.any(false, false)");
+        ast(ctx, "Math.all(true, false)");
+        ast(ctx, "Math.all(true, true)");
+
+        ast(ctx, "Math.any([false, true])");
+        ast(ctx, "Math.min([3, 4, 5])");
+
 //        ast(ctx, "i=5");
 //        ast(ctx, "pure = function( ) { let i = 3 return i }");
 //        ast(ctx, "pure()");
