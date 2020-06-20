@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class Builtins {
 
-    public static final JSFunction PRINTLN = JSFunction.of("println", arguments -> {
+    public static final JSFunction PRINTLN = JSFunction.of(arguments -> {
         System.out.print("stdout >> ");
         for (JSObject object : arguments) {
             System.out.print(object.castToString() + " ");
@@ -17,49 +17,49 @@ public class Builtins {
         return JSUndefinedObject.INSTANCE;
     });
 
-    public static final JSFunction DIR = JSFunction.of("dir", arguments -> {
+    public static final JSFunction DIR = JSFunction.of(arguments -> {
         JSEvalException.validArgumentListLength(arguments, 1);
         return new JSArray(arguments.get(0).asMapLike().keys().stream().map(JSStringObject::new).collect(Collectors.toList()));
     });
 
     public static final JSMap MATH = new JSMap(new HashMap<>())
-            .builderSet("random", JSFunction.of("MATH::random", arguments -> {
+            .builderSet("random", JSFunction.of(arguments -> {
                 JSEvalException.validArgumentListLength(arguments, 0);
                 return new JSNumberObject(Math.random());
             }))
-            .builderSet("sqrt", JSFunction.of("MATH::sqrt", arguments -> {
+            .builderSet("sqrt", JSFunction.of(arguments -> {
                 JSEvalException.validArgumentListLength(arguments, 1);
                 return new JSNumberObject(Math.sqrt(arguments.get(0).asNumber().getValue()));
             }))
-            .builderSet("floor", JSFunction.of("MATH::floor", arguments -> {
+            .builderSet("floor", JSFunction.of(arguments -> {
                 JSEvalException.validArgumentListLength(arguments, 1);
                 return new JSNumberObject(Math.floor(arguments.get(0).asNumber().getValue()));
             }))
-            .builderSet("ceil", JSFunction.of("MATH::ceil", arguments -> {
+            .builderSet("ceil", JSFunction.of(arguments -> {
                 JSEvalException.validArgumentListLength(arguments, 1);
                 return new JSNumberObject(Math.ceil(arguments.get(0).asNumber().getValue()));
             }))
-            .builderSet("pow", JSFunction.of("MATH::pow", arguments -> {
+            .builderSet("pow", JSFunction.of(arguments -> {
                 JSEvalException.validArgumentListLength(arguments, 2);
                 return new JSNumberObject(Math.pow(arguments.get(0).asNumber().getValue(), arguments.get(1).asNumber().getValue()));
             }))
-            .builderSet("abs", JSFunction.of("MATH::abs", arguments -> {
+            .builderSet("abs", JSFunction.of(arguments -> {
                 JSEvalException.validArgumentListLength(arguments, 1);
                 return new JSNumberObject(Math.abs(arguments.get(0).asNumber().getValue()));
             }))
-            .builderSet("sin", JSFunction.of("MATH::sin", arguments -> {
+            .builderSet("sin", JSFunction.of(arguments -> {
                 JSEvalException.validArgumentListLength(arguments, 1);
                 return new JSNumberObject(Math.sin(arguments.get(0).asNumber().getValue()));
             }))
-            .builderSet("cos", JSFunction.of("MATH::cos", arguments -> {
+            .builderSet("cos", JSFunction.of(arguments -> {
                 JSEvalException.validArgumentListLength(arguments, 1);
                 return new JSNumberObject(Math.cos(arguments.get(0).asNumber().getValue()));
             }))
-            .builderSet("tan", JSFunction.of("MATH::tan", arguments -> {
+            .builderSet("tan", JSFunction.of(arguments -> {
                 JSEvalException.validArgumentListLength(arguments, 1);
                 return new JSNumberObject(Math.tan(arguments.get(0).asNumber().getValue()));
             }))
-            .builderSet("min", JSFunction.of("MATH::min", arguments -> {
+            .builderSet("min", JSFunction.of(arguments -> {
                 if (arguments.size() == 0) throw JSEvalException.INVALID_ARGUMENT_LIST;
                 if (arguments.get(0) instanceof JSArray) arguments = ((JSArray) arguments.get(0)).getValues();
                 double min = arguments.get(0).asNumber().getValue();
@@ -68,7 +68,7 @@ public class Builtins {
                 }
                 return new JSNumberObject(min);
             }))
-            .builderSet("max", JSFunction.of("MATH::max", arguments -> {
+            .builderSet("max", JSFunction.of(arguments -> {
                 if (arguments.size() == 0) throw JSEvalException.INVALID_ARGUMENT_LIST;
                 if (arguments.get(0) instanceof JSArray) arguments = ((JSArray) arguments.get(0)).getValues();
                 double max = arguments.get(0).asNumber().getValue();
@@ -77,7 +77,7 @@ public class Builtins {
                 }
                 return new JSNumberObject(max);
             }))
-            .builderSet("any", JSFunction.of("MATH::any", arguments -> {
+            .builderSet("any", JSFunction.of(arguments -> {
                 if (arguments.size() == 0) throw JSEvalException.INVALID_ARGUMENT_LIST;
                 if (arguments.get(0) instanceof JSArray) arguments = ((JSArray) arguments.get(0)).getValues();
                 boolean value = arguments.get(0).asBoolean().getValue();
@@ -86,7 +86,7 @@ public class Builtins {
                 }
                 return new JSBooleanObject(value);
             }))
-            .builderSet("all", JSFunction.of("MATH::all", arguments -> {
+            .builderSet("all", JSFunction.of(arguments -> {
                 if (arguments.size() == 0) throw JSEvalException.INVALID_ARGUMENT_LIST;
                 if (arguments.get(0) instanceof JSArray) arguments = ((JSArray) arguments.get(0)).getValues();
                 boolean value = arguments.get(0).asBoolean().getValue();

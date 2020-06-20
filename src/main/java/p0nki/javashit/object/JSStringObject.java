@@ -23,11 +23,11 @@ public class JSStringObject extends JSObject implements JSMapLike {
 
     public JSStringObject(String value) {
         this.value = value;
-        charAt = JSFunction.of("STRING::charAt", arguments -> {
+        charAt = JSFunction.of(arguments -> {
             JSEvalException.validArgumentListLength(arguments, 1);
             return new JSStringObject("" + value.charAt((int) arguments.get(0).asNumber().getValue()));
         });
-        substring = JSFunction.of("STRING::substring", arguments -> {
+        substring = JSFunction.of(arguments -> {
             JSEvalException.validArgumentListLength(arguments, 1, 2);
             int beginIndex = (int) arguments.get(0).asNumber().getValue();
             JSEvalException.checkIndexOutOfBounds(beginIndex, value.length());
@@ -37,7 +37,7 @@ public class JSStringObject extends JSObject implements JSMapLike {
             if (beginIndex > endIndex) throw JSEvalException.indexOutOfBounds(beginIndex, value.length());
             return new JSStringObject(value.substring(beginIndex, endIndex));
         });
-        length = JSFunction.of("STRING::length", arguments -> {
+        length = JSFunction.of(arguments -> {
             JSEvalException.validArgumentListLength(arguments, 0);
             return new JSNumberObject(value.length());
         });

@@ -70,6 +70,9 @@ public class MainTests {
         ast(ctx, "Math.any([false, true])");
         ast(ctx, "Math.min([3, 4, 5])");
 
+        ast(ctx, "println(\"hi\")");
+        ast(ctx, "println");
+
 //        ast(ctx, "i=5");
 //        ast(ctx, "pure = function( ) { let i = 3 return i }");
 //        ast(ctx, "pure()");
@@ -115,8 +118,8 @@ public class MainTests {
 //        ast(ctx, "for(i=1;i<5;i=i+1){println(i)}");
 //        ast(ctx, "if(5 > 4) { println(true) }");
 
-        ast(ctx, "factorial = function(x) { if(x>1){return x*factorial(x-1)}else{return 1}}");
-        ast(ctx, "for(let i=1;i<11;i=i+1){println(i, factorial(i))}");
+//        ast(ctx, "factorial = function(x) { if(x>1){return x*factorial(x-1)}else{return 1}}");
+//        ast(ctx, "for(let i=1;i<11;i=i+1){println(i, factorial(i))}");
 
 //        ast(ctx, "throw { x : 5 }");
 

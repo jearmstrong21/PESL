@@ -68,7 +68,6 @@ public class JSASTCreator {
             tokens.expect(JSTokenType.RETURN);
             return new JSReturnNode(parseExpression(tokens));
         } else if (top == JSTokenType.FUNCTION) {
-            //  TODO GET MAXS BIRTHDAY PRESENT DO THIS FIRSTER
             tokens.expect(JSTokenType.FUNCTION);
             tokens.expect(JSTokenType.LEFT_PAREN);
             List<String> argNames = new ArrayList<>();

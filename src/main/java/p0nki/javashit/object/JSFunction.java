@@ -7,7 +7,6 @@ import p0nki.javashit.run.JSEvalException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class JSFunction extends JSObject {
 
@@ -18,7 +17,7 @@ public class JSFunction extends JSObject {
 
     }
 
-    public static JSFunction of(String name, JSFInterface jsfInterface) {
+    public static JSFunction of(JSFInterface jsfInterface) {
         return new JSFunction(new ArrayList<>(), new JSASTNode() {
             @Override
             public JSObject evaluate(JSContext context) throws JSEvalException {
@@ -27,7 +26,7 @@ public class JSFunction extends JSObject {
 
             @Override
             public void print(IndentedLogger logger) {
-                logger.println("JSFInterface " + name);
+                logger.println("[native function]");
             }
         });
     }
