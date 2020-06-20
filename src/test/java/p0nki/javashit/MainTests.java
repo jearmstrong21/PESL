@@ -145,10 +145,10 @@ public class MainTests {
 //        ast(ctx, "dir({x: 5, y: 4})");
 //        ast(ctx, "dir(dir)");
 
-        ast(ctx, "z = {increment: function() { this.x = this.x + 1 }, x: 4}");
-        ast(ctx, "z");
-        ast(ctx, "z.increment()");
-        ast(ctx, "z");
+//        ast(ctx, "z = {increment: function() { this.x = this.x + 1 }, x: 4}");
+//        ast(ctx, "z");
+//        ast(ctx, "z.increment()");
+//        ast(ctx, "z");
 
 //        ast(ctx, "for(i=1;i<5;i=i+1){println(i)}");
 //        ast(ctx, "if(5 > 4) { println(true) }");
@@ -168,6 +168,20 @@ public class MainTests {
 //        ast(ctx, "try { throw Math.random() } catch (i) { i = 5 println(i) }");
 //        ast(ctx, "i");
 //        ast(ctx, "try { throw 5 } catch (exc) { println(\"ISSUE \" + exc) }");
+
+//        ast(ctx, "f = function(x){return function(y){return x+y}}");
+//        ast(ctx, "f");
+//        ast(ctx, "f(3)");
+//        ast(ctx, "z=f(3)");
+//        ast(ctx, "z(5)");
+
+        ast(ctx, "my_class = function(initCounter) { return { counter:initCounter, increment: function() {this.counter=this.counter+1}, decrement: function() {this.counter=this.counter-1}, get: function(){return this.counter}}}");
+        ast(ctx, "my_class(5)");
+        ast(ctx, "obj = my_class(5)");
+        ast(ctx, "obj.increment()");
+        ast(ctx, "obj.decrement()");
+        ast(ctx, "obj.decrement()");
+        ast(ctx, "obj");
 
         // in order of importance:
 
