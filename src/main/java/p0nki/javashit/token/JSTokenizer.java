@@ -13,7 +13,7 @@ public class JSTokenizer {
 
     private class JSTokenizerImpl {
 
-        private JSCodeReader reader;
+        private final JSCodeReader reader;
         private String buffer = "";
         private final JSTokenList tokens;
 
@@ -59,7 +59,7 @@ public class JSTokenizer {
                     tokens.push(JSTokenType.END_STRING);
                     continue;
                 }
-                if (ch == '"' && !inQuote) {
+                if (ch == '"') {
                     flush();
                     tokens.push(JSTokenType.BEGIN_STRING);
                     inQuote = true;
@@ -71,6 +71,9 @@ public class JSTokenizer {
                 }
                 if (ch == ' ' || ch == '\n' || ch == '\t') {
                     flush();
+                } else if (ch == '!') {
+                    flush();
+                    tokens.push(JSTokenType.NOT);
                 } else if (ch == '+') {
                     flush();
                     tokens.push(new JSOperatorToken(JSOperatorType.ADD));

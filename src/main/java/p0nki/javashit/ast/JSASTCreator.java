@@ -43,7 +43,13 @@ public class JSASTCreator {
 
     private JSASTNode parsePrimary1(JSTokenList tokens) throws JSParseException {
         JSTokenType top = tokens.peek().getType();
-        if (top == JSTokenType.THIS) {
+        if (top == JSTokenType.NOT) {
+            tokens.expect(JSTokenType.NOT);
+            return new JSNotNode(parsePrimary(tokens));
+        } else if (top == JSTokenType.ADDITIVE_OP && ((JSOperatorToken) tokens.peek()).getOpType() == JSOperatorType.SUB) {
+            tokens.expect(JSTokenType.ADDITIVE_OP);
+            return new JSNegateNode(parsePrimary(tokens));
+        } else if (top == JSTokenType.THIS) {
             tokens.expect(JSTokenType.THIS);
             return parseAccess(new JSThisNode(), tokens);
         } else if (top == JSTokenType.UNDEFINED) {

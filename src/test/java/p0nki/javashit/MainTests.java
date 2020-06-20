@@ -63,48 +63,74 @@ public class MainTests {
             }
         }));
         ctx.set("Math", new JSMap(new HashMap<>())
-                .builderSet("random", new JSFunction(new ArrayList<>(), new JSASTNode() {
-                    @Override
-                    public JSObject evaluate(JSContext context) {
-                        return new JSNumberObject(Math.random());
-                    }
-
-                    @Override
-                    public void print(IndentedLogger logger) {
-                        logger.println("MATH::RANDOM");
-                    }
+                .builderSet("random", JSFunction.of("MATH::random", arguments -> {
+                    JSEvalException.validArgumentListLength(arguments, 0);
+                    return new JSNumberObject(Math.random());
                 }))
-                .builderSet("sqrt", new JSFunction(new ArrayList<String>() {{
-                    add("value");
-                }}, new JSASTNode() {
-                    @Override
-                    public JSObject evaluate(JSContext context) throws JSEvalException {
-                        return new JSNumberObject(Math.sqrt(context.get("value").asNumber().getValue()));
-                    }
-
-                    @Override
-                    public void print(IndentedLogger logger) {
-                        logger.println("MATH::SQRT");
-                    }
+                .builderSet("sqrt", JSFunction.of("MATH::sqrt", arguments -> {
+                    JSEvalException.validArgumentListLength(arguments, 1);
+                    return new JSNumberObject(Math.sqrt(arguments.get(0).asNumber().getValue()));
                 }))
-                .builderSet("floor", new JSFunction(new ArrayList<String>() {{
-                    add("value");
-                }}, new JSASTNode() {
-                    @Override
-                    public JSObject evaluate(JSContext context) throws JSEvalException {
-                        return new JSNumberObject(Math.floor(context.get("value").asNumber().getValue()));
+                .builderSet("floor", JSFunction.of("MATH::floor", arguments -> {
+                    JSEvalException.validArgumentListLength(arguments, 1);
+                    return new JSNumberObject(Math.floor(arguments.get(0).asNumber().getValue()));
+                }))
+                .builderSet("ceil", JSFunction.of("MATH::ceil", arguments -> {
+                    JSEvalException.validArgumentListLength(arguments, 1);
+                    return new JSNumberObject(Math.ceil(arguments.get(0).asNumber().getValue()));
+                }))
+                .builderSet("pow", JSFunction.of("MATH::pow", arguments -> {
+                    JSEvalException.validArgumentListLength(arguments, 2);
+                    return new JSNumberObject(Math.pow(arguments.get(0).asNumber().getValue(), arguments.get(1).asNumber().getValue()));
+                }))
+                .builderSet("abs", JSFunction.of("MATH::abs", arguments -> {
+                    JSEvalException.validArgumentListLength(arguments, 1);
+                    return new JSNumberObject(Math.abs(arguments.get(0).asNumber().getValue()));
+                }))
+                .builderSet("sin", JSFunction.of("MATH::sin", arguments -> {
+                    JSEvalException.validArgumentListLength(arguments, 1);
+                    return new JSNumberObject(Math.sin(arguments.get(0).asNumber().getValue()));
+                }))
+                .builderSet("cos", JSFunction.of("MATH::cos", arguments -> {
+                    JSEvalException.validArgumentListLength(arguments, 1);
+                    return new JSNumberObject(Math.cos(arguments.get(0).asNumber().getValue()));
+                }))
+                .builderSet("tan", JSFunction.of("MATH::tan", arguments -> {
+                    JSEvalException.validArgumentListLength(arguments, 1);
+                    return new JSNumberObject(Math.tan(arguments.get(0).asNumber().getValue()));
+                }))
+                .builderSet("min", JSFunction.of("MATH::min", arguments -> {
+                    if (arguments.size() == 0) throw JSEvalException.INVALID_ARGUMENT_LIST;
+                    if (arguments.get(0) instanceof JSArray) arguments = ((JSArray) arguments.get(0)).getValues();
+                    double min = arguments.get(0).asNumber().getValue();
+                    for (int i = 1; i < arguments.size(); i++) {
+                        min = Math.min(min, arguments.get(i).asNumber().getValue());
                     }
-
-                    @Override
-                    public void print(IndentedLogger logger) {
-                        logger.println("MATH::FLOOR");
+                    return new JSNumberObject(min);
+                }))
+                .builderSet("max", JSFunction.of("MATH::max", arguments -> {
+                    if (arguments.size() == 0) throw JSEvalException.INVALID_ARGUMENT_LIST;
+                    if (arguments.get(0) instanceof JSArray) arguments = ((JSArray) arguments.get(0)).getValues();
+                    double max = arguments.get(0).asNumber().getValue();
+                    for (int i = 1; i < arguments.size(); i++) {
+                        max = Math.max(max, arguments.get(i).asNumber().getValue());
                     }
+                    return new JSNumberObject(max);
                 }))
         );
         ctx.set("dir", JSFunction.of("dir", arguments -> {
-            JSEvalException.validateArgumentList(arguments, 1);
+            JSEvalException.validArgumentListLength(arguments, 1);
             return new JSArray(arguments.get(0).asMapLike().keys().stream().map(JSStringObject::new).collect(Collectors.toList()));
         }));
+
+        ast(ctx, "Math");
+        ast(ctx, "Math.min(5, 10, -3)");
+        ast(ctx, "!true ^ false");
+        ast(ctx, "!false ^ false");
+        ast(ctx, "!(false & false)");
+        ast(ctx, "!false & true");
+        ast(ctx, "5 +- 3 +- 4");
+
 //        ast(ctx, "function(x) { println(2+x) } (4)");
 //        ast(ctx, "add = function(x,y) { return x + y }");
 //        ast(ctx, "add(5,4)");
@@ -183,15 +209,12 @@ public class MainTests {
 //        ast(ctx, "obj.set(10)");
 //        ast(ctx, "obj.get()");
 
-        ast(ctx, "arr = [5, 4, {x: 1, y: 2}]");
-        ast(ctx, "foreach(value:arr){println(value)}");
-        ast(ctx, "foreach(value,index:arr){println(index+\" \"+value)}");
-
-        // in order of importance:
+//        ast(ctx, "arr = [5, 4, {x: 1, y: 2}]");
+//        ast(ctx, "foreach(value:arr){println(value)}");
+//        ast(ctx, "foreach(value,index:arr){println(index+\" \"+value)}");
 
         // TODO: `global` (with a new token type) object which represents the global ctx
         // TODO: value listeners which listen for a value change
-//        tokenize( "println(5)");
 //        ast(ctx, "z = {\"x\": 3, y: 4}");
 //        ast(ctx, "z.ten = {test: 10}");
 //        ast(ctx, "z[\"ten\"]");

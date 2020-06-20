@@ -7,6 +7,8 @@ import java.util.List;
 
 public class JSEvalException extends Exception {
 
+    public static final JSEvalException INVALID_ARGUMENT_LIST = new JSEvalException("Invalid argument list");
+
     private final JSObject object;
 
     public JSEvalException(String message) {
@@ -35,13 +37,13 @@ public class JSEvalException extends Exception {
         return new JSEvalException("Cannot set key " + value);
     }
 
-    public static void validateArgumentList(List<JSObject> arguments, int... lengths) throws JSEvalException {
+    public static void validArgumentListLength(List<JSObject> arguments, int... lengths) throws JSEvalException {
         boolean bad = true;
         for (int i = 0; i < lengths.length && bad; i++) {
             if (arguments.size() == lengths[i]) bad = false;
         }
         if (bad)
-            throw new JSEvalException("Invalid argument list");
+            throw INVALID_ARGUMENT_LIST;
     }
 
 }
