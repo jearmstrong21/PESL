@@ -23,28 +23,34 @@ public class JSTokenizer {
             parse();
         }
 
+        private int start() {
+            return reader.getIndex() - buffer.length();
+        }
+
         private void flush() {
             buffer = buffer.trim();
             if (buffer.equals("")) return;
             OptionalDouble optionalDouble = Utilities.parseDouble(buffer);
-            if (optionalDouble.isPresent()) tokens.push(new JSNumToken(optionalDouble.getAsDouble()));
-            else if (buffer.equals("function")) tokens.push(JSTokenType.FUNCTION);
-            else if (buffer.equals("return")) tokens.push(JSTokenType.RETURN);
-            else if (buffer.equals("null")) tokens.push(JSTokenType.NULL);
-            else if (buffer.equals("undefined")) tokens.push(JSTokenType.UNDEFINED);
-            else if (buffer.equals("let")) tokens.push(JSTokenType.LET);
-            else if (buffer.equals("is")) tokens.push(new JSOperatorToken(JSOperatorType.EQUALS));
-            else if (buffer.equals("for")) tokens.push(JSTokenType.FOR);
-            else if (buffer.equals("if")) tokens.push(JSTokenType.IF);
-            else if (buffer.equals("else")) tokens.push(JSTokenType.ELSE);
-            else if (buffer.equals("true")) tokens.push(JSTokenType.TRUE);
-            else if (buffer.equals("false")) tokens.push(JSTokenType.FALSE);
-            else if (buffer.equals("throw")) tokens.push(JSTokenType.THROW);
-            else if (buffer.equals("try")) tokens.push(JSTokenType.TRY);
-            else if (buffer.equals("catch")) tokens.push(JSTokenType.CATCH);
-            else if (buffer.equals("this")) tokens.push(JSTokenType.THIS);
-            else if (buffer.equals("foreach")) tokens.push(JSTokenType.FOREACH);
-            else tokens.push(new JSLiteralToken(buffer));
+            if (optionalDouble.isPresent())
+                tokens.push(new JSNumToken(optionalDouble.getAsDouble(), start() + 1, reader.getIndex() + 1));
+            else if (buffer.equals("function")) tokens.push(JSTokenType.FUNCTION, start() + 1, reader.getIndex() + 1);
+            else if (buffer.equals("return")) tokens.push(JSTokenType.RETURN, start() + 1, reader.getIndex() + 1);
+            else if (buffer.equals("null")) tokens.push(JSTokenType.NULL, start() + 1, reader.getIndex() + 1);
+            else if (buffer.equals("undefined")) tokens.push(JSTokenType.UNDEFINED, start() + 1, reader.getIndex() + 1);
+            else if (buffer.equals("let")) tokens.push(JSTokenType.LET, start() + 1, reader.getIndex() + 1);
+            else if (buffer.equals("is"))
+                tokens.push(new JSOperatorToken(JSOperatorType.EQUALS, start() + 1, reader.getIndex() + 1));
+            else if (buffer.equals("for")) tokens.push(JSTokenType.FOR, start() + 1, reader.getIndex() + 1);
+            else if (buffer.equals("if")) tokens.push(JSTokenType.IF, start() + 1, reader.getIndex() + 1);
+            else if (buffer.equals("else")) tokens.push(JSTokenType.ELSE, start() + 1, reader.getIndex() + 1);
+            else if (buffer.equals("true")) tokens.push(JSTokenType.TRUE, start() + 1, reader.getIndex() + 1);
+            else if (buffer.equals("false")) tokens.push(JSTokenType.FALSE, start() + 1, reader.getIndex() + 1);
+            else if (buffer.equals("throw")) tokens.push(JSTokenType.THROW, start() + 1, reader.getIndex() + 1);
+            else if (buffer.equals("try")) tokens.push(JSTokenType.TRY, start() + 1, reader.getIndex() + 1);
+            else if (buffer.equals("catch")) tokens.push(JSTokenType.CATCH, start() + 1, reader.getIndex() + 1);
+            else if (buffer.equals("this")) tokens.push(JSTokenType.THIS, start() + 1, reader.getIndex() + 1);
+            else if (buffer.equals("foreach")) tokens.push(JSTokenType.FOREACH, start() + 1, reader.getIndex() + 1);
+            else tokens.push(new JSLiteralToken(buffer, start() + 1, reader.getIndex() + 1));
             buffer = "";
         }
 
@@ -54,14 +60,14 @@ public class JSTokenizer {
                 char ch = reader.next();
                 if (ch == '"' && inQuote) {
                     inQuote = false;
-                    tokens.push(new JSLiteralToken(buffer));
+                    tokens.push(new JSLiteralToken(buffer, reader.getIndex(), reader.getIndex() + 1));
                     buffer = "";
-                    tokens.push(JSTokenType.END_STRING);
+                    tokens.push(JSTokenType.END_STRING, reader.getIndex(), reader.getIndex() + 1);
                     continue;
                 }
                 if (ch == '"') {
                     flush();
-                    tokens.push(JSTokenType.BEGIN_STRING);
+                    tokens.push(JSTokenType.BEGIN_STRING, reader.getIndex(), reader.getIndex() + 1);
                     inQuote = true;
                     continue;
                 }
@@ -73,67 +79,67 @@ public class JSTokenizer {
                     flush();
                 } else if (ch == '!') {
                     flush();
-                    tokens.push(JSTokenType.NOT);
+                    tokens.push(JSTokenType.NOT, reader.getIndex(), reader.getIndex() + 1);
                 } else if (ch == '+') {
                     flush();
-                    tokens.push(new JSOperatorToken(JSOperatorType.ADD));
+                    tokens.push(new JSOperatorToken(JSOperatorType.ADD, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '-') {
                     flush();
-                    tokens.push(new JSOperatorToken(JSOperatorType.SUB));
+                    tokens.push(new JSOperatorToken(JSOperatorType.SUB, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '*') {
                     flush();
-                    tokens.push(new JSOperatorToken(JSOperatorType.MUL));
+                    tokens.push(new JSOperatorToken(JSOperatorType.MUL, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '/') {
                     flush();
-                    tokens.push(new JSOperatorToken(JSOperatorType.DIV));
+                    tokens.push(new JSOperatorToken(JSOperatorType.DIV, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '&') {
                     flush();
-                    tokens.push(new JSOperatorToken(JSOperatorType.AND));
+                    tokens.push(new JSOperatorToken(JSOperatorType.AND, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '|') {
                     flush();
-                    tokens.push(new JSOperatorToken(JSOperatorType.OR));
+                    tokens.push(new JSOperatorToken(JSOperatorType.OR, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '^') {
                     flush();
-                    tokens.push(new JSOperatorToken(JSOperatorType.XOR));
+                    tokens.push(new JSOperatorToken(JSOperatorType.XOR, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '<') {
                     flush();
-                    tokens.push(new JSOperatorToken(JSOperatorType.LESS_THAN));
+                    tokens.push(new JSOperatorToken(JSOperatorType.LESS_THAN, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '>') {
                     flush();
-                    tokens.push(new JSOperatorToken(JSOperatorType.MORE_THAN));
+                    tokens.push(new JSOperatorToken(JSOperatorType.MORE_THAN, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '(') {
                     flush();
-                    tokens.push(JSTokenType.LEFT_PAREN);
+                    tokens.push(JSTokenType.LEFT_PAREN, reader.getIndex(), reader.getIndex() + 1);
                 } else if (ch == ')') {
                     flush();
-                    tokens.push(JSTokenType.RIGHT_PAREN);
+                    tokens.push(JSTokenType.RIGHT_PAREN, reader.getIndex(), reader.getIndex() + 1);
                 } else if (ch == ';') {
                     flush();
-                    tokens.push(JSTokenType.SEMICOLON);
+                    tokens.push(JSTokenType.SEMICOLON, reader.getIndex(), reader.getIndex() + 1);
                 } else if (ch == '=') {
                     flush();
-                    tokens.push(JSTokenType.EQUALS_SIGN);
+                    tokens.push(JSTokenType.EQUALS_SIGN, reader.getIndex(), reader.getIndex() + 1);
                 } else if (ch == '.') {
                     flush();
-                    tokens.push(JSTokenType.DOT);
+                    tokens.push(JSTokenType.DOT, reader.getIndex(), reader.getIndex() + 1);
                 } else if (ch == '{') {
                     flush();
-                    tokens.push(JSTokenType.LEFT_BRACE);
+                    tokens.push(JSTokenType.LEFT_BRACE, reader.getIndex(), reader.getIndex() + 1);
                 } else if (ch == '}') {
                     flush();
-                    tokens.push(JSTokenType.RIGHT_BRACE);
+                    tokens.push(JSTokenType.RIGHT_BRACE, reader.getIndex(), reader.getIndex() + 1);
                 } else if (ch == ':') {
                     flush();
-                    tokens.push(JSTokenType.COLON);
+                    tokens.push(JSTokenType.COLON, reader.getIndex(), reader.getIndex() + 1);
                 } else if (ch == ',') {
                     flush();
-                    tokens.push(JSTokenType.COMMA);
+                    tokens.push(JSTokenType.COMMA, reader.getIndex(), reader.getIndex() + 1);
                 } else if (ch == '[') {
                     flush();
-                    tokens.push(JSTokenType.LEFT_BRACKET);
+                    tokens.push(JSTokenType.LEFT_BRACKET, reader.getIndex(), reader.getIndex() + 1);
                 } else if (ch == ']') {
                     flush();
-                    tokens.push(JSTokenType.RIGHT_BRACKET);
+                    tokens.push(JSTokenType.RIGHT_BRACKET, reader.getIndex(), reader.getIndex() + 1);
                 } else {
                     buffer += ch;
                 }

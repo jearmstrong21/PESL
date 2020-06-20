@@ -4,8 +4,8 @@ public class JSOperatorToken extends JSToken {
 
     private final JSOperatorType opType;
 
-    public JSOperatorToken(JSOperatorType opType) {
-        super(opType.getTokenType());
+    public JSOperatorToken(JSOperatorType opType, int start, int end) {
+        super(opType.getTokenType(), start, end);
         this.opType = opType;
     }
 

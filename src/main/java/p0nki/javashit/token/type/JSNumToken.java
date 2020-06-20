@@ -4,8 +4,8 @@ public class JSNumToken extends JSToken {
 
     private final double value;
 
-    public JSNumToken(double value) {
-        super(JSTokenType.NUMBER);
+    public JSNumToken(double value, int start, int end) {
+        super(JSTokenType.NUMBER, start, end);
         this.value = value;
     }
 

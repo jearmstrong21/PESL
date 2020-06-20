@@ -183,7 +183,7 @@ public class JSASTCreator {
             tokens.expect(JSTokenType.END_STRING);
             return new JSLiteralNode(new JSStringObject(token.getValue()));
         } else {
-            throw new JSParseException("Unexpected token " + top);
+            throw new JSParseException("Unexpected token in `primary` element " + tokens.peek().toString(), tokens.peek());
         }
     }
 
@@ -251,22 +251,24 @@ public class JSASTCreator {
 
     public JSASTNode parseExpression(JSTokenList tokens) throws JSParseException {
         boolean let = tokens.peek().getType() == JSTokenType.LET;
-        if (let) tokens.expect(JSTokenType.LET);
+        JSToken letToken = null;
+        if (let) letToken = tokens.expect(JSTokenType.LET);
         JSASTNode left = parseBoolean(tokens);
         if (tokens.hasAny()) {
             if (tokens.peek().getType() == JSTokenType.EQUALS_SIGN) {
                 tokens.expect(JSTokenType.EQUALS_SIGN);
+                JSToken startRight = tokens.peek();
                 JSASTNode right = parseBoolean(tokens);
                 if (left instanceof JSAccessPropertyNode) {
                     JSASTNode value = ((JSAccessPropertyNode) left).getValue();
                     JSASTNode key = ((JSAccessPropertyNode) left).getKey();
                     return new JSEqualsNode(value, key, right, let);
                 } else {
-                    throw new JSParseException("Expected lvalue on left side of `=`");
+                    throw new JSParseException("Expected lvalue on left side of `=`", startRight);
                 }
             }
         }
-        if (let) throw new JSParseException("Expected assignment with `let`");
+        if (let) throw new JSParseException("Expected assignment with `let`", letToken);
         return left;
     }
 

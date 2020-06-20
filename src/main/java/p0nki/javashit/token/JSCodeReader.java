@@ -1,7 +1,5 @@
 package p0nki.javashit.token;
 
-import p0nki.javashit.token.JSTokenizeException;
-
 public class JSCodeReader {
 
     private final String buffer;
@@ -12,8 +10,12 @@ public class JSCodeReader {
         index = 0;
     }
 
+    public int getIndex() {
+        return index;
+    }
+
     public char next() throws JSTokenizeException {
-        if (index >= buffer.length()) throw JSTokenizeException.UNEXPECTED_EOF;
+        if (index >= buffer.length()) throw new JSTokenizeException("Unexpected EOF", buffer.length());
         return buffer.charAt(index++);
     }
 

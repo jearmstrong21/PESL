@@ -4,8 +4,8 @@ public class JSLiteralToken extends JSToken {
 
     private final String value;
 
-    public JSLiteralToken(String value) {
-        super(JSTokenType.LITERAL);
+    public JSLiteralToken(String value, int start, int end) {
+        super(JSTokenType.LITERAL, start, end);
         this.value = value;
     }
 
