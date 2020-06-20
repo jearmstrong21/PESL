@@ -21,7 +21,6 @@ public class JSASTCreator {
         List<JSASTNode> nodes = new ArrayList<>();
         while (tokens.peek().getType() != JSTokenType.RIGHT_BRACE) {
             nodes.add(parseExpression(tokens));
-//            if (tokens.peek().getType() == JSTokenType.SEMICOLON) tokens.expect(JSTokenType.SEMICOLON);
         }
         tokens.expect(JSTokenType.RIGHT_BRACE);
         return new JSBodyNode(nodes, catchReturn);
@@ -178,7 +177,7 @@ public class JSASTCreator {
             tokens.expect(JSTokenType.END_STRING);
             return new JSLiteralNode(new JSStringObject(token.getValue()));
         } else {
-            throw new UnsupportedOperationException(top.toString());
+            throw new JSParseException("Unexpected token " + top);
         }
     }
 
