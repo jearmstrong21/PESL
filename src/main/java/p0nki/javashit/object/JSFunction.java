@@ -7,6 +7,7 @@ import p0nki.javashit.run.JSEvalException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class JSFunction extends JSObject {
 
@@ -50,7 +51,7 @@ public class JSFunction extends JSObject {
     //TODO better stringify with argument names
     @Override
     public String stringify() {
-        return "function { ... code ... }";
+        return String.format("function(%s) { ... code ... }", String.join(", ", argumentNames));
     }
 
     @Override
@@ -60,6 +61,6 @@ public class JSFunction extends JSObject {
 
     @Override
     public String castToString() {
-        return "function { ... code ... }";
+        return stringify();
     }
 }

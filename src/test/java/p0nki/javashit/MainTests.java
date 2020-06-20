@@ -172,10 +172,6 @@ public class MainTests {
         // in order of importance:
 
         // TODO: `global` (with a new token type) object which represents the global ctx
-        // TODO: try/catch, easy to implement, catch JSEvalException and pass in the stringliteral specified by it into the catch
-
-        // TODO: function binding to `this`
-
         // TODO: value listeners which listen for a value change
 //        tokenize( "println(5)");
 //        ast(ctx, "z = {\"x\": 3, y: 4}");

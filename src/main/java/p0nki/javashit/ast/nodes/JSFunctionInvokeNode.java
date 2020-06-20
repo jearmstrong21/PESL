@@ -28,10 +28,9 @@ public class JSFunctionInvokeNode implements JSASTNode {
         JSFunction functionValue = function.evaluate(context).asFunction();
         JSContext newContext = context.push();
         List<JSObject> evaluatedArguments = new ArrayList<>();
-        for (int i = 0; i < arguments.size(); i++) {
-            evaluatedArguments.add(arguments.get(i).evaluate(context));
+        for (JSASTNode argument : arguments) {
+            evaluatedArguments.add(argument.evaluate(context));
         }
-        // TODO: `arguments` parameter, add arrays for this
         for (int i = 0; i < functionValue.getArgumentNames().size(); i++) {
             if (i < arguments.size()) {
                 newContext.let(functionValue.getArgumentNames().get(i), evaluatedArguments.get(i));
