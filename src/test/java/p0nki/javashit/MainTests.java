@@ -152,8 +152,6 @@ public class MainTests {
 //        ast(ctx, "foreach(value:arr){println(value)}");
 //        ast(ctx, "foreach(value,index:arr){println(index+\" \"+value)}");
 
-        // TODO: `global` (with a new token type) object which represents the global ctx
-        // TODO: value listeners which listen for a value change
 //        ast(ctx, "z = {\"x\": 3, y: 4}");
 //        ast(ctx, "z.ten = {test: 10}");
 //        ast(ctx, "z[\"ten\"]");

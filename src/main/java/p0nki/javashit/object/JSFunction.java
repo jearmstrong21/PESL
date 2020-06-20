@@ -47,7 +47,6 @@ public class JSFunction extends JSObject {
         return argumentNames;
     }
 
-    //TODO better stringify with argument names
     @Override
     public String stringify() {
         return String.format("function(%s) { ... code ... }", String.join(", ", argumentNames));
