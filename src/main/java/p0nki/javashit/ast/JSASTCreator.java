@@ -5,10 +5,7 @@ import p0nki.javashit.object.*;
 import p0nki.javashit.token.JSTokenList;
 import p0nki.javashit.token.type.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class JSASTCreator {
 
@@ -17,13 +14,17 @@ public class JSASTCreator {
     }
 
     private JSASTNode parseBracketedCode(JSTokenList tokens, boolean catchReturn) throws JSParseException {
-        tokens.expect(JSTokenType.LEFT_BRACE);
-        List<JSASTNode> nodes = new ArrayList<>();
-        while (tokens.peek().getType() != JSTokenType.RIGHT_BRACE) {
-            nodes.add(parseExpression(tokens));
+        if (tokens.peek().getType() == JSTokenType.LEFT_BRACE) {
+            tokens.expect(JSTokenType.LEFT_BRACE);
+            List<JSASTNode> nodes = new ArrayList<>();
+            while (tokens.peek().getType() != JSTokenType.RIGHT_BRACE) {
+                nodes.add(parseExpression(tokens));
+            }
+            tokens.expect(JSTokenType.RIGHT_BRACE);
+            return new JSBodyNode(nodes, catchReturn);
+        } else {
+            return new JSBodyNode(Collections.singletonList(parseExpression(tokens)), catchReturn);
         }
-        tokens.expect(JSTokenType.RIGHT_BRACE);
-        return new JSBodyNode(nodes, catchReturn);
     }
 
     private JSASTNode parseAccess(JSASTNode access, JSTokenList tokens) throws JSParseException {

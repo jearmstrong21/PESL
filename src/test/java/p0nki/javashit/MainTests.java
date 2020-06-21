@@ -78,11 +78,14 @@ public class MainTests {
 //        run(ctx, "Data.read(function(y){return y+2})");
 //        run(ctx, "Data.write(function(y){return y+2})");
 
-        run(ctx, "fib = function(x) { if(x<1){return 0}if(x<2){return 1}return fib(x-1)+fib(x-2)}");
-        run(ctx, "startTime = System.time()");
-        run(ctx, "for(i=0;i<25;i=i+1){fib(i)}");
-        run(ctx, "endTime = System.time()");
-        run(ctx, "println(\"Time in milliseconds: \" + (endTime-startTime))");
+//        run(ctx, "fib = function(x) { if(x<1){return 0}if(x<2){return 1}return fib(x-1)+fib(x-2)}");
+//        run(ctx, "startTime = System.time()");
+//        run(ctx, "for(i=0;i<25;i=i+1){fib(i)}");
+//        run(ctx, "endTime = System.time()");
+//        run(ctx, "println(\"Time in milliseconds: \" + (endTime-startTime))");
+
+        run(ctx, "fib = function(x){if(x<1)return 0 else if(x<2)return 1 else return fib(x-1)+fib(x-2)}");
+        run(ctx, "fib(10)");
 
 //        run(ctx, "obj = {i:10,get:function(self){return self.i}}");
 //        run(ctx, "obj");
