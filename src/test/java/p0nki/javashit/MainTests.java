@@ -70,8 +70,12 @@ public class MainTests {
         ctx.set("println", Builtins.PRINTLN);
         ctx.set("dir", Builtins.DIR);
         ctx.set("Math", Builtins.MATH);
+        ctx.set("Data", Builtins.DATA);
 
-        run(ctx, "dir(");
+        run(ctx, "res = Data.write({x: [5, 2], y: 4 * 3})");
+        run(ctx, "Data.read(res)");
+        run(ctx, "Data.read(function(y){return y+2})");
+        run(ctx, "Data.write(function(y){return y+2})");
 
     }
 

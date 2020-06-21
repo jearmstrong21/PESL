@@ -3,6 +3,7 @@ package p0nki.javashit.builtins;
 import p0nki.javashit.object.*;
 import p0nki.javashit.run.JSEvalException;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -94,6 +95,27 @@ public class Builtins {
                     value = arguments.get(i).asBoolean().getValue();
                 }
                 return new JSBooleanObject(value);
+            }));
+
+    public static final JSMap DATA = new JSMap(new HashMap<>())
+            .builderSet("write", JSFunction.of(arguments -> {
+                JSEvalException.validArgumentListLength(arguments, 1);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                try {
+                    JSSerializationUtils.writeObject(arguments.get(0), new DataOutputStream(outputStream));
+                } catch (IOException e) {
+                    throw new JSEvalException(e.getMessage());
+                }
+                return new JSStringObject(outputStream.toString());
+            }))
+            .builderSet("read", JSFunction.of(arguments -> {
+                JSEvalException.validArgumentListLength(arguments, 1);
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(arguments.get(0).asString().getValue().getBytes());
+                try {
+                    return JSSerializationUtils.readObject(new DataInputStream(inputStream));
+                } catch (IOException e) {
+                    throw new JSEvalException(e.getMessage());
+                }
             }));
 
 }

@@ -10,40 +10,44 @@ import java.util.stream.Collectors;
 
 public class JSMap extends JSObject implements JSMapLike {
 
-    private final Map<String, JSObject> map;
+    private final Map<String, JSObject> values;
 
     public JSMap() {
-        map = new HashMap<>();
+        values = new HashMap<>();
     }
 
-    public JSMap(Map<String, JSObject> map) {
-        this.map = map;
+    public JSMap(Map<String, JSObject> values) {
+        this.values = values;
     }
 
     public JSMap builderSet(String key, JSObject value) {
-        map.put(key, value);
+        this.values.put(key, value);
         return this;
+    }
+
+    public Map<String, JSObject> getValues() {
+        return values;
     }
 
     @Override
     public JSObject get(String key) {
-        return map.getOrDefault(key, JSUndefinedObject.INSTANCE);
+        return values.getOrDefault(key, JSUndefinedObject.INSTANCE);
     }
 
     @Override
     public void set(String key, JSObject value) {
-        map.put(key, value);
+        this.values.put(key, value);
     }
 
     @Override
     public Set<String> keys() {
-        return Collections.unmodifiableSet(map.keySet());
+        return Collections.unmodifiableSet(values.keySet());
     }
 
     @Override
     public String stringify() {
         return "{" +
-                map.entrySet().stream().map(entry ->
+                values.entrySet().stream().map(entry ->
                         entry.getKey() + ": " + entry.getValue().stringify())
                         .collect(Collectors.joining(", ")) +
                 "}";
