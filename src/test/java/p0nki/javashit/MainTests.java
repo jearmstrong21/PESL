@@ -71,11 +71,18 @@ public class MainTests {
         ctx.set("dir", Builtins.DIR);
         ctx.set("Math", Builtins.MATH);
         ctx.set("Data", Builtins.DATA);
+        ctx.set("System", Builtins.SYSTEM);
 
-        run(ctx, "res = Data.write({x: [5, 2], y: 4 * 3})");
-        run(ctx, "Data.read(res)");
-        run(ctx, "Data.read(function(y){return y+2})");
-        run(ctx, "Data.write(function(y){return y+2})");
+//        run(ctx, "res = Data.write({x: [5, 2], y: 4 * 3})");
+//        run(ctx, "Data.read(res)");
+//        run(ctx, "Data.read(function(y){return y+2})");
+//        run(ctx, "Data.write(function(y){return y+2})");
+        run(ctx, "fib = function(x) { if(x<1){return 0}if(x<2){return 1}return fib(x-1)+fib(x-2)}");
+        run(ctx, "startTime = System.time()");
+        run(ctx, "for(i=0;i<25;i=i+1){fib(i)}");
+        run(ctx, "endTime = System.time()");
+        run(ctx, "println(\"Time in milliseconds: \" + (endTime-startTime))");
+//        run(ctx, "for(i=1;i<20;i=i+1){println(fib(i))}");
 
     }
 

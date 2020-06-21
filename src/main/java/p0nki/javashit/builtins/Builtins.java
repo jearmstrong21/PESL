@@ -4,6 +4,7 @@ import p0nki.javashit.object.*;
 import p0nki.javashit.run.JSEvalException;
 
 import java.io.*;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -116,6 +117,16 @@ public class Builtins {
                 } catch (IOException e) {
                     throw new JSEvalException(e.getMessage());
                 }
+            }));
+
+    public static final JSMap SYSTEM = new JSMap(new HashMap<>())
+            .builderSet("time", JSFunction.of(arguments -> {
+                JSEvalException.validArgumentListLength(arguments, 0);
+                return new JSNumberObject(System.currentTimeMillis());
+            }))
+            .builderSet("formatDate", JSFunction.of(arguments -> {
+                JSEvalException.validArgumentListLength(arguments, 1);
+                return new JSStringObject(new Date((long) arguments.get(0).asNumber().getValue()).toString());
             }));
 
 }
