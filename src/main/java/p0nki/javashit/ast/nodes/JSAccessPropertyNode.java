@@ -26,7 +26,7 @@ public class JSAccessPropertyNode implements JSASTNode {
     @Override
     public JSObject evaluate(JSContext context) throws JSEvalException {
         if (value == null) return context.get(key.evaluate(context).asString().getValue());
-        return value.evaluate(context).asMapLike().get(key.evaluate(context).asString().getValue());
+        return value.evaluate(context).asMapLike().get(key.evaluate(context).castToString());
     }
 
     @Override

@@ -28,7 +28,7 @@ public class JSEqualsNode implements JSASTNode {
         } else {
             maplikeValue = maplike.evaluate(context).asMapLike();
         }
-        String keyValue = key.evaluate(context).asString().getValue();
+        String keyValue = key.evaluate(context).castToString();
         JSObject equalsValue = equals.evaluate(context);
         if (let && maplikeValue instanceof JSContext) {
             ((JSContext) maplikeValue).let(keyValue, equalsValue);

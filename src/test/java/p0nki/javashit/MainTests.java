@@ -77,12 +77,26 @@ public class MainTests {
 //        run(ctx, "Data.read(res)");
 //        run(ctx, "Data.read(function(y){return y+2})");
 //        run(ctx, "Data.write(function(y){return y+2})");
-        run(ctx, "fib = function(x) { if(x<1){return 0}if(x<2){return 1}return fib(x-1)+fib(x-2)}");
-        run(ctx, "startTime = System.time()");
-        run(ctx, "for(i=0;i<25;i=i+1){fib(i)}");
-        run(ctx, "endTime = System.time()");
-        run(ctx, "println(\"Time in milliseconds: \" + (endTime-startTime))");
-//        run(ctx, "for(i=1;i<20;i=i+1){println(fib(i))}");
+
+//        run(ctx, "fib = function(x) { if(x<1){return 0}if(x<2){return 1}return fib(x-1)+fib(x-2)}");
+//        run(ctx, "startTime = System.time()");
+//        run(ctx, "for(i=0;i<25;i=i+1){fib(i)}");
+//        run(ctx, "endTime = System.time()");
+//        run(ctx, "println(\"Time in milliseconds: \" + (endTime-startTime))");
+
+//        run(ctx, "obj = {i:0,inc:function(){this.i=this.i+1}}");
+//        run(ctx, "obj.i");
+//        run(ctx, "obj.inc()");
+//        run(ctx, "obj.i");
+//        run(ctx, "f = obj.inc");
+//        run(ctx, "f()");
+//        run(ctx, "obj.i");
+
+        run(ctx, "obj=[3]");
+        run(ctx, "obj[0]");
+        run(ctx, "f = function(input) { input[0] = 5 }");
+        run(ctx, "f(obj)");
+        run(ctx, "obj[0]");
 
     }
 

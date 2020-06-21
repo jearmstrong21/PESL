@@ -60,7 +60,7 @@ public class JSArray extends JSObject implements JSMapLike {
         if (key.equals("pop")) return pop;
         if (key.equals("length")) return length;
         try {
-            return values.get(JSEvalException.checkIndexOutOfBounds(Integer.parseInt(key), values.size()));
+            return values.get(JSEvalException.checkIndexOutOfBounds((int) Double.parseDouble(key), values.size()));
         } catch (NumberFormatException nfe) {
             return JSUndefinedObject.INSTANCE;
         }
@@ -69,7 +69,7 @@ public class JSArray extends JSObject implements JSMapLike {
     @Override
     public void set(String key, JSObject value) throws JSEvalException {
         try {
-            values.set(JSEvalException.checkIndexOutOfBounds(Integer.parseInt(key), values.size()), value);
+            values.set(JSEvalException.checkIndexOutOfBounds((int) Double.parseDouble(key), values.size()), value);
         } catch (NumberFormatException nfe) {
             throw JSEvalException.cannotSetKey(key);
         }
