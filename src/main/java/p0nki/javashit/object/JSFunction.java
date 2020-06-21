@@ -28,11 +28,13 @@ public class JSFunction extends JSObject {
     private final List<String> argumentNames;
     private final JSASTNode node;
 
-    public static JSFunction of(JSFInterface jsfInterface) {
+    public static JSFunction of(boolean removeThisParameter, JSFInterface jsfInterface) {
         return new JSFunction(null, new ArrayList<>(), new JSASTNode() {
             @Override
             public JSObject evaluate(JSContext context) throws JSEvalException {
-                return jsfInterface.operate(context.get("arguments").asArray().getValues());
+                List<JSObject> arguments = context.get("arguments").asArray().getValues();
+                if (removeThisParameter) arguments.remove(0);
+                return jsfInterface.operate(arguments);
             }
 
             @Override
