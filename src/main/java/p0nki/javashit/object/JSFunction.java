@@ -56,7 +56,7 @@ public class JSFunction extends JSObject {
 
     @Override
     public String stringify() {
-        return String.format("function(%s) { ... code ... }%s", String.join(", ", argumentNames), thisObject == null ? "" : " [bound]");
+        return String.format("function(%s)", String.join(", ", argumentNames));
     }
 
     @Override

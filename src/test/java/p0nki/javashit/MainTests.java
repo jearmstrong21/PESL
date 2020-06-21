@@ -84,14 +84,13 @@ public class MainTests {
 //        run(ctx, "endTime = System.time()");
 //        run(ctx, "println(\"Time in milliseconds: \" + (endTime-startTime))");
 
-        run(ctx, "obj = {i:0,inc:function(this){this.i=this.i+1}}");
-        run(ctx, "obj.i");
-        run(ctx, "obj.inc");
-        run(ctx, "obj.inc()");
-        run(ctx, "obj.i");
-        run(ctx, "f = obj.inc");
-        run(ctx, "f()");
-        run(ctx, "obj.i");
+        run(ctx, "obj = {i:10,get:function(self){return self.i}}");
+        run(ctx, "obj");
+        run(ctx, "obj.get()");
+        run(ctx, "obj2 = {i:40}");
+        run(ctx, "obj2.get=obj.get");
+        run(ctx, "obj2");
+        run(ctx, "obj2.get()");
 
 //        run(ctx, "obj=[3]");
 //        run(ctx, "obj[0]");
