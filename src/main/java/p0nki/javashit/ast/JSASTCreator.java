@@ -49,9 +49,6 @@ public class JSASTCreator {
         } else if (top == JSTokenType.ADDITIVE_OP && ((JSOperatorToken) tokens.peek()).getOpType() == JSOperatorType.SUB) {
             tokens.expect(JSTokenType.ADDITIVE_OP);
             return new JSNegateNode(parsePrimary(tokens));
-        } else if (top == JSTokenType.THIS) {
-            tokens.expect(JSTokenType.THIS);
-            return parseAccess(new JSThisNode(), tokens);
         } else if (top == JSTokenType.UNDEFINED) {
             tokens.expect(JSTokenType.UNDEFINED);
             return new JSLiteralNode(JSUndefinedObject.INSTANCE);
@@ -206,8 +203,7 @@ public class JSASTCreator {
                         break;
                     }
                 }
-                JSASTNode thisNode = new JSThisNode();
-                return new JSFunctionInvokeNode(thisNode, node, arguments);
+                return new JSFunctionInvokeNode(node, arguments);
             }
         }
         return node;

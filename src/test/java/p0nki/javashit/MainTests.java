@@ -84,19 +84,23 @@ public class MainTests {
 //        run(ctx, "endTime = System.time()");
 //        run(ctx, "println(\"Time in milliseconds: \" + (endTime-startTime))");
 
-//        run(ctx, "obj = {i:0,inc:function(){this.i=this.i+1}}");
-//        run(ctx, "obj.i");
-//        run(ctx, "obj.inc()");
-//        run(ctx, "obj.i");
-//        run(ctx, "f = obj.inc");
-//        run(ctx, "f()");
-//        run(ctx, "obj.i");
+        run(ctx, "obj = {i:0,inc:function(this){this.i=this.i+1}}");
+        run(ctx, "obj.i");
+        run(ctx, "obj.inc");
+        run(ctx, "obj.inc()");
+        run(ctx, "obj.i");
+        run(ctx, "f = obj.inc");
+        run(ctx, "f()");
+        run(ctx, "obj.i");
 
-        run(ctx, "obj=[3]");
-        run(ctx, "obj[0]");
-        run(ctx, "f = function(input) { input[0] = 5 }");
-        run(ctx, "f(obj)");
-        run(ctx, "obj[0]");
+//        run(ctx, "obj=[3]");
+//        run(ctx, "obj[0]");
+//        run(ctx, "f = function(input) { input[0] = 5 }");
+//        run(ctx, "f(obj)");
+//        run(ctx, "obj[0]");
+
+//        run(ctx, "factorial=function(i){if(i<2){return 1}else{return i*factorial(i-1)}}");
+//        run(ctx, "factorial(6)");
 
     }
 

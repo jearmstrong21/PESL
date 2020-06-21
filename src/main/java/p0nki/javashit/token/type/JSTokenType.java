@@ -34,7 +34,6 @@ public enum JSTokenType {
     THROW,
     TRY,
     CATCH,
-    THIS,
     FOREACH,
     NOT
 }

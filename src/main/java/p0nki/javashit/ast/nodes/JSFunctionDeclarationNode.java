@@ -19,7 +19,7 @@ public class JSFunctionDeclarationNode implements JSASTNode {
 
     @Override
     public JSObject evaluate(JSContext context) {
-        return new JSFunction(argumentNames, body);
+        return new JSFunction(null, argumentNames, body);
     }
 
     @Override

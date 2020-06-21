@@ -17,8 +17,19 @@ public class JSFunction extends JSObject {
 
     }
 
+    private final JSObject thisObject;
+
+    public JSFunction(JSObject thisObject, List<String> argumentNames, JSASTNode node) {
+        this.thisObject = thisObject;
+        this.argumentNames = argumentNames;
+        this.node = node;
+    }
+
+    private final List<String> argumentNames;
+    private final JSASTNode node;
+
     public static JSFunction of(JSFInterface jsfInterface) {
-        return new JSFunction(new ArrayList<>(), new JSASTNode() {
+        return new JSFunction(null, new ArrayList<>(), new JSASTNode() {
             @Override
             public JSObject evaluate(JSContext context) throws JSEvalException {
                 return jsfInterface.operate(context.get("arguments").asArray().getValues());
@@ -31,12 +42,8 @@ public class JSFunction extends JSObject {
         });
     }
 
-    private final List<String> argumentNames;
-    private final JSASTNode node;
-
-    public JSFunction(List<String> argumentNames, JSASTNode node) {
-        this.argumentNames = argumentNames;
-        this.node = node;
+    public JSObject getThisObject() {
+        return thisObject;
     }
 
     public JSASTNode getNode() {
@@ -49,7 +56,7 @@ public class JSFunction extends JSObject {
 
     @Override
     public String stringify() {
-        return String.format("function(%s) { ... code ... }", String.join(", ", argumentNames));
+        return String.format("function(%s) { ... code ... }%s", String.join(", ", argumentNames), thisObject == null ? "" : " [bound]");
     }
 
     @Override

@@ -13,12 +13,10 @@ import java.util.List;
 
 public class JSFunctionInvokeNode implements JSASTNode {
 
-    private final JSASTNode thisNode;
     private final JSASTNode function;
     private final List<JSASTNode> arguments;
 
-    public JSFunctionInvokeNode(JSASTNode thisNode, JSASTNode function, List<JSASTNode> arguments) {
-        this.thisNode = thisNode;
+    public JSFunctionInvokeNode(JSASTNode function, List<JSASTNode> arguments) {
         this.function = function;
         this.arguments = arguments;
     }
@@ -28,22 +26,20 @@ public class JSFunctionInvokeNode implements JSASTNode {
         JSFunction functionValue = function.evaluate(context).asFunction();
         JSContext newContext = context.push();
         List<JSObject> evaluatedArguments = new ArrayList<>();
+        if (functionValue.getThisObject() != null) {
+            evaluatedArguments.add(functionValue.getThisObject());
+        }
         for (JSASTNode argument : arguments) {
             evaluatedArguments.add(argument.evaluate(context));
         }
         for (int i = 0; i < functionValue.getArgumentNames().size(); i++) {
-            if (i < arguments.size()) {
+            if (i < evaluatedArguments.size()) {
                 newContext.let(functionValue.getArgumentNames().get(i), evaluatedArguments.get(i));
             } else {
                 newContext.let(functionValue.getArgumentNames().get(i), JSUndefinedObject.INSTANCE);
             }
         }
         newContext.set("arguments", new JSArray(evaluatedArguments));
-        if (function instanceof JSAccessPropertyNode) {
-            JSASTNode obj = ((JSAccessPropertyNode) function).getValue();
-            if(obj==null)newContext.setThis(JSUndefinedObject.INSTANCE);
-            else newContext.setThis(((JSAccessPropertyNode) function).getValue().evaluate(context));
-        }
         return functionValue.getNode().evaluate(newContext);
     }
 

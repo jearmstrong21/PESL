@@ -31,7 +31,11 @@ public class JSMap extends JSObject implements JSMapLike {
 
     @Override
     public JSObject get(String key) {
-        return values.getOrDefault(key, JSUndefinedObject.INSTANCE);
+        JSObject res = values.getOrDefault(key, JSUndefinedObject.INSTANCE);
+        if (res instanceof JSFunction) {
+            return new JSFunction(this, ((JSFunction) res).getArgumentNames(), ((JSFunction) res).getNode());
+        }
+        return res;
     }
 
     @Override
