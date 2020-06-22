@@ -18,18 +18,18 @@ public class JSArray extends JSObject implements JSMapLike {
 
     public JSArray(List<JSObject> values) {
         this.values = values;
-        push = JSFunction.of(true, arguments -> {
+        push = JSFunction.of(false, arguments -> {
             JSEvalException.validArgumentListLength(arguments, 1);
             values.add(arguments.get(0));
             return JSUndefinedObject.INSTANCE;
         });
-        pop = JSFunction.of(true, arguments -> {
+        pop = JSFunction.of(false, arguments -> {
             JSEvalException.validArgumentListLength(arguments, 0);
             if (values.size() == 0) throw JSEvalException.indexOutOfBounds(-1, 0);
             values.remove(values.size() - 1);
             return JSUndefinedObject.INSTANCE;
         });
-        length = JSFunction.of(true, arguments -> {
+        length = JSFunction.of(false, arguments -> {
             JSEvalException.validArgumentListLength(arguments, 0);
             return new JSNumberObject(values.size());
         });

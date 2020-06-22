@@ -13,6 +13,8 @@ public class JSASTCreator {
 
     }
 
+    // TODO: merge TRUE,FALSE tokens into BOOLEAN, NUM -> NUMBER, LEFT_XXX RIGHT_XXX -> XXX_LEFT, XXX_RIGHT
+
     private JSASTNode parseBracketedCode(JSTokenList tokens, boolean catchReturn) throws JSParseException {
         if (tokens.peek().getType() == JSTokenType.LEFT_BRACE) {
             tokens.expect(JSTokenType.LEFT_BRACE);

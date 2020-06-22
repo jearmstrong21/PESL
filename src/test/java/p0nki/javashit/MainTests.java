@@ -84,8 +84,26 @@ public class MainTests {
 //        run(ctx, "endTime = System.time()");
 //        run(ctx, "println(\"Time in milliseconds: \" + (endTime-startTime))");
 
-        run(ctx, "fib = function(x){if(x<1)return 0 else if(x<2)return 1 else return fib(x-1)+fib(x-2)}");
-        run(ctx, "fib(10)");
+//        run(ctx, "fib = function(x){if(x<1)return 0 else if(x<2)return 1 else return fib(x-1)+fib(x-2)}");
+//        run(ctx, "fib(10)");
+
+//        run(ctx, "test=function(x){res=1 for(i=1;i<x+1;i=i+1)res=res*i return res}");
+
+        run(ctx, "width = 5\n" +
+                "height = 5\n" +
+                "pointCount = 2\n" +
+                "points = []\n" +
+                "for(i=0;i<pointCount;i=i+1){\n" +
+                "  points.push([Math.floor(width*Math.random()), Math.floor(height*Math.random())])\n" +
+                "}");
+        run(ctx, "points.push(Math.floor(width*Math.random()))");
+        run(ctx, "points");
+        run(ctx, "arr = [1,2,3]");
+        run(ctx, "arr.pop()");
+        run(ctx, "arr");
+        run(ctx, "x=\"hello world\"");
+        run(ctx, "x.substring(3,5)");
+        //TODO: "string literal".substring(3,5) doens't work, why?
 
 //        run(ctx, "obj = {i:10,get:function(self){return self.i}}");
 //        run(ctx, "obj");
