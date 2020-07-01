@@ -1,0 +1,49 @@
+bracketed_code = expression | ('{' expression * '}')
+
+map_entry = (('\'' literal '\'') | literal) ':' expression
+map_declaration = ('{' '}') | ('{' map_entry (',' map_entry) * '}')
+list_declaration = ('[' ']') | ('[' expression (',' expression) * ']')
+throw = 'throw' expression
+if_statement = 'if' '(' expression ')' bracketed_code (('else' bracketed_code) | ())
+foreach_statement = 'foreach' '(' literal ((',' literal)|()) ':' expression ')' bracketed_code
+for_statement = 'for' '(' expression ';' expression ';' expression ')' bracketed_code
+try_catch = 'try' bracketed_code 'catch' '(' literal ')' bracketed_code
+function_declaration = 'function' (('(' ')') | ('(' literal (',' literal) * ')')) bracketed_code
+return_statement = 'return' expression
+string_declaration = '\'' literal '\''
+parenthetic_expression = '(' expression ')'
+not = '!' primary
+negate = '-' primary
+
+value =
+        not |
+        negate |
+        'undefined' |
+        'null' |
+        'true' |
+        'false' |
+        return_statement |
+        function_declaration |
+        try_catch |
+        number |
+        parenthetic_expression |
+        for_statement |
+        foreach_statement |
+        if_statement |
+        throw |
+        literal |
+        map_declaration |
+        list_declaration |
+        string_declaration
+
+
+property_access = ('.' literal) | ('[' expression ']')
+function_invoke = ('(' ')') | ('(' expression (',' expression) * ')')
+primary = value (property_access * function_invoke) *
+
+multiplicative = primary (multiplicative_op primary) *
+additive = multiplicative (additive_op multiplicative) *
+comparative = additive (comparative_op additive) *
+boolean = comparative (boolean_op comparative) *
+let_expression = 'let' boolean '=' boolean
+expression = let_expression | boolean

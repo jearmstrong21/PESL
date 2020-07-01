@@ -28,21 +28,21 @@ public class PESLParser {
     }
 
     private ASTNode parseAccess(ASTNode access, PESLTokenList tokens) throws PESLParseException {
-        while (tokens.hasAny() && (tokens.peek().getType() == TokenType.DOT || tokens.peek().getType() == TokenType.LEFT_BRACKET)) {
+        if (tokens.peek().getType() == TokenType.DOT || tokens.peek().getType() == TokenType.LEFT_BRACKET) {
             PESLToken accessor = tokens.pop();
             if (accessor.getType() == TokenType.DOT) {
                 LiteralToken token1 = tokens.expect(TokenType.LITERAL);
-                access = new AccessPropertyNode(access, new LiteralNode(new StringObject(token1.getValue())));
+                return new AccessPropertyNode(access, new LiteralNode(new StringObject(token1.getValue())));
             } else {
                 ASTNode key = parseExpression(tokens);
                 tokens.expect(TokenType.RIGHT_BRACKET);
-                access = new AccessPropertyNode(access, key);
+                return new AccessPropertyNode(access, key);
             }
         }
-        return access;
+        throw new PESLParseException(tokens.peek(), TokenType.DOT, TokenType.LEFT_BRACKET);
     }
 
-    private ASTNode parsePrimary1(PESLTokenList tokens) throws PESLParseException {
+    private ASTNode parseValue(PESLTokenList tokens) throws PESLParseException {
         TokenType top = tokens.peek().getType();
         if (top == TokenType.NOT) {
             tokens.expect(TokenType.NOT);
@@ -143,8 +143,8 @@ public class PESLParser {
             return new ThrowNode(parseExpression(tokens));
         } else if (top == TokenType.LITERAL) {
             LiteralToken token = tokens.expect(TokenType.LITERAL);
-            ASTNode access = new AccessPropertyNode(null, new LiteralNode(new StringObject(token.getValue())));
-            return parseAccess(access, tokens);
+            return new AccessPropertyNode(null, new LiteralNode(new StringObject(token.getValue())));
+//            return parseAccess(access, tokens);
         } else if (top == TokenType.LEFT_BRACE) {
             tokens.expect(TokenType.LEFT_BRACE);
             Map<String, ASTNode> map = new HashMap<>();
@@ -186,9 +186,11 @@ public class PESLParser {
     }
 
     private ASTNode parsePrimary(PESLTokenList tokens) throws PESLParseException {
-        ASTNode node = parsePrimary1(tokens);
-        if (tokens.hasAny()) {
-            if (tokens.peek().getType() == TokenType.LEFT_PAREN) {
+        ASTNode node = parseValue(tokens);
+        while (tokens.hasAny() && (tokens.peek().getType() == TokenType.DOT || tokens.peek().getType() == TokenType.LEFT_PAREN || tokens.peek().getType() == TokenType.LEFT_BRACKET)) {
+            if (tokens.peek().getType() == TokenType.DOT || tokens.peek().getType() == TokenType.LEFT_BRACKET) {
+                node = parseAccess(node, tokens);
+            } else {
                 tokens.expect(TokenType.LEFT_PAREN);
                 List<ASTNode> arguments = new ArrayList<>();
                 while (true) {
@@ -204,7 +206,7 @@ public class PESLParser {
                         break;
                     }
                 }
-                return new FunctionInvokeNode(node, arguments);
+                node = new FunctionInvokeNode(node, arguments);
             }
         }
         return node;
