@@ -19,6 +19,11 @@ public class PESLBuiltins {
         return UndefinedObject.INSTANCE;
     });
 
+    public static final FunctionObject TYPEOF = FunctionObject.of(false, arguments -> {
+        PESLEvalException.validArgumentListLength(arguments, 1);
+        return new StringObject(arguments.get(0).getType());
+    });
+
     public static final FunctionObject DIR = FunctionObject.of(false, arguments -> {
         PESLEvalException.validArgumentListLength(arguments, 1);
         return new ArrayObject(arguments.get(0).asMapLike().keys().stream().map(StringObject::new).collect(Collectors.toList()));

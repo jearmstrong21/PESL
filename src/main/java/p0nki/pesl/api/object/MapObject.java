@@ -1,5 +1,6 @@
 package p0nki.pesl.api.object;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,10 +13,11 @@ public class MapObject extends PESLObject implements MapLikeObject {
     private final Map<String, PESLObject> values;
 
     public MapObject() {
-        values = new HashMap<>();
+        this(new HashMap<>());
     }
 
     public MapObject(Map<String, PESLObject> values) {
+        super("map");
         this.values = values;
     }
 
@@ -49,6 +51,7 @@ public class MapObject extends PESLObject implements MapLikeObject {
         return Collections.unmodifiableSet(values.keySet());
     }
 
+    @CheckReturnValue
     @Nonnull
     @Override
     public String stringify() {
@@ -59,12 +62,7 @@ public class MapObject extends PESLObject implements MapLikeObject {
                 "}";
     }
 
-    @Nonnull
-    @Override
-    public ObjectType type() {
-        return ObjectType.MAP;
-    }
-
+    @CheckReturnValue
     @Nonnull
     @Override
     public String castToString() {

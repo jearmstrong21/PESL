@@ -1,5 +1,6 @@
 package p0nki.pesl.api.object;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 
 public class BooleanObject extends PESLObject {
@@ -7,6 +8,7 @@ public class BooleanObject extends PESLObject {
     private final boolean value;
 
     public BooleanObject(boolean value) {
+        super("boolean");
         this.value = value;
     }
 
@@ -14,18 +16,14 @@ public class BooleanObject extends PESLObject {
         return value;
     }
 
+    @CheckReturnValue
     @Nonnull
     @Override
     public String stringify() {
         return "" + value;
     }
 
-    @Nonnull
-    @Override
-    public ObjectType type() {
-        return ObjectType.BOOLEAN;
-    }
-
+    @CheckReturnValue
     @Nonnull
     @Override
     public String castToString() {

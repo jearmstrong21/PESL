@@ -2,6 +2,7 @@ package p0nki.pesl.api.object;
 
 import p0nki.pesl.api.PESLEvalException;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.HashSet;
@@ -21,6 +22,7 @@ public class StringObject extends PESLObject implements MapLikeObject {
 
 
     public StringObject(String value) {
+        super("string");
         this.value = value;
         charAt = FunctionObject.of(false, arguments -> {
             PESLEvalException.validArgumentListLength(arguments, 1);
@@ -46,27 +48,23 @@ public class StringObject extends PESLObject implements MapLikeObject {
         return value;
     }
 
+    @CheckReturnValue
     @Nonnull
     @Override
     public String stringify() {
         return "\"" + value + "\"";
     }
 
-    @Nonnull
-    @Override
-    public ObjectType type() {
-        return ObjectType.STRING;
-    }
-
+    @CheckReturnValue
     @Nonnull
     @Override
     public String castToString() {
         return value;
     }
 
+    @Nonnull
     @Override
-    public @Nonnull
-    PESLObject get(String key) {
+    public PESLObject get(String key) {
         if (key.equals("charAt")) return charAt;
         if (key.equals("substring")) return substring;
         if (key.equals("length")) return length;

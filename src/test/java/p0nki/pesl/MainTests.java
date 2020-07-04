@@ -57,7 +57,7 @@ public class MainTests {
     }
 
     long curMem() {
-        return Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        return (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024;
     }
 
     private void test(Runnable pesl, Runnable java) {
@@ -76,9 +76,10 @@ public class MainTests {
         System.out.println("JAVA: " + (endMem - startMem) + "memory, " + (endTime - startTime) + "ms");
     }
 
-    double factorial(double x) {
-        if (x < 2) return 1;
-        else return x * factorial(x - 1);
+    double fib(double x) {
+        if (x < 1) return 0;
+        else if (x < 2) return 1;
+        else return fib(x - 1) + fib(x - 2);
     }
 
     @Test
@@ -91,10 +92,8 @@ public class MainTests {
             ctx.set("Data", PESLBuiltins.DATA);
             ctx.set("System", PESLBuiltins.SYSTEM);
 
-            run(ctx, "f=function(x){if(x<2)return 1 else return x*f(x-1)}f(10)");
-        }, () -> {
-            System.out.println(factorial(10));
-        });
+            run(ctx, "fib=function(x){if(x<1)return 0 else if(x<2)return 1 else return fib(x-1)+fib(x-2)}fib(30)");
+        }, () -> System.out.println(fib(30)));
     }
 
 }

@@ -5,6 +5,7 @@ import p0nki.pesl.api.PESLEvalException;
 import p0nki.pesl.api.parse.ASTNode;
 import p0nki.pesl.api.parse.PESLIndentedLogger;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class FunctionObject extends PESLObject {
     private final List<String> argumentNames;
 
     public FunctionObject(@Nullable PESLObject thisObject, @Nonnull List<String> argumentNames, @Nonnull ASTNode node) {
+        super("function");
         this.thisObject = thisObject;
         this.argumentNames = argumentNames;
         this.node = node;
@@ -51,22 +53,18 @@ public class FunctionObject extends PESLObject {
     }
 
     @Nonnull
-    @Override
-    public ObjectType type() {
-        return ObjectType.FUNCTION;
-    }
-
-    @Nonnull
     public List<String> getArgumentNames() {
         return argumentNames;
     }
 
+    @CheckReturnValue
     @Nonnull
     @Override
     public String stringify() {
         return String.format("function(%s)", String.join(", ", argumentNames));
     }
 
+    @CheckReturnValue
     @Nonnull
     @Override
     public String castToString() {
