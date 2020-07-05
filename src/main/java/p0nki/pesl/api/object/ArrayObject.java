@@ -4,37 +4,31 @@ import p0nki.pesl.api.PESLEvalException;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-public class ArrayObject extends PESLObject implements MapLikeObject {
+public class ArrayObject extends BuiltinMapLikeObject implements ArrayLikeObject {
 
     private final List<PESLObject> values;
-    private final FunctionObject push;
-    private final FunctionObject pop;
-    private final FunctionObject length;
 
     public ArrayObject(@Nonnull List<PESLObject> values) {
         super("array");
         this.values = values;
-        push = FunctionObject.of(false, arguments -> {
-            PESLEvalException.validArgumentListLength(arguments, 1);
-            values.add(arguments.get(0));
-            return UndefinedObject.INSTANCE;
-        });
-        pop = FunctionObject.of(false, arguments -> {
-            PESLEvalException.validArgumentListLength(arguments, 0);
-            if (values.size() == 0) throw PESLEvalException.indexOutOfBounds(-1, 0);
-            values.remove(values.size() - 1);
-            return UndefinedObject.INSTANCE;
-        });
-        length = FunctionObject.of(false, arguments -> {
+//        put("push", FunctionObject.of(false, arguments -> {
+//            PESLEvalException.validArgumentListLength(arguments, 1);
+//            values.add(arguments.get(0));
+//            return UndefinedObject.INSTANCE;
+//        }));
+//        put("pop", FunctionObject.of(false, arguments -> {
+//            PESLEvalException.validArgumentListLength(arguments, 0);
+//            if (values.size() == 0) throw PESLEvalException.indexOutOfBounds(-1, 0);
+//            values.remove(values.size() - 1);
+//            return UndefinedObject.INSTANCE;
+//        }));
+        put("length", FunctionObject.of(false, arguments -> {
             PESLEvalException.validArgumentListLength(arguments, 0);
             return new NumberObject(values.size());
-        });
+        }));
     }
 
     @CheckReturnValue
@@ -57,34 +51,40 @@ public class ArrayObject extends PESLObject implements MapLikeObject {
     }
 
     @Override
-    public @Nonnull
-    PESLObject get(String key) throws PESLEvalException {
-        if (key.equals("push")) return push;
-        if (key.equals("pop")) return pop;
-        if (key.equals("length")) return length;
-        try {
-            return values.get(PESLEvalException.checkIndexOutOfBounds((int) Double.parseDouble(key), values.size()));
-        } catch (NumberFormatException nfe) {
-            return UndefinedObject.INSTANCE;
+    public boolean compareEquals(@Nonnull PESLObject object) throws PESLEvalException {
+        if (object instanceof ArrayObject) {
+            return isEqual(this, (MapLikeObject) object);
         }
+        return false;
+    }
+
+    @Nonnull
+    @Override
+    public PESLObject getElement(int index) throws PESLEvalException {
+        return values.get(PESLEvalException.checkIndexOutOfBounds(index, values.size()));
     }
 
     @Override
-    public void set(@Nonnull String key, @Nonnull PESLObject value) throws PESLEvalException {
-        try {
-            values.set(PESLEvalException.checkIndexOutOfBounds((int) Double.parseDouble(key), values.size()), value);
-        } catch (NumberFormatException nfe) {
-            throw PESLEvalException.cannotSetKey(key);
+    public void setElement(int index, @Nonnull PESLObject object) throws PESLEvalException {
+        if (index < 0) PESLEvalException.checkIndexOutOfBounds(index, values.size());
+        if (index >= values.size()) {
+            for (int i = 0; i < index - values.size(); i++) {
+                values.add(UndefinedObject.INSTANCE);
+            }
+            values.add(object);
+        } else {
+            values.set(index, object);
         }
     }
 
+    @Nonnull
     @Override
-    public @Nonnull
-    Set<String> keys() {
-        Set<String> keys = IntStream.range(0, values.size()).boxed().map(x -> x + "").collect(Collectors.toSet());
-        keys.add("push");
-        keys.add("pop");
-        keys.add("length");
-        return Collections.unmodifiableSet(keys);
+    public PESLObject removeElement(int index) throws PESLEvalException {
+        return values.remove(PESLEvalException.checkIndexOutOfBounds(index, values.size()));
+    }
+
+    @Override
+    public int arraySize() {
+        return values.size();
     }
 }

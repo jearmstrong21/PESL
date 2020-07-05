@@ -12,9 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PESLSerializationUtils {
+public class PESLDataUtils {
 
-    private PESLSerializationUtils() {
+    private PESLDataUtils() {
 
     }
 
@@ -27,18 +27,17 @@ public class PESLSerializationUtils {
     private static final byte UNDEFINED = 6;
     private static final byte NULL = 7;
 
-    public static void writeObject(@Nonnull PESLObject object, @Nonnull DataOutputStream outputStream) throws IOException, PESLEvalException {
+    public static void write(@Nonnull PESLObject object, @Nonnull DataOutputStream outputStream) throws IOException, PESLEvalException {
         if (object instanceof ArrayObject) {
             outputStream.writeByte(ARRAY);
             outputStream.writeInt(((ArrayObject) object).getValues().size());
             for (PESLObject value : ((ArrayObject) object).getValues()) {
-                writeObject(value, outputStream);
+                write(value, outputStream);
             }
         } else if (object instanceof BooleanObject) {
             outputStream.writeByte(BOOLEAN);
             outputStream.writeBoolean(((BooleanObject) object).getValue());
         } else if (object instanceof FunctionObject) {
-//            outputStream.writeByte(FUNCTION);
             throw new PESLEvalException("Cannot write function");
         } else if (object instanceof MapObject) {
             outputStream.writeByte(MAP);
@@ -48,7 +47,7 @@ public class PESLSerializationUtils {
                 for (char c : value.getKey().toCharArray()) {
                     outputStream.writeChar(c);
                 }
-                writeObject(value.getValue(), outputStream);
+                write(value.getValue(), outputStream);
             }
         } else if (object instanceof NumberObject) {
             outputStream.writeByte(NUMBER);
@@ -69,13 +68,13 @@ public class PESLSerializationUtils {
     }
 
     @Nonnull
-    public static PESLObject readObject(@Nonnull DataInputStream inputStream) throws IOException, PESLEvalException {
+    public static PESLObject read(@Nonnull DataInputStream inputStream) throws IOException, PESLEvalException {
         byte type = inputStream.readByte();
         if (type == ARRAY) {
             int length = inputStream.readInt();
             List<PESLObject> values = new ArrayList<>();
             for (int i = 0; i < length; i++) {
-                values.add(readObject(inputStream));
+                values.add(read(inputStream));
             }
             return new ArrayObject(values);
         } else if (type == BOOLEAN) {
@@ -91,7 +90,7 @@ public class PESLSerializationUtils {
                 for (int j = 0; j < length; j++) {
                     key.append(inputStream.readChar());
                 }
-                values.put(key.toString(), readObject(inputStream));
+                values.put(key.toString(), read(inputStream));
             }
             return new MapObject(values);
         } else if (type == NULL) {
@@ -109,6 +108,36 @@ public class PESLSerializationUtils {
             return UndefinedObject.INSTANCE;
         } else {
             throw new UnsupportedOperationException("Cannot read object of type " + type);
+        }
+    }
+
+    public static PESLObject copy(@Nonnull PESLObject object) throws PESLEvalException {
+        if (object instanceof ArrayObject) {
+            List<PESLObject> values = new ArrayList<>();
+            for (int i = 0; i < ((ArrayObject) object).arraySize(); i++) {
+                values.add(copy(((ArrayObject) object).getElement(i)));
+            }
+            return new ArrayObject(values);
+        } else if (object instanceof BooleanObject) {
+            return new BooleanObject(((BooleanObject) object).getValue());
+        } else if (object instanceof FunctionObject) {
+            throw new PESLEvalException("Cannot copy function");
+        } else if (object instanceof MapObject) {
+            Map<String, PESLObject> values = new HashMap<>();
+            for (String key : ((MapObject) object).keys()) {
+                values.put(key, copy(((MapObject) object).getKey(key)));
+            }
+            return new MapObject(values);
+        } else if (object instanceof NullObject) {
+            return NullObject.INSTANCE;
+        } else if (object instanceof NumberObject) {
+            return new NumberObject(((NumberObject) object).getValue());
+        } else if (object instanceof StringObject) {
+            return new StringObject(((StringObject) object).getValue());
+        } else if (object instanceof UndefinedObject) {
+            return UndefinedObject.INSTANCE;
+        } else {
+            throw new UnsupportedOperationException("Cannot copy " + object.getType());
         }
     }
 

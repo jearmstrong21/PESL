@@ -2,6 +2,8 @@ package p0nki.pesl.internal.nodes;
 
 import p0nki.pesl.api.PESLContext;
 import p0nki.pesl.api.PESLEvalException;
+import p0nki.pesl.api.object.ArrayLikeObject;
+import p0nki.pesl.api.object.NumberObject;
 import p0nki.pesl.api.object.PESLObject;
 import p0nki.pesl.api.parse.ASTNode;
 import p0nki.pesl.api.parse.PESLIndentedLogger;
@@ -26,11 +28,18 @@ public class AccessPropertyNode implements ASTNode {
         return key;
     }
 
+    @Nonnull
     @Override
-    public @javax.annotation.Nonnull
-    PESLObject evaluate(@Nonnull PESLContext context) throws PESLEvalException {
-        if (value == null) return context.get(key.evaluate(context).asString().getValue());
-        return value.evaluate(context).asMapLike().get(key.evaluate(context).castToString());
+    public PESLObject evaluate(@Nonnull PESLContext context) throws PESLEvalException {
+        PESLObject keyValue = key.evaluate(context);
+        if (value == null) {
+            return context.getKey(keyValue.castToString());
+        }
+        PESLObject valueValue = value.evaluate(context);
+        if (keyValue instanceof NumberObject && valueValue instanceof ArrayLikeObject) {
+            return ((ArrayLikeObject) valueValue).getElement((int) ((NumberObject) keyValue).getValue());
+        }
+        return valueValue.asMapLike().getKey(keyValue.castToString());
     }
 
     @Override

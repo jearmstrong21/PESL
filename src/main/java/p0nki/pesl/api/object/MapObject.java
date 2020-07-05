@@ -1,5 +1,7 @@
 package p0nki.pesl.api.object;
 
+import p0nki.pesl.api.PESLEvalException;
+
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -30,9 +32,9 @@ public class MapObject extends PESLObject implements MapLikeObject {
         return values;
     }
 
+    @Nonnull
     @Override
-    public @javax.annotation.Nonnull
-    PESLObject get(String key) {
+    public PESLObject getKey(@Nonnull String key) {
         PESLObject res = values.getOrDefault(key, UndefinedObject.INSTANCE);
         if (res instanceof FunctionObject) {
             return new FunctionObject(this, ((FunctionObject) res).getArgumentNames(), ((FunctionObject) res).getNode());
@@ -41,8 +43,14 @@ public class MapObject extends PESLObject implements MapLikeObject {
     }
 
     @Override
-    public void set(@Nonnull String key, @Nonnull PESLObject value) {
-        this.values.put(key, value);
+    public void setKey(@Nonnull String key, @Nonnull PESLObject value) {
+        if (value == UndefinedObject.INSTANCE) values.remove(key);
+        else this.values.put(key, value);
+    }
+
+    @Override
+    public boolean containsKey(@Nonnull String key) {
+        return getKey(key) != UndefinedObject.INSTANCE;
     }
 
     @Override
@@ -67,5 +75,10 @@ public class MapObject extends PESLObject implements MapLikeObject {
     @Override
     public String castToString() {
         return stringify();
+    }
+
+    @Override
+    public boolean compareEquals(@Nonnull PESLObject object) throws PESLEvalException {
+        return false;
     }
 }

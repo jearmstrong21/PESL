@@ -35,6 +35,7 @@ public class MainTests {
         try {
             while (tokens.hasAny()) {
                 ASTNode node = astCreator.parseExpression(tokens);
+//                node.print(new PESLIndentedLogger());
                 PESLObject result = node.evaluate(ctx);
                 System.out.println("-> " + result.castToString());
             }
@@ -53,6 +54,7 @@ public class MainTests {
         } catch (PESLEvalException e) {
             System.out.println("Eval error");
             System.out.println(e.getObject().toString());
+//            e.printStackTrace();
         }
     }
 
@@ -84,16 +86,32 @@ public class MainTests {
 
     @Test
     public void test() {
-        test(() -> {
-            PESLContext ctx = new PESLContext(null, new HashMap<>());
-            ctx.set("println", PESLBuiltins.PRINTLN);
-            ctx.set("dir", PESLBuiltins.DIR);
-            ctx.set("Math", PESLBuiltins.MATH);
-            ctx.set("Data", PESLBuiltins.DATA);
-            ctx.set("System", PESLBuiltins.SYSTEM);
+        PESLContext ctx = new PESLContext(null, new HashMap<>());
+        ctx.setKey("println", PESLBuiltins.PRINTLN);
+        ctx.setKey("dir", PESLBuiltins.DIR);
+        ctx.setKey("Math", PESLBuiltins.MATH);
+        ctx.setKey("Data", PESLBuiltins.DATA);
+        ctx.setKey("System", PESLBuiltins.SYSTEM);
 
-            run(ctx, "fib=function(x){if(x<1)return 0 else if(x<2)return 1 else return fib(x-1)+fib(x-2)}fib(30)");
-        }, () -> System.out.println(fib(30)));
+        run(ctx, "x = {a: 4, ab: 5}");
+        run(ctx, "x.a");
+        run(ctx, "x.ab");
+        run(ctx, "x[\"a\"+\"b\"]");
+        run(ctx, "x[\"12ab5\".substring(2,4)]");
+        run(ctx, "x.a = x.a + 1");
+        run(ctx, "x.a");
+        run(ctx, "x[\"5\"] = 10");
+        run(ctx, "x");
+        run(ctx, "x[\"5.2\"]");
+        run(ctx, "x[5]");
+        run(ctx, "x[\"5\"]");
+        run(ctx, "y = [4, 5, {i: 10, j: 2}, [6, 9]]");
+        run(ctx, "z = y");
+        run(ctx, "w = Data.copy(y)");
+        run(ctx, "y[2].i=y[2].j+5");
+        run(ctx, "y");
+        run(ctx, "z");
+        run(ctx, "w");
     }
 
 }

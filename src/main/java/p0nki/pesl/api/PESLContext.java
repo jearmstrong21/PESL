@@ -22,12 +22,12 @@ public class PESLContext implements MapLikeObject {
         this.objects = objects;
     }
 
+    @Nonnull
     @Override
-    public @Nonnull
-    PESLObject get(String key) throws PESLReferenceException {
+    public PESLObject getKey(@Nonnull String key) {
         if (objects.containsKey(key)) return objects.get(key);
-        if (parent != null) return parent.get(key);
-        throw new PESLReferenceException("Reference exception `" + key + "`");
+        if (parent != null) return parent.getKey(key);
+        return UndefinedObject.INSTANCE;
     }
 
     @Nonnull
@@ -49,9 +49,9 @@ public class PESLContext implements MapLikeObject {
     }
 
     @Override
-    public void set(@Nonnull String key, @Nonnull PESLObject value) {
+    public void setKey(@Nonnull String key, @Nonnull PESLObject value) {
         PESLContext ctx = this;
-        while (ctx != null && !ctx.keys().contains(key)) {
+        while (ctx != null && !ctx.containsKey(key)) {
             ctx = ctx.parent;
         }
         if (ctx == null) {
@@ -59,6 +59,11 @@ public class PESLContext implements MapLikeObject {
         } else {
             ctx.objects.put(key, value);
         }
+    }
+
+    @Override
+    public boolean containsKey(@Nonnull String key) {
+        return getKey(key) != UndefinedObject.INSTANCE;
     }
 
     @Override

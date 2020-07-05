@@ -42,7 +42,7 @@ public class FunctionInvokeNode implements ASTNode {
                 newContext.let(functionValue.getArgumentNames().get(i), UndefinedObject.INSTANCE);
             }
         }
-        newContext.set("arguments", new ArrayObject(evaluatedArguments));
+        newContext.setKey("arguments", new ArrayObject(evaluatedArguments));
         return functionValue.getNode().evaluate(newContext);
     }
 

@@ -26,7 +26,14 @@ public abstract class PESLObject {
     @CheckReturnValue
     public abstract String castToString();
 
-//    public abstract boolean compareEquals(@Nonnull PESLObject object);
+    public static boolean isEqual(MapLikeObject a, MapLikeObject b) {
+        if (a.keys().size() != b.keys().size()) return false;
+        for (String k : a.keys()) {
+            if (!b.keys().contains(k)) return false;
+            if (!a.getKey(k).equals(b.getKey(k))) return false;
+        }
+        return true;
+    }
 
     @Nonnull
     @Override
@@ -75,5 +82,16 @@ public abstract class PESLObject {
         if (this instanceof ArrayObject) return (ArrayObject) this;
         throw new PESLEvalException("Cannot cast " + getType() + " to array");
     }
+
+    public static boolean isEqual(ArrayLikeObject a, ArrayLikeObject b) throws PESLEvalException {
+        if (a.arraySize() != b.arraySize()) return false;
+        for (int i = 0; i < a.arraySize(); i++) {
+            if (!a.getElement(i).equals(b.getElement(i))) return false;
+        }
+        return true;
+    }
+
+    @CheckReturnValue
+    public abstract boolean compareEquals(@Nonnull PESLObject object) throws PESLEvalException;
 
 }

@@ -24,4 +24,11 @@ public class UndefinedObject extends PESLObject {
     public String castToString() {
         return "undefined";
     }
+
+    @Override
+    public boolean compareEquals(@Nonnull PESLObject object) {
+        if (this != INSTANCE)
+            throw new UnsupportedOperationException("Unsupported non-INSTANCE UNDEFINED object found");
+        return object == INSTANCE;
+    }
 }

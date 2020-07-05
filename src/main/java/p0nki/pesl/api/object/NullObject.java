@@ -25,4 +25,10 @@ public class NullObject extends PESLObject {
     public String castToString() {
         return "null";
     }
+
+    @Override
+    public boolean compareEquals(@Nonnull PESLObject object) {
+        if (this != INSTANCE) throw new UnsupportedOperationException("Unsupported non-INSTANCE null object found");
+        return object == INSTANCE;
+    }
 }

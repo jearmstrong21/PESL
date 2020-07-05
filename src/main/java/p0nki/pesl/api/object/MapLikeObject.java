@@ -8,9 +8,11 @@ import java.util.Set;
 public interface MapLikeObject {
 
     @Nonnull
-    PESLObject get(String key) throws PESLEvalException;
+    PESLObject getKey(@Nonnull String key);
 
-    void set(@Nonnull String key, @Nonnull PESLObject value) throws PESLEvalException;
+    void setKey(@Nonnull String key, @Nonnull PESLObject value) throws PESLEvalException;
+
+    boolean containsKey(@Nonnull String key);
 
     @Nonnull
     Set<String> keys();

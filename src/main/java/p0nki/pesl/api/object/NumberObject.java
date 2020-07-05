@@ -30,4 +30,9 @@ public class NumberObject extends PESLObject {
         return value + "";
     }
 
+    @Override
+    public boolean compareEquals(@Nonnull PESLObject object) {
+        return object instanceof NumberObject && value == ((NumberObject) object).getValue();
+    }
+
 }

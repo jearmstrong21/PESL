@@ -108,7 +108,7 @@ public class PESLBuiltins {
                 PESLEvalException.validArgumentListLength(arguments, 1);
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 try {
-                    PESLSerializationUtils.writeObject(arguments.get(0), new DataOutputStream(outputStream));
+                    PESLDataUtils.write(arguments.get(0), new DataOutputStream(outputStream));
                 } catch (IOException e) {
                     throw new PESLEvalException(e.getMessage());
                 }
@@ -118,10 +118,14 @@ public class PESLBuiltins {
                 PESLEvalException.validArgumentListLength(arguments, 1);
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(arguments.get(0).asString().getValue().getBytes());
                 try {
-                    return PESLSerializationUtils.readObject(new DataInputStream(inputStream));
+                    return PESLDataUtils.read(new DataInputStream(inputStream));
                 } catch (IOException e) {
                     throw new PESLEvalException(e.getMessage());
                 }
+            }))
+            .builderSet("copy", FunctionObject.of(true, arguments -> {
+                PESLEvalException.validArgumentListLength(arguments, 1);
+                return PESLDataUtils.copy(arguments.get(0));
             }));
 
     public static final MapObject SYSTEM = new MapObject(new HashMap<>())

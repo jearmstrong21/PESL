@@ -29,4 +29,9 @@ public class BooleanObject extends PESLObject {
     public String castToString() {
         return stringify();
     }
+
+    @Override
+    public boolean compareEquals(@Nonnull PESLObject object) {
+        return object instanceof BooleanObject && value == ((BooleanObject) object).getValue();
+    }
 }

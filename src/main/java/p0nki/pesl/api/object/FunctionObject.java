@@ -30,7 +30,7 @@ public class FunctionObject extends PESLObject {
             @Override
             public @Nonnull
             PESLObject evaluate(@Nonnull PESLContext context) throws PESLEvalException {
-                List<PESLObject> arguments = context.get("arguments").asArray().getValues();
+                List<PESLObject> arguments = context.getKey("arguments").asArray().getValues();
                 if (removeThisParameter) arguments.remove(0);
                 return jsfInterface.operate(arguments);
             }
@@ -69,6 +69,11 @@ public class FunctionObject extends PESLObject {
     @Override
     public String castToString() {
         return stringify();
+    }
+
+    @Override
+    public boolean compareEquals(@Nonnull PESLObject object) {
+        return false;
     }
 
     @FunctionalInterface

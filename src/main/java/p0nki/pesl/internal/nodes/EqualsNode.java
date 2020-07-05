@@ -23,9 +23,9 @@ public class EqualsNode implements ASTNode {
         this.let = let;
     }
 
+    @Nonnull
     @Override
-    public @javax.annotation.Nonnull
-    PESLObject evaluate(@Nonnull PESLContext context) throws PESLEvalException {
+    public PESLObject evaluate(@Nonnull PESLContext context) throws PESLEvalException {
         MapLikeObject maplikeValue;
         if (maplike == null) {
             maplikeValue = context;
@@ -37,7 +37,8 @@ public class EqualsNode implements ASTNode {
         if (let && maplikeValue instanceof PESLContext) {
             ((PESLContext) maplikeValue).let(keyValue, equalsValue);
         } else {
-            maplikeValue.set(keyValue, equalsValue);
+            if (let) throw new PESLEvalException("Unexpected let");
+            maplikeValue.setKey(keyValue, equalsValue);
         }
         return equalsValue;
     }
