@@ -90,6 +90,9 @@ public class PESLTokenizer {
                     case "foreach":
                         tokens.push(TokenType.FOREACH, start() + 1, reader.getIndex() + 1);
                         break;
+                    case "delete":
+                        tokens.push(TokenType.DELETE, start() + 1, reader.getIndex() + 1);
+                        break;
                     default:
                         tokens.push(new LiteralToken(buffer.toString(), start() + 1, reader.getIndex() + 1));
                         break;

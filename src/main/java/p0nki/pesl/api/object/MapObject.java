@@ -4,10 +4,7 @@ import p0nki.pesl.api.PESLEvalException;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MapObject extends PESLObject implements MapLikeObject {
@@ -43,9 +40,10 @@ public class MapObject extends PESLObject implements MapLikeObject {
     }
 
     @Override
-    public void setKey(@Nonnull String key, @Nonnull PESLObject value) {
-        if (value == UndefinedObject.INSTANCE) values.remove(key);
-        else this.values.put(key, value);
+    public PESLObject setKey(@Nonnull String key, @Nonnull PESLObject value) {
+        if (value == UndefinedObject.INSTANCE)
+            return Optional.ofNullable(values.remove(key)).orElse(UndefinedObject.INSTANCE);
+        else return this.values.put(key, value);
     }
 
     @Override

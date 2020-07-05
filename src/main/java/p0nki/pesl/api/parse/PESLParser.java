@@ -180,6 +180,9 @@ public class PESLParser {
             LiteralToken token = tokens.expect(TokenType.LITERAL);
             tokens.expect(TokenType.END_STRING);
             return new LiteralNode(new StringObject(token.getValue()));
+        } else if (top == TokenType.DELETE) {
+            tokens.expect(TokenType.DELETE);
+            return new DeleteNode(parseExpression(tokens));
         } else {
             throw new PESLParseException("Unexpected token in `primary` element " + tokens.peek().toString(), tokens.peek());
         }

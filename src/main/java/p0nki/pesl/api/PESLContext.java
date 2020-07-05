@@ -49,7 +49,7 @@ public class PESLContext implements MapLikeObject {
     }
 
     @Override
-    public void setKey(@Nonnull String key, @Nonnull PESLObject value) {
+    public PESLObject setKey(@Nonnull String key, @Nonnull PESLObject value) {
         PESLContext ctx = this;
         while (ctx != null && !ctx.containsKey(key)) {
             ctx = ctx.parent;
@@ -59,6 +59,7 @@ public class PESLContext implements MapLikeObject {
         } else {
             ctx.objects.put(key, value);
         }
+        return value;
     }
 
     @Override

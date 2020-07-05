@@ -16,7 +16,7 @@ import java.util.HashMap;
 
 public class MainTests {
 
-    private void run(PESLContext ctx, String str) {
+    private PESLObject run(PESLContext ctx, String str) throws PESLTokenizeException, PESLEvalException, PESLParseException {
         PESLTokenizer tokenizer = new PESLTokenizer();
         System.out.println();
         System.out.println("<- " + str);
@@ -29,16 +29,17 @@ public class MainTests {
             for (int i = 0; i < index; i++) System.out.print(" ");
             System.out.println("^");
             System.out.println("Tokenize error\n" + e.getMessage());
-            return;
+            throw e;
         }
         PESLParser astCreator = new PESLParser();
         try {
+            PESLObject lastObject = null;
             while (tokens.hasAny()) {
                 ASTNode node = astCreator.parseExpression(tokens);
-//                node.print(new PESLIndentedLogger());
-                PESLObject result = node.evaluate(ctx);
-                System.out.println("-> " + result.castToString());
+                lastObject = node.evaluate(ctx);
+                System.out.println("-> " + lastObject.castToString());
             }
+            return lastObject;
         } catch (PESLParseException e) {
             System.out.print("  ");
             for (int i = 0; i < e.getToken().getStart(); i++) {
@@ -50,11 +51,11 @@ public class MainTests {
             System.out.println();
             System.out.println(" " + e.getToken().toString());
             System.out.println("Parse error\n" + e.getMessage());
-            e.printStackTrace();
+            throw e;
         } catch (PESLEvalException e) {
             System.out.println("Eval error");
             System.out.println(e.getObject().toString());
-//            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -85,7 +86,7 @@ public class MainTests {
     }
 
     @Test
-    public void test() {
+    public void test() throws PESLTokenizeException, PESLEvalException, PESLParseException {
         PESLContext ctx = new PESLContext(null, new HashMap<>());
         ctx.setKey("println", PESLBuiltins.PRINTLN);
         ctx.setKey("dir", PESLBuiltins.DIR);
@@ -93,25 +94,38 @@ public class MainTests {
         ctx.setKey("Data", PESLBuiltins.DATA);
         ctx.setKey("System", PESLBuiltins.SYSTEM);
 
-        run(ctx, "x = {a: 4, ab: 5}");
-        run(ctx, "x.a");
-        run(ctx, "x.ab");
-        run(ctx, "x[\"a\"+\"b\"]");
-        run(ctx, "x[\"12ab5\".substring(2,4)]");
-        run(ctx, "x.a = x.a + 1");
-        run(ctx, "x.a");
-        run(ctx, "x[\"5\"] = 10");
+//        run(ctx, "x = {a: 4, ab: 5}");
+//        run(ctx, "x.a");
+//        run(ctx, "x.ab");
+//        run(ctx, "x[\"a\"+\"b\"]");
+//        run(ctx, "x[\"12ab5\".substring(2,4)]");
+//        run(ctx, "x.a = x.a + 1");
+//        run(ctx, "x.a");
+//        run(ctx, "x[\"5\"] = 10");
+//        run(ctx, "x");
+//        run(ctx, "x[\"5.2\"]");
+//        run(ctx, "x[5]");
+//        run(ctx, "x[\"5\"]");
+//        run(ctx, "y = [4, 5, {i: 10, j: 2}, [6, 9]]");
+//        run(ctx, "z = y");
+//        run(ctx, "w = Data.copy(y)");
+//        run(ctx, "y[2].i=y[2].j+5");
+//        run(ctx, "y");
+//        run(ctx, "z");
+//        run(ctx, "w");
+//        run(ctx, "delete 5");
+//        PESLObject object = run(ctx, "{a: 4, b: 6}");
+        run(ctx, "x = {a: 4, b: 6}");
+        run(ctx, "delete {a:4,b:6}.a");
+        run(ctx, "delete x.b");
         run(ctx, "x");
-        run(ctx, "x[\"5.2\"]");
-        run(ctx, "x[5]");
-        run(ctx, "x[\"5\"]");
-        run(ctx, "y = [4, 5, {i: 10, j: 2}, [6, 9]]");
-        run(ctx, "z = y");
-        run(ctx, "w = Data.copy(y)");
-        run(ctx, "y[2].i=y[2].j+5");
+        run(ctx, "y = [3, 4]");
+        run(ctx, "delete y[1]");
         run(ctx, "y");
+        run(ctx, "z={a:[5,{b:10}],c:1}");
+        run(ctx, "delete z.a[1].b");
         run(ctx, "z");
-        run(ctx, "w");
+//        System.out.println(run(ctx, "x").asMapLike().setKey("a", UndefinedObject.INSTANCE));
     }
 
 }

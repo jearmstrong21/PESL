@@ -10,7 +10,7 @@ public interface MapLikeObject {
     @Nonnull
     PESLObject getKey(@Nonnull String key);
 
-    void setKey(@Nonnull String key, @Nonnull PESLObject value) throws PESLEvalException;
+    PESLObject setKey(@Nonnull String key, @Nonnull PESLObject value) throws PESLEvalException;
 
     boolean containsKey(@Nonnull String key);
 

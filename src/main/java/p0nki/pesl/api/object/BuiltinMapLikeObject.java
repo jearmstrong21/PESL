@@ -27,7 +27,7 @@ abstract class BuiltinMapLikeObject extends PESLObject implements MapLikeObject 
     }
 
     @Override
-    public final void setKey(@Nonnull String key, @Nonnull PESLObject value) throws PESLEvalException {
+    public final PESLObject setKey(@Nonnull String key, @Nonnull PESLObject value) throws PESLEvalException {
         throw new PESLEvalException("Cannot set key on this object");
     }
 
