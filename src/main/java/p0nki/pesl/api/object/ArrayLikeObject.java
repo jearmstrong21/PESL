@@ -6,8 +6,6 @@ import javax.annotation.Nonnull;
 
 public interface ArrayLikeObject {
 
-    // TODO add DeleteNode and make sure DeleteNode and PropertyAccessNode deal with these methods correctly
-
     @Nonnull
     PESLObject getElement(int index) throws PESLEvalException;
 
