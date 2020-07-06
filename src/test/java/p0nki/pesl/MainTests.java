@@ -96,7 +96,7 @@ public class MainTests {
 //        run(ctx, "4 <= 5");
 //        run(ctx, "4 >= 5");
 //        run(ctx, "while(Math.random()<=0.5){println(\"hello world\")}");
-        run(ctx, "5.4 + 3");
+        run(ctx, "5.4 + 3.2");
         // TODO: delete "is" token and replace with "EQUALS_BOOL_OP" or something to represent double tokens. once double tokens work do that for <= and >= and == and !=
 //        run(ctx, "x = {a: 4, ab: 5}");
 //        run(ctx, "x.a");

@@ -43,6 +43,7 @@ public class PESLTokenizer {
         }
 
         private OptionalLong parseSingleLong(String buffer) {
+            System.out.println("PSL(String) " + buffer);
             long value = 0;
             int digits = 0;
             while (buffer.length() > 0) {
@@ -57,7 +58,7 @@ public class PESLTokenizer {
                 }
             }
             if (digits == 0) return OptionalLong.empty();
-            if (buffer.length() > 0) return OptionalLong.empty();
+//            if (buffer.length() > 0) return OptionalLong.empty();
             return OptionalLong.of(value);
         }
 
@@ -71,7 +72,7 @@ public class PESLTokenizer {
                     value += ch - '0';
                     digits++;
                 } else {
-                    return OptionalLong.empty();
+                    break;
                 }
             }
             if (digits == 0) return OptionalLong.empty();
@@ -79,15 +80,10 @@ public class PESLTokenizer {
         }
 
         private void flush() {
-            System.out.println("a");
             buffer = new StringBuilder(buffer.toString().trim());
-            System.out.println("b");
             if (buffer.toString().equals("")) return;
-            System.out.println("c");
             OptionalLong optionalLong = parseSingleLong(buffer.toString());
-            System.out.println("d");
             if (optionalLong.isPresent()) {
-                System.out.println("e");
                 tokens.add(new NumToken(optionalLong.getAsLong(), start() + 1, reader.getIndex() + 1));
             } else {
                 switch (buffer.toString()) {
@@ -244,21 +240,21 @@ public class PESLTokenizer {
                     flush();
                     tokens.add(new PESLToken(TokenType.EQUALS_SIGN, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '.') {
+                    System.out.println("[parse] DOT ENCOUNTERED");
                     flush();
                     if (tokens.size() > 0 && tokens.get(tokens.size() - 1).getType() == TokenType.NUMBER) {
-                        System.out.println("3");
+                        System.out.println("[parse] LAST TOKEN WAS NUMBER");
                         double firstDouble = ((NumToken) tokens.get(tokens.size() - 1)).getValue();
                         if (firstDouble == (int) firstDouble) {
-                            System.out.println("4");
+                            System.out.println("[parse] LAST NUMBER TOKEN WAS INTEGER/LONG");
                             int start = reader.getIndex();
                             OptionalLong nextLong = parseSingleLong();
                             if (nextLong.isPresent()) {
-                                System.out.println("5");
+                                System.out.println("[parse] PSL() RETURNED VALUE " + nextLong.getAsLong());
                                 PESLToken original = tokens.remove(tokens.size() - 1);
                                 tokens.add(new NumToken(Double.parseDouble(((int) firstDouble) + "." + nextLong.getAsLong()), original.getStart(), reader.getIndex() + 1));
                                 continue;
                             } else {
-                                System.out.println("6");
                                 reader.setIndex(start);
                             }
                         }
