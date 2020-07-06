@@ -10,11 +10,14 @@ public class PESLToken {
         this.start = start;
         this.end = end;
         if (type == TokenType.NUMBER && !(this instanceof NumToken))
-            throw new UnsupportedOperationException("Cannot initialize generic JSToken with type NUMBER");
-        if ((type == TokenType.ADDITIVE_OP || type == TokenType.MULTIPLICATIVE_OP) && !(this instanceof OperatorToken))
-            throw new UnsupportedOperationException("Cannot initialize generic JSToken with type " + type.toString());
+            throw new UnsupportedOperationException("Cannot initialize generic PESLToken with type NUMBER");
+        if ((type == TokenType.ADDITIVE_OP ||
+                type == TokenType.MULTIPLICATIVE_OP ||
+                type == TokenType.BOOLEAN_OP ||
+                type == TokenType.COMPARATIVE_OP) && !(this instanceof OperatorToken))
+            throw new UnsupportedOperationException("Cannot initialize generic PESLToken with type " + type.toString());
         if (type == TokenType.LITERAL && !(this instanceof LiteralToken))
-            throw new UnsupportedOperationException("Cannot initialize generic JSToken with type UNQUOTED_LITERAL");
+            throw new UnsupportedOperationException("Cannot initialize generic PESLToken with type UNQUOTED_LITERAL");
     }
 
     public int getStart() {

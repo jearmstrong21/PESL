@@ -30,9 +30,11 @@ public enum OperatorType {
     OR(processB((a, b) -> a || b), TokenType.BOOLEAN_OP),
     XOR(processB((a, b) -> a ^ b), TokenType.BOOLEAN_OP),
 
-    EQUALS((a, b) -> new BooleanObject(a.equals(b)), TokenType.COMPARATIVE_OP),
+    EQUALS((a, b) -> new BooleanObject(a.compareEquals(b)), TokenType.COMPARATIVE_OP),
     LESS_THAN(processMB((a, b) -> a < b), TokenType.COMPARATIVE_OP),
-    MORE_THAN(processMB((a, b) -> a > b), TokenType.COMPARATIVE_OP);
+    MORE_THAN(processMB((a, b) -> a > b), TokenType.COMPARATIVE_OP),
+    LESS_THAN_OR_EQUAL_TO(processMB((a, b) -> a <= b), TokenType.COMPARATIVE_OP),
+    MORE_THAN_OR_EQUAL_TO(processMB((a, b) -> a >= b), TokenType.COMPARATIVE_OP);
 
     private final Op function;
     private final TokenType tokenType;

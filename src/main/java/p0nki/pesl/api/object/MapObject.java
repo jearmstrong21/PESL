@@ -23,11 +23,6 @@ public class MapObject extends PESLObject implements MapLikeObject {
         this.values = values;
     }
 
-    public MapObject builderSet(String key, PESLObject value) {
-        this.values.put(key, value);
-        return this;
-    }
-
     public Map<String, PESLObject> getValues() {
         return values;
     }
@@ -64,6 +59,9 @@ public class MapObject extends PESLObject implements MapLikeObject {
     @Nonnull
     @Override
     public String stringify() {
+//        if(getKey("__str__") != UndefinedObject.INSTANCE) { // TODO pass in PESLContext to stringify and then make it a function
+//            return
+//        }
         return "{" +
                 values.entrySet().stream().map(entry ->
                         entry.getKey() + ": " + entry.getValue().stringify())

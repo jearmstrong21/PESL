@@ -3,7 +3,6 @@ package p0nki.pesl;
 import org.junit.Test;
 import p0nki.pesl.api.PESLContext;
 import p0nki.pesl.api.PESLEvalException;
-import p0nki.pesl.api.builtins.PESLBuiltins;
 import p0nki.pesl.api.object.PESLObject;
 import p0nki.pesl.api.parse.ASTNode;
 import p0nki.pesl.api.parse.PESLParseException;
@@ -11,8 +10,6 @@ import p0nki.pesl.api.parse.PESLParser;
 import p0nki.pesl.api.token.PESLTokenList;
 import p0nki.pesl.api.token.PESLTokenizeException;
 import p0nki.pesl.api.token.PESLTokenizer;
-
-import java.util.HashMap;
 
 public class MainTests {
 
@@ -23,6 +20,9 @@ public class MainTests {
         PESLTokenList tokens;
         try {
             tokens = tokenizer.tokenize(str);
+            for (int i = 0; i < tokens.getSize(); i++) {
+                System.out.println(tokens.get(i));
+            }
         } catch (PESLTokenizeException e) {
             int index = e.getIndex();
             System.out.print("   ");
@@ -87,13 +87,17 @@ public class MainTests {
 
     @Test
     public void test() throws PESLTokenizeException, PESLEvalException, PESLParseException {
-        PESLContext ctx = new PESLContext(null, new HashMap<>());
-        ctx.setKey("println", PESLBuiltins.PRINTLN);
-        ctx.setKey("dir", PESLBuiltins.DIR);
-        ctx.setKey("Math", PESLBuiltins.MATH);
-        ctx.setKey("Data", PESLBuiltins.DATA);
-        ctx.setKey("System", PESLBuiltins.SYSTEM);
-
+        PESLContext ctx = new PESLContext();
+//        run(ctx, "parseNumber(5)");
+//        run(ctx, "parseNumber(\"5\"+\"3\")");
+//        run(ctx, "5 is 3 + 4");
+//        run(ctx, "4 + 3 is 9 - 2");
+//        run(ctx, "4 == 5");
+//        run(ctx, "4 <= 5");
+//        run(ctx, "4 >= 5");
+//        run(ctx, "while(Math.random()<=0.5){println(\"hello world\")}");
+        run(ctx, "5.4 + 3");
+        // TODO: delete "is" token and replace with "EQUALS_BOOL_OP" or something to represent double tokens. once double tokens work do that for <= and >= and == and !=
 //        run(ctx, "x = {a: 4, ab: 5}");
 //        run(ctx, "x.a");
 //        run(ctx, "x.ab");
@@ -116,23 +120,25 @@ public class MainTests {
 //        run(ctx, "delete 5");
 //        PESLObject object = run(ctx, "{a: 4, b: 6}");
 
-        run(ctx, "x = {a: 4, b: 6}");
-        run(ctx, "delete {a:4,b:6}.a");
-        run(ctx, "delete x.b");
-        run(ctx, "x");
-        run(ctx, "y = [3, 4]");
-        run(ctx, "delete y[1]");
-        run(ctx, "y");
-        run(ctx, "z={a:[5,{b:10}],c:1}");
-        run(ctx, "delete z.a[1].b");
-        run(ctx, "z");
-
-        System.out.println("\n\n\n\n");
-
-        run(ctx, "x = [2, 3]");
-        run(ctx, "x");
-        run(ctx, "x[0] = 5");
-        run(ctx, "x");
+//        run(ctx, "x = {a: 4, b: 6}");
+//        run(ctx, "delete {a:4,b:6}.a");
+//        run(ctx, "delete x.b");
+//        run(ctx, "x");
+//        run(ctx, "y = [3, 4]");
+//        run(ctx, "delete y[1]");
+//        run(ctx, "y");
+//        run(ctx, "z={a:[5,{b:10}],c:1}");
+//        run(ctx, "delete z.a[1].b");
+//        run(ctx, "z");
+//
+//        System.out.println("\n\n\n\n");
+//
+//        run(ctx, "x = [2, 3]");
+//        run(ctx, "x");
+//        run(ctx, "x[0] = 5");
+//        run(ctx, "x");
+//
+//        run(ctx, "abcd");
     }
 
 }

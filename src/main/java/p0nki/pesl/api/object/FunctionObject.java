@@ -25,14 +25,14 @@ public class FunctionObject extends PESLObject {
     }
 
     @Nonnull
-    public static FunctionObject of(boolean removeThisParameter, JSFInterface jsfInterface) {
+    public static FunctionObject of(boolean removeThisParameter, PESLFunctionInterface value) {
         return new FunctionObject(null, new ArrayList<>(), new ASTNode() {
             @Override
             public @Nonnull
             PESLObject evaluate(@Nonnull PESLContext context) throws PESLEvalException {
                 List<PESLObject> arguments = context.getKey("arguments").asArray().getValues();
                 if (removeThisParameter) arguments.remove(0);
-                return jsfInterface.operate(arguments);
+                return value.operate(arguments);
             }
 
             @Override
@@ -77,7 +77,7 @@ public class FunctionObject extends PESLObject {
     }
 
     @FunctionalInterface
-    public interface JSFInterface {
+    public interface PESLFunctionInterface {
 
         @Nonnull
         PESLObject operate(@Nonnull List<PESLObject> arguments) throws PESLEvalException;

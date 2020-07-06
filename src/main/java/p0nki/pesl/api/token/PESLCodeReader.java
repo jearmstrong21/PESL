@@ -21,6 +21,15 @@ public class PESLCodeReader {
         return buffer.charAt(index++);
     }
 
+    public char peek() throws PESLTokenizeException {
+        if (index >= buffer.length()) throw new PESLTokenizeException("Unexpected EOF", buffer.length());
+        return buffer.charAt(index);
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
     public boolean canRead() {
         return index < buffer.length();
     }

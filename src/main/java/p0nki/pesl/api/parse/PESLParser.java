@@ -144,7 +144,6 @@ public class PESLParser {
         } else if (top == TokenType.LITERAL) {
             LiteralToken token = tokens.expect(TokenType.LITERAL);
             return new AccessPropertyNode(null, new LiteralNode(new StringObject(token.getValue())));
-//            return parseAccess(access, tokens);
         } else if (top == TokenType.LEFT_BRACE) {
             tokens.expect(TokenType.LEFT_BRACE);
             Map<String, ASTNode> map = new HashMap<>();
@@ -183,6 +182,12 @@ public class PESLParser {
         } else if (top == TokenType.DELETE) {
             tokens.expect(TokenType.DELETE);
             return new DeleteNode(parseExpression(tokens));
+        } else if (top == TokenType.WHILE) {
+            tokens.expect(TokenType.WHILE);
+            tokens.expect(TokenType.LEFT_PAREN);
+            ASTNode condition = parseExpression(tokens);
+            tokens.expect(TokenType.RIGHT_PAREN);
+            return new WhileNode(condition, parseBracketedCode(tokens, false));
         } else {
             throw new PESLParseException("Unexpected token in `primary` element " + tokens.peek().toString(), tokens.peek());
         }

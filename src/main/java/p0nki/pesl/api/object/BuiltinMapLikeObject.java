@@ -2,28 +2,35 @@ package p0nki.pesl.api.object;
 
 import p0nki.pesl.api.PESLEvalException;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-public abstract class BuiltinMapLikeObject extends PESLObject implements MapLikeObject {
+public class BuiltinMapLikeObject extends PESLObject implements MapLikeObject {
 
-    private final Map<String, PESLObject> map = new HashMap<>();
+    private final Map<String, PESLObject> values = new HashMap<>();
 
-    protected BuiltinMapLikeObject(String type) {
+    public BuiltinMapLikeObject(String type) {
         super(type);
     }
 
-    protected void put(String str, PESLObject object) {
-        map.put(str, object);
+    public static BuiltinMapLikeObject builtinBuilder() {
+        return new BuiltinMapLikeObject("map");
+    }
+
+    public BuiltinMapLikeObject put(String str, PESLObject object) { // for builders
+        values.put(str, object);
+        return this;
     }
 
     @Nonnull
     @Override
     public final PESLObject getKey(@Nonnull String key) {
-        return map.getOrDefault(key, UndefinedObject.INSTANCE);
+        return values.getOrDefault(key, UndefinedObject.INSTANCE);
     }
 
     @Override
@@ -39,7 +46,30 @@ public abstract class BuiltinMapLikeObject extends PESLObject implements MapLike
     @Nonnull
     @Override
     public final Set<String> keys() {
-        return Collections.unmodifiableSet(map.keySet());
+        return Collections.unmodifiableSet(values.keySet());
+    }
+
+    @CheckReturnValue
+    @Nonnull
+    @Override
+    public String stringify() {
+        return "{" +
+                values.entrySet().stream().map(entry ->
+                        entry.getKey() + ": " + entry.getValue().stringify())
+                        .collect(Collectors.joining(", ")) +
+                "}";
+    }
+
+    @CheckReturnValue
+    @Nonnull
+    @Override
+    public String castToString() {
+        return stringify();
+    }
+
+    @Override
+    public boolean compareEquals(@Nonnull PESLObject object) throws PESLEvalException {
+        return false;
     }
 
 }

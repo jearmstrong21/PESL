@@ -3,6 +3,9 @@ package p0nki.pesl.api.token;
 import p0nki.pesl.internal.token.type.*;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.OptionalLong;
 
 public class PESLTokenizer {
 
@@ -12,8 +15,8 @@ public class PESLTokenizer {
 
     @Nonnull
     public PESLTokenList tokenize(PESLCodeReader reader) throws PESLTokenizeException {
-        JSTokenizerImpl impl = new JSTokenizerImpl(reader);
-        return impl.tokens;
+        TokenizerImpl impl = new TokenizerImpl(reader);
+        return new PESLTokenList(impl.tokens);
     }
 
     @Nonnull
@@ -22,83 +25,157 @@ public class PESLTokenizer {
     }
 
     // NOTE: this will be un-static-ed if I add tokenizer options
-    private static class JSTokenizerImpl {
+    private static class TokenizerImpl {
 
         private final PESLCodeReader reader;
-        private final PESLTokenList tokens;
+        private List<PESLToken> tokens;
         private StringBuilder buffer = new StringBuilder();
 
-        public JSTokenizerImpl(PESLCodeReader reader) throws PESLTokenizeException {
+        public TokenizerImpl(PESLCodeReader reader) throws PESLTokenizeException {
             this.reader = reader;
-            tokens = new PESLTokenList();
+            tokens = new ArrayList<>();
             parse();
+            postProcess();
         }
 
         private int start() {
             return reader.getIndex() - buffer.length();
         }
 
+        private OptionalLong parseSingleLong(String buffer) {
+            long value = 0;
+            int digits = 0;
+            while (buffer.length() > 0) {
+                char ch = buffer.charAt(0);
+                buffer = buffer.substring(1);
+                if ('0' <= ch && ch <= '9') {
+                    value *= 10;
+                    value += ch - '0';
+                    digits++;
+                } else {
+                    return OptionalLong.empty();
+                }
+            }
+            if (digits == 0) return OptionalLong.empty();
+            if (buffer.length() > 0) return OptionalLong.empty();
+            return OptionalLong.of(value);
+        }
+
+        private OptionalLong parseSingleLong() throws PESLTokenizeException {
+            long value = 0;
+            int digits = 0;
+            while (reader.canRead()) {
+                char ch = reader.next();
+                if ('0' <= ch && ch <= '9') {
+                    value *= 10;
+                    value += ch - '0';
+                    digits++;
+                } else {
+                    return OptionalLong.empty();
+                }
+            }
+            if (digits == 0) return OptionalLong.empty();
+            return OptionalLong.of(value);
+        }
+
         private void flush() {
+            System.out.println("a");
             buffer = new StringBuilder(buffer.toString().trim());
+            System.out.println("b");
             if (buffer.toString().equals("")) return;
-            try {
-                tokens.push(new NumToken(Double.parseDouble(buffer.toString()), start() + 1, reader.getIndex() + 1));
-            } catch (NumberFormatException ignored) {
+            System.out.println("c");
+            OptionalLong optionalLong = parseSingleLong(buffer.toString());
+            System.out.println("d");
+            if (optionalLong.isPresent()) {
+                System.out.println("e");
+                tokens.add(new NumToken(optionalLong.getAsLong(), start() + 1, reader.getIndex() + 1));
+            } else {
                 switch (buffer.toString()) {
                     case "function":
-                        tokens.push(TokenType.FUNCTION, start() + 1, reader.getIndex() + 1);
+                        tokens.add(new PESLToken(TokenType.FUNCTION, start() + 1, reader.getIndex() + 1));
                         break;
                     case "return":
-                        tokens.push(TokenType.RETURN, start() + 1, reader.getIndex() + 1);
+                        tokens.add(new PESLToken(TokenType.RETURN, start() + 1, reader.getIndex() + 1));
                         break;
                     case "null":
-                        tokens.push(TokenType.NULL, start() + 1, reader.getIndex() + 1);
+                        tokens.add(new PESLToken(TokenType.NULL, start() + 1, reader.getIndex() + 1));
                         break;
                     case "undefined":
-                        tokens.push(TokenType.UNDEFINED, start() + 1, reader.getIndex() + 1);
+                        tokens.add(new PESLToken(TokenType.UNDEFINED, start() + 1, reader.getIndex() + 1));
                         break;
                     case "let":
-                        tokens.push(TokenType.LET, start() + 1, reader.getIndex() + 1);
+                        tokens.add(new PESLToken(TokenType.LET, start() + 1, reader.getIndex() + 1));
                         break;
                     case "is":
-                        tokens.push(new OperatorToken(OperatorType.EQUALS, start() + 1, reader.getIndex() + 1));
+                        tokens.add(new OperatorToken(OperatorType.EQUALS, start() + 1, reader.getIndex() + 1));
                         break;
                     case "for":
-                        tokens.push(TokenType.FOR, start() + 1, reader.getIndex() + 1);
+                        tokens.add(new PESLToken(TokenType.FOR, start() + 1, reader.getIndex() + 1));
                         break;
                     case "if":
-                        tokens.push(TokenType.IF, start() + 1, reader.getIndex() + 1);
+                        tokens.add(new PESLToken(TokenType.IF, start() + 1, reader.getIndex() + 1));
                         break;
                     case "else":
-                        tokens.push(TokenType.ELSE, start() + 1, reader.getIndex() + 1);
+                        tokens.add(new PESLToken(TokenType.ELSE, start() + 1, reader.getIndex() + 1));
                         break;
                     case "true":
-                        tokens.push(TokenType.TRUE, start() + 1, reader.getIndex() + 1);
+                        tokens.add(new PESLToken(TokenType.TRUE, start() + 1, reader.getIndex() + 1));
                         break;
                     case "false":
-                        tokens.push(TokenType.FALSE, start() + 1, reader.getIndex() + 1);
+                        tokens.add(new PESLToken(TokenType.FALSE, start() + 1, reader.getIndex() + 1));
                         break;
                     case "throw":
-                        tokens.push(TokenType.THROW, start() + 1, reader.getIndex() + 1);
+                        tokens.add(new PESLToken(TokenType.THROW, start() + 1, reader.getIndex() + 1));
                         break;
                     case "try":
-                        tokens.push(TokenType.TRY, start() + 1, reader.getIndex() + 1);
+                        tokens.add(new PESLToken(TokenType.TRY, start() + 1, reader.getIndex() + 1));
                         break;
                     case "catch":
-                        tokens.push(TokenType.CATCH, start() + 1, reader.getIndex() + 1);
+                        tokens.add(new PESLToken(TokenType.CATCH, start() + 1, reader.getIndex() + 1));
                         break;
                     case "foreach":
-                        tokens.push(TokenType.FOREACH, start() + 1, reader.getIndex() + 1);
+                        tokens.add(new PESLToken(TokenType.FOREACH, start() + 1, reader.getIndex() + 1));
                         break;
                     case "delete":
-                        tokens.push(TokenType.DELETE, start() + 1, reader.getIndex() + 1);
+                        tokens.add(new PESLToken(TokenType.DELETE, start() + 1, reader.getIndex() + 1));
+                        break;
+                    case "while":
+                        tokens.add(new PESLToken(TokenType.WHILE, start() + 1, reader.getIndex() + 1));
                         break;
                     default:
-                        tokens.push(new LiteralToken(buffer.toString(), start() + 1, reader.getIndex() + 1));
+                        tokens.add(new LiteralToken(buffer.toString(), start() + 1, reader.getIndex() + 1));
                         break;
                 }
             }
             buffer = new StringBuilder();
+        }
+
+        private void collapseBuffer(List<PESLToken> buffer) {
+            if (buffer.size() < 2) return;
+            PESLToken first = buffer.get(buffer.size() - 2);
+            PESLToken second = buffer.get(buffer.size() - 1);
+            if (first instanceof OperatorToken && ((OperatorToken) first).getOpType() == OperatorType.LESS_THAN && second.getType() == TokenType.EQUALS_SIGN) {
+                buffer.remove(buffer.size() - 1);
+                buffer.remove(buffer.size() - 1);
+                buffer.add(new OperatorToken(OperatorType.LESS_THAN_OR_EQUAL_TO, first.getStart(), second.getEnd()));
+            } else if (first instanceof OperatorToken && ((OperatorToken) first).getOpType() == OperatorType.MORE_THAN && second.getType() == TokenType.EQUALS_SIGN) {
+                buffer.remove(buffer.size() - 1);
+                buffer.remove(buffer.size() - 1);
+                buffer.add(new OperatorToken(OperatorType.MORE_THAN_OR_EQUAL_TO, first.getStart(), second.getEnd()));
+            } else if (first.getType() == TokenType.EQUALS_SIGN && second.getType() == TokenType.EQUALS_SIGN) {
+                buffer.remove(buffer.size() - 1);
+                buffer.remove(buffer.size() - 1);
+                buffer.add(new OperatorToken(OperatorType.EQUALS, first.getStart(), second.getEnd()));
+            }
+        }
+
+        private void postProcess() {
+            List<PESLToken> buffer = new ArrayList<>();
+            for (int i = 0; i < tokens.size(); i++) {
+                buffer.add(tokens.get(i));
+                collapseBuffer(buffer);
+            }
+            tokens = buffer;
         }
 
         private void parse() throws PESLTokenizeException {
@@ -107,14 +184,14 @@ public class PESLTokenizer {
                 char ch = reader.next();
                 if (ch == '"' && inQuote) {
                     inQuote = false;
-                    tokens.push(new LiteralToken(buffer.toString(), reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new LiteralToken(buffer.toString(), reader.getIndex(), reader.getIndex() + 1));
                     buffer = new StringBuilder();
-                    tokens.push(TokenType.END_STRING, reader.getIndex(), reader.getIndex() + 1);
+                    tokens.add(new PESLToken(TokenType.END_STRING, reader.getIndex(), reader.getIndex() + 1));
                     continue;
                 }
                 if (ch == '"') {
                     flush();
-                    tokens.push(TokenType.BEGIN_STRING, reader.getIndex(), reader.getIndex() + 1);
+                    tokens.add(new PESLToken(TokenType.BEGIN_STRING, reader.getIndex(), reader.getIndex() + 1));
                     inQuote = true;
                     continue;
                 }
@@ -126,67 +203,85 @@ public class PESLTokenizer {
                     flush();
                 } else if (ch == '!') {
                     flush();
-                    tokens.push(TokenType.NOT, reader.getIndex(), reader.getIndex() + 1);
+                    tokens.add(new PESLToken(TokenType.NOT, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '+') {
                     flush();
-                    tokens.push(new OperatorToken(OperatorType.ADD, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new OperatorToken(OperatorType.ADD, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '-') {
                     flush();
-                    tokens.push(new OperatorToken(OperatorType.SUB, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new OperatorToken(OperatorType.SUB, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '*') {
                     flush();
-                    tokens.push(new OperatorToken(OperatorType.MUL, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new OperatorToken(OperatorType.MUL, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '/') {
                     flush();
-                    tokens.push(new OperatorToken(OperatorType.DIV, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new OperatorToken(OperatorType.DIV, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '&') {
                     flush();
-                    tokens.push(new OperatorToken(OperatorType.AND, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new OperatorToken(OperatorType.AND, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '|') {
                     flush();
-                    tokens.push(new OperatorToken(OperatorType.OR, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new OperatorToken(OperatorType.OR, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '^') {
                     flush();
-                    tokens.push(new OperatorToken(OperatorType.XOR, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new OperatorToken(OperatorType.XOR, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '<') {
                     flush();
-                    tokens.push(new OperatorToken(OperatorType.LESS_THAN, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new OperatorToken(OperatorType.LESS_THAN, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '>') {
                     flush();
-                    tokens.push(new OperatorToken(OperatorType.MORE_THAN, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new OperatorToken(OperatorType.MORE_THAN, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '(') {
                     flush();
-                    tokens.push(TokenType.LEFT_PAREN, reader.getIndex(), reader.getIndex() + 1);
+                    tokens.add(new PESLToken(TokenType.LEFT_PAREN, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == ')') {
                     flush();
-                    tokens.push(TokenType.RIGHT_PAREN, reader.getIndex(), reader.getIndex() + 1);
+                    tokens.add(new PESLToken(TokenType.RIGHT_PAREN, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == ';') {
                     flush();
-                    tokens.push(TokenType.SEMICOLON, reader.getIndex(), reader.getIndex() + 1);
+                    tokens.add(new PESLToken(TokenType.SEMICOLON, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '=') {
                     flush();
-                    tokens.push(TokenType.EQUALS_SIGN, reader.getIndex(), reader.getIndex() + 1);
+                    tokens.add(new PESLToken(TokenType.EQUALS_SIGN, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '.') {
                     flush();
-                    tokens.push(TokenType.DOT, reader.getIndex(), reader.getIndex() + 1);
+                    if (tokens.size() > 0 && tokens.get(tokens.size() - 1).getType() == TokenType.NUMBER) {
+                        System.out.println("3");
+                        double firstDouble = ((NumToken) tokens.get(tokens.size() - 1)).getValue();
+                        if (firstDouble == (int) firstDouble) {
+                            System.out.println("4");
+                            int start = reader.getIndex();
+                            OptionalLong nextLong = parseSingleLong();
+                            if (nextLong.isPresent()) {
+                                System.out.println("5");
+                                PESLToken original = tokens.remove(tokens.size() - 1);
+                                tokens.add(new NumToken(Double.parseDouble(((int) firstDouble) + "." + nextLong.getAsLong()), original.getStart(), reader.getIndex() + 1));
+                                continue;
+                            } else {
+                                System.out.println("6");
+                                reader.setIndex(start);
+                            }
+                        }
+                    }
+                    tokens.add(new PESLToken(TokenType.DOT, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '{') {
                     flush();
-                    tokens.push(TokenType.LEFT_BRACE, reader.getIndex(), reader.getIndex() + 1);
+                    tokens.add(new PESLToken(TokenType.LEFT_BRACE, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '}') {
                     flush();
-                    tokens.push(TokenType.RIGHT_BRACE, reader.getIndex(), reader.getIndex() + 1);
+                    tokens.add(new PESLToken(TokenType.RIGHT_BRACE, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == ':') {
                     flush();
-                    tokens.push(TokenType.COLON, reader.getIndex(), reader.getIndex() + 1);
+                    tokens.add(new PESLToken(TokenType.COLON, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == ',') {
                     flush();
-                    tokens.push(TokenType.COMMA, reader.getIndex(), reader.getIndex() + 1);
+                    tokens.add(new PESLToken(TokenType.COMMA, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '[') {
                     flush();
-                    tokens.push(TokenType.LEFT_BRACKET, reader.getIndex(), reader.getIndex() + 1);
+                    tokens.add(new PESLToken(TokenType.LEFT_BRACKET, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == ']') {
                     flush();
-                    tokens.push(TokenType.RIGHT_BRACKET, reader.getIndex(), reader.getIndex() + 1);
+                    tokens.add(new PESLToken(TokenType.RIGHT_BRACKET, reader.getIndex(), reader.getIndex() + 1));
                 } else {
                     buffer.append(ch);
                 }

@@ -1,15 +1,13 @@
 package p0nki.pesl.api;
 
+import p0nki.pesl.api.builtins.PESLBuiltins;
 import p0nki.pesl.api.object.MapLikeObject;
 import p0nki.pesl.api.object.PESLObject;
 import p0nki.pesl.api.object.UndefinedObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class PESLContext implements MapLikeObject {
 
@@ -17,8 +15,19 @@ public class PESLContext implements MapLikeObject {
     private final Map<String, PESLObject> objects;
     private PESLObject thisValue = UndefinedObject.INSTANCE;
 
-    public PESLContext(@Nullable PESLContext parent, @Nonnull Map<String, PESLObject> objects) {
-        this.parent = parent;
+    public PESLContext() {
+        this.parent = null;
+        objects = new HashMap<>();
+        objects.put("typeof", PESLBuiltins.TYPEOF);
+        objects.put("dir", PESLBuiltins.DIR);
+        objects.put("Math", PESLBuiltins.MATH);
+        objects.put("Data", PESLBuiltins.DATA);
+        objects.put("parseNumber", PESLBuiltins.PARSE_NUMBER);
+        objects.put("System", PESLBuiltins.SYSTEM);
+    }
+
+    private PESLContext(@Nonnull PESLContext parent, Map<String, PESLObject> objects) {
+        this.parent = Objects.requireNonNull(parent);
         this.objects = objects;
     }
 
