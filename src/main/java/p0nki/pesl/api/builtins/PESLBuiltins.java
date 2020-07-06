@@ -29,43 +29,43 @@ public class PESLBuiltins {
     });
 
     public static final PESLObject MATH = BuiltinMapLikeObject.builtinBuilder()
-            .put("random", FunctionObject.of(true, arguments -> {
+            .put("random", FunctionObject.of(false, arguments -> {
                 PESLEvalException.validArgumentListLength(arguments, 0);
                 return new NumberObject(Math.random());
             }))
-            .put("sqrt", FunctionObject.of(true, arguments -> {
+            .put("sqrt", FunctionObject.of(false, arguments -> {
                 PESLEvalException.validArgumentListLength(arguments, 1);
                 return new NumberObject(Math.sqrt(arguments.get(0).asNumber().getValue()));
             }))
-            .put("floor", FunctionObject.of(true, arguments -> {
+            .put("floor", FunctionObject.of(false, arguments -> {
                 PESLEvalException.validArgumentListLength(arguments, 1);
                 return new NumberObject(Math.floor(arguments.get(0).asNumber().getValue()));
             }))
-            .put("ceil", FunctionObject.of(true, arguments -> {
+            .put("ceil", FunctionObject.of(false, arguments -> {
                 PESLEvalException.validArgumentListLength(arguments, 1);
                 return new NumberObject(Math.ceil(arguments.get(0).asNumber().getValue()));
             }))
-            .put("pow", FunctionObject.of(true, arguments -> {
+            .put("pow", FunctionObject.of(false, arguments -> {
                 PESLEvalException.validArgumentListLength(arguments, 2);
                 return new NumberObject(Math.pow(arguments.get(0).asNumber().getValue(), arguments.get(1).asNumber().getValue()));
             }))
-            .put("abs", FunctionObject.of(true, arguments -> {
+            .put("abs", FunctionObject.of(false, arguments -> {
                 PESLEvalException.validArgumentListLength(arguments, 1);
                 return new NumberObject(Math.abs(arguments.get(0).asNumber().getValue()));
             }))
-            .put("sin", FunctionObject.of(true, arguments -> {
+            .put("sin", FunctionObject.of(false, arguments -> {
                 PESLEvalException.validArgumentListLength(arguments, 1);
                 return new NumberObject(Math.sin(arguments.get(0).asNumber().getValue()));
             }))
-            .put("cos", FunctionObject.of(true, arguments -> {
+            .put("cos", FunctionObject.of(false, arguments -> {
                 PESLEvalException.validArgumentListLength(arguments, 1);
                 return new NumberObject(Math.cos(arguments.get(0).asNumber().getValue()));
             }))
-            .put("tan", FunctionObject.of(true, arguments -> {
+            .put("tan", FunctionObject.of(false, arguments -> {
                 PESLEvalException.validArgumentListLength(arguments, 1);
                 return new NumberObject(Math.tan(arguments.get(0).asNumber().getValue()));
             }))
-            .put("min", FunctionObject.of(true, arguments -> {
+            .put("min", FunctionObject.of(false, arguments -> {
                 if (arguments.size() == 0) throw PESLEvalException.INVALID_ARGUMENT_LIST;
                 if (arguments.get(0) instanceof ArrayObject) arguments = ((ArrayObject) arguments.get(0)).getValues();
                 double min = arguments.get(0).asNumber().getValue();
@@ -74,7 +74,7 @@ public class PESLBuiltins {
                 }
                 return new NumberObject(min);
             }))
-            .put("max", FunctionObject.of(true, arguments -> {
+            .put("max", FunctionObject.of(false, arguments -> {
                 if (arguments.size() == 0) throw PESLEvalException.INVALID_ARGUMENT_LIST;
                 if (arguments.get(0) instanceof ArrayObject) arguments = ((ArrayObject) arguments.get(0)).getValues();
                 double max = arguments.get(0).asNumber().getValue();
@@ -83,7 +83,7 @@ public class PESLBuiltins {
                 }
                 return new NumberObject(max);
             }))
-            .put("any", FunctionObject.of(true, arguments -> {
+            .put("any", FunctionObject.of(false, arguments -> {
                 if (arguments.size() == 0) throw PESLEvalException.INVALID_ARGUMENT_LIST;
                 if (arguments.get(0) instanceof ArrayObject) arguments = ((ArrayObject) arguments.get(0)).getValues();
                 boolean value = arguments.get(0).asBoolean().getValue();
@@ -92,7 +92,7 @@ public class PESLBuiltins {
                 }
                 return new BooleanObject(value);
             }))
-            .put("all", FunctionObject.of(true, arguments -> {
+            .put("all", FunctionObject.of(false, arguments -> {
                 if (arguments.size() == 0) throw PESLEvalException.INVALID_ARGUMENT_LIST;
                 if (arguments.get(0) instanceof ArrayObject) arguments = ((ArrayObject) arguments.get(0)).getValues();
                 boolean value = arguments.get(0).asBoolean().getValue();
@@ -103,7 +103,7 @@ public class PESLBuiltins {
             }));
 
     public static final PESLObject DATA = BuiltinMapLikeObject.builtinBuilder()
-            .put("write", FunctionObject.of(true, arguments -> {
+            .put("write", FunctionObject.of(false, arguments -> {
                 PESLEvalException.validArgumentListLength(arguments, 1);
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 try {
@@ -113,7 +113,7 @@ public class PESLBuiltins {
                 }
                 return new StringObject(outputStream.toString());
             }))
-            .put("read", FunctionObject.of(true, arguments -> {
+            .put("read", FunctionObject.of(false, arguments -> {
                 PESLEvalException.validArgumentListLength(arguments, 1);
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(arguments.get(0).asString().getValue().getBytes());
                 try {
@@ -122,7 +122,7 @@ public class PESLBuiltins {
                     throw new PESLEvalException(e.getMessage());
                 }
             }))
-            .put("copy", FunctionObject.of(true, arguments -> {
+            .put("copy", FunctionObject.of(false, arguments -> {
                 PESLEvalException.validArgumentListLength(arguments, 1);
                 return PESLDataUtils.copy(arguments.get(0));
             }));
@@ -137,11 +137,11 @@ public class PESLBuiltins {
     });
 
     public static final PESLObject SYSTEM = BuiltinMapLikeObject.builtinBuilder()
-            .put("time", FunctionObject.of(true, arguments -> {
+            .put("time", FunctionObject.of(false, arguments -> {
                 PESLEvalException.validArgumentListLength(arguments, 0);
                 return new NumberObject(System.currentTimeMillis());
             }))
-            .put("formatDate", FunctionObject.of(true, arguments -> {
+            .put("formatDate", FunctionObject.of(false, arguments -> {
                 PESLEvalException.validArgumentListLength(arguments, 1);
                 return new StringObject(new Date((long) arguments.get(0).asNumber().getValue()).toString());
             }));

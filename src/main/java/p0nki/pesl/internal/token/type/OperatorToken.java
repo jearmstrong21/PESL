@@ -13,4 +13,8 @@ public class OperatorToken extends PESLToken {
         return opType;
     }
 
+    @Override
+    public String toString() {
+        return "OPERATOR[" + getType() + "," + opType + "]";
+    }
 }

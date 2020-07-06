@@ -31,7 +31,11 @@ public class FunctionObject extends PESLObject {
             public @Nonnull
             PESLObject evaluate(@Nonnull PESLContext context) throws PESLEvalException {
                 List<PESLObject> arguments = context.getKey("arguments").asArray().getValues();
-                if (removeThisParameter) arguments.remove(0);
+                if (removeThisParameter) {
+                    if (arguments.size() == 0)
+                        throw new PESLEvalException("Expected to remove `this` parameter, but none were found. This means that you wrote your builtins wrong.");
+                    arguments.remove(0);
+                }
                 return value.operate(arguments);
             }
 

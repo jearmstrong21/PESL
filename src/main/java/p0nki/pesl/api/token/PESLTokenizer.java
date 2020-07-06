@@ -43,7 +43,6 @@ public class PESLTokenizer {
         }
 
         private OptionalLong parseSingleLong(String buffer) {
-            System.out.println("PSL(String) " + buffer);
             long value = 0;
             int digits = 0;
             while (buffer.length() > 0) {
@@ -58,7 +57,6 @@ public class PESLTokenizer {
                 }
             }
             if (digits == 0) return OptionalLong.empty();
-//            if (buffer.length() > 0) return OptionalLong.empty();
             return OptionalLong.of(value);
         }
 
@@ -84,7 +82,7 @@ public class PESLTokenizer {
             if (buffer.toString().equals("")) return;
             OptionalLong optionalLong = parseSingleLong(buffer.toString());
             if (optionalLong.isPresent()) {
-                tokens.add(new NumToken(optionalLong.getAsLong(), start() + 1, reader.getIndex() + 1));
+                tokens.add(new NumToken(optionalLong.getAsLong(), start() + 1, reader.getIndex() + 1, false));
             } else {
                 switch (buffer.toString()) {
                     case "function":
@@ -240,19 +238,15 @@ public class PESLTokenizer {
                     flush();
                     tokens.add(new PESLToken(TokenType.EQUALS_SIGN, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '.') {
-                    System.out.println("[parse] DOT ENCOUNTERED");
                     flush();
                     if (tokens.size() > 0 && tokens.get(tokens.size() - 1).getType() == TokenType.NUMBER) {
-                        System.out.println("[parse] LAST TOKEN WAS NUMBER");
-                        double firstDouble = ((NumToken) tokens.get(tokens.size() - 1)).getValue();
-                        if (firstDouble == (int) firstDouble) {
-                            System.out.println("[parse] LAST NUMBER TOKEN WAS INTEGER/LONG");
+                        NumToken first = (NumToken) tokens.get(tokens.size() - 1);
+                        if (!first.isHasFP()) {
                             int start = reader.getIndex();
                             OptionalLong nextLong = parseSingleLong();
                             if (nextLong.isPresent()) {
-                                System.out.println("[parse] PSL() RETURNED VALUE " + nextLong.getAsLong());
                                 PESLToken original = tokens.remove(tokens.size() - 1);
-                                tokens.add(new NumToken(Double.parseDouble(((int) firstDouble) + "." + nextLong.getAsLong()), original.getStart(), reader.getIndex() + 1));
+                                tokens.add(new NumToken(Double.parseDouble(((int) first.getValue()) + "." + nextLong.getAsLong()), original.getStart(), reader.getIndex() + 1, true));
                                 continue;
                             } else {
                                 reader.setIndex(start);
