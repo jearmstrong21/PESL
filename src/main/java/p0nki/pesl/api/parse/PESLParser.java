@@ -254,24 +254,14 @@ public class PESLParser {
     @Nonnull
     public ASTNode parseExpression(@Nonnull PESLTokenList tokens) throws PESLParseException {
         boolean let = tokens.peek().getType() == TokenType.LET;
-        PESLToken letToken = null;
-        if (let) letToken = tokens.expect(TokenType.LET);
+        if (let) tokens.expect(TokenType.LET);
         ASTNode left = parseBoolean(tokens);
         if (tokens.hasAny()) {
             if (tokens.peek().getType() == TokenType.EQUALS_SIGN) {
                 tokens.expect(TokenType.EQUALS_SIGN);
-                PESLToken startRight = tokens.peek();
-                ASTNode right = parseBoolean(tokens);
-                if (left instanceof AccessPropertyNode) {
-                    ASTNode value = ((AccessPropertyNode) left).getValue();
-                    ASTNode key = ((AccessPropertyNode) left).getKey();
-                    return new EqualsNode(value, key, right, let);
-                } else {
-                    throw new PESLParseException("Expected lvalue on left side of `=`", startRight);
-                }
+                return new EqualsNode(left, parseExpression(tokens), let);
             }
         }
-        if (let) throw new PESLParseException("Expected assignment with `let`", letToken);
         return left;
     }
 

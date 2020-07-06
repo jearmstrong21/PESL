@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-abstract class BuiltinMapLikeObject extends PESLObject implements MapLikeObject {
+public abstract class BuiltinMapLikeObject extends PESLObject implements MapLikeObject {
 
     private final Map<String, PESLObject> map = new HashMap<>();
 
@@ -27,7 +27,7 @@ abstract class BuiltinMapLikeObject extends PESLObject implements MapLikeObject 
     }
 
     @Override
-    public final PESLObject setKey(@Nonnull String key, @Nonnull PESLObject value) throws PESLEvalException {
+    public final void setKey(@Nonnull String key, @Nonnull PESLObject value) throws PESLEvalException {
         throw new PESLEvalException("Cannot set key on this object");
     }
 

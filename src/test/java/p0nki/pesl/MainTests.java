@@ -115,6 +115,7 @@ public class MainTests {
 //        run(ctx, "w");
 //        run(ctx, "delete 5");
 //        PESLObject object = run(ctx, "{a: 4, b: 6}");
+
         run(ctx, "x = {a: 4, b: 6}");
         run(ctx, "delete {a:4,b:6}.a");
         run(ctx, "delete x.b");
@@ -125,7 +126,13 @@ public class MainTests {
         run(ctx, "z={a:[5,{b:10}],c:1}");
         run(ctx, "delete z.a[1].b");
         run(ctx, "z");
-//        System.out.println(run(ctx, "x").asMapLike().setKey("a", UndefinedObject.INSTANCE));
+
+        System.out.println("\n\n\n\n");
+
+        run(ctx, "x = [2, 3]");
+        run(ctx, "x");
+        run(ctx, "x[0] = 5");
+        run(ctx, "x");
     }
 
 }

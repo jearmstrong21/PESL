@@ -3,6 +3,7 @@ package p0nki.pesl.internal.nodes;
 import p0nki.pesl.api.PESLContext;
 import p0nki.pesl.api.PESLEvalException;
 import p0nki.pesl.api.object.ArrayLikeObject;
+import p0nki.pesl.api.object.MapLikeObject;
 import p0nki.pesl.api.object.PESLObject;
 import p0nki.pesl.api.object.UndefinedObject;
 import p0nki.pesl.api.parse.ASTNode;
@@ -27,11 +28,11 @@ public class DeleteNode implements ASTNode {
             if (value instanceof ArrayLikeObject) {
                 return ((ArrayLikeObject) value).removeElement((int) key.asNumber().getValue());
             } else {
-//                System.out.println("maplike delete key " + key.stringify());
-//                System.out.println(value.asMapLike().getKey(key.stringify()));
-//                System.out.println(value.asMapLike().keys());
-//                System.out.println("maplike " + key + " " + value);
-                return value.asMapLike().setKey(key.castToString(), UndefinedObject.INSTANCE);
+                MapLikeObject mapLike = value.asMapLike();
+                String keyValue = key.castToString();
+                PESLObject result = mapLike.getKey(keyValue);
+                mapLike.setKey(keyValue, UndefinedObject.INSTANCE);
+                return result;
             }
         } else {
             throw new PESLEvalException("Cannot delete this value");
