@@ -7,16 +7,19 @@ import p0nki.pesl.api.object.NumberObject;
 import p0nki.pesl.api.object.PESLObject;
 import p0nki.pesl.api.parse.ASTNode;
 import p0nki.pesl.api.parse.PESLIndentedLogger;
+import p0nki.pesl.internal.token.type.AssignmentType;
 
 import javax.annotation.Nonnull;
 
 public class EqualsNode implements ASTNode {
 
+    private final AssignmentType operatorType;
     private final ASTNode value;
     private final ASTNode equals;
     private final boolean let;
 
-    public EqualsNode(ASTNode value, ASTNode equals, boolean let) {
+    public EqualsNode(AssignmentType operatorType, ASTNode value, ASTNode equals, boolean let) {
+        this.operatorType = operatorType;
         this.value = value;
         this.equals = equals;
         this.let = let;
@@ -31,6 +34,7 @@ public class EqualsNode implements ASTNode {
             ASTNode holder = ((AccessPropertyNode) value).getValue();
             ASTNode key = ((AccessPropertyNode) value).getKey();
             PESLObject keyValue = key.evaluate(context);
+            equalsValue = operatorType.apply(value.evaluate(context), equalsValue);
             if (holder == null) {
                 if (let) {
                     context.let(keyValue.castToString(), equalsValue);

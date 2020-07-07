@@ -6,7 +6,7 @@ import p0nki.pesl.api.object.NumberObject;
 import p0nki.pesl.api.object.PESLObject;
 import p0nki.pesl.api.object.StringObject;
 
-public enum OperatorType {
+public enum BiOperatorType {
 
     ADD((a, b) -> {
         if (a instanceof NumberObject && b instanceof NumberObject) {
@@ -30,7 +30,7 @@ public enum OperatorType {
     OR(processB((a, b) -> a || b), TokenType.BOOLEAN_OP),
     XOR(processB((a, b) -> a ^ b), TokenType.BOOLEAN_OP),
 
-    EQUALS((a, b) -> new BooleanObject(a.compareEquals(b)), TokenType.COMPARATIVE_OP),
+    EQUIVALENCE((a, b) -> new BooleanObject(a.compareEquals(b)), TokenType.COMPARATIVE_OP),
     LESS_THAN(processMB((a, b) -> a < b), TokenType.COMPARATIVE_OP),
     MORE_THAN(processMB((a, b) -> a > b), TokenType.COMPARATIVE_OP),
     LESS_THAN_OR_EQUAL_TO(processMB((a, b) -> a <= b), TokenType.COMPARATIVE_OP),
@@ -39,7 +39,7 @@ public enum OperatorType {
     private final Op function;
     private final TokenType tokenType;
 
-    OperatorType(Op function, TokenType tokenType) {
+    BiOperatorType(Op function, TokenType tokenType) {
         this.function = function;
         this.tokenType = tokenType;
     }

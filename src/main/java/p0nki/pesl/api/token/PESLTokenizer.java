@@ -101,7 +101,7 @@ public class PESLTokenizer {
                         tokens.add(new PESLToken(TokenType.LET, start() + 1, reader.getIndex() + 1));
                         break;
                     case "is":
-                        tokens.add(new OperatorToken(OperatorType.EQUALS, start() + 1, reader.getIndex() + 1));
+                        tokens.add(new OperatorToken(BiOperatorType.EQUIVALENCE, start() + 1, reader.getIndex() + 1));
                         break;
                     case "for":
                         tokens.add(new PESLToken(TokenType.FOR, start() + 1, reader.getIndex() + 1));
@@ -148,18 +148,30 @@ public class PESLTokenizer {
             if (buffer.size() < 2) return;
             PESLToken first = buffer.get(buffer.size() - 2);
             PESLToken second = buffer.get(buffer.size() - 1);
-            if (first instanceof OperatorToken && ((OperatorToken) first).getOpType() == OperatorType.LESS_THAN && second.getType() == TokenType.EQUALS_SIGN) {
+            if (first instanceof OperatorToken && ((OperatorToken) first).getOpType() == BiOperatorType.LESS_THAN && second.getType() == TokenType.ASSIGNMENT_OP) {
                 buffer.remove(buffer.size() - 1);
                 buffer.remove(buffer.size() - 1);
-                buffer.add(new OperatorToken(OperatorType.LESS_THAN_OR_EQUAL_TO, first.getStart(), second.getEnd()));
-            } else if (first instanceof OperatorToken && ((OperatorToken) first).getOpType() == OperatorType.MORE_THAN && second.getType() == TokenType.EQUALS_SIGN) {
+                buffer.add(new OperatorToken(BiOperatorType.LESS_THAN_OR_EQUAL_TO, first.getStart(), second.getEnd()));
+            } else if (first instanceof OperatorToken && ((OperatorToken) first).getOpType() == BiOperatorType.MORE_THAN && second.getType() == TokenType.ASSIGNMENT_OP) {
                 buffer.remove(buffer.size() - 1);
                 buffer.remove(buffer.size() - 1);
-                buffer.add(new OperatorToken(OperatorType.MORE_THAN_OR_EQUAL_TO, first.getStart(), second.getEnd()));
-            } else if (first.getType() == TokenType.EQUALS_SIGN && second.getType() == TokenType.EQUALS_SIGN) {
+                buffer.add(new OperatorToken(BiOperatorType.MORE_THAN_OR_EQUAL_TO, first.getStart(), second.getEnd()));
+            } else if (first instanceof OperatorToken && ((OperatorToken) first).getOpType() == BiOperatorType.ADD && second instanceof AssignmentOpToken && ((AssignmentOpToken) second).getOpType() == AssignmentType.EQUALS) {
                 buffer.remove(buffer.size() - 1);
                 buffer.remove(buffer.size() - 1);
-                buffer.add(new OperatorToken(OperatorType.EQUALS, first.getStart(), second.getEnd()));
+                buffer.add(new AssignmentOpToken(AssignmentType.PLUS_EQUALS, first.getStart(), second.getEnd()));
+            } else if (first instanceof OperatorToken && ((OperatorToken) first).getOpType() == BiOperatorType.SUB && second instanceof AssignmentOpToken && ((AssignmentOpToken) second).getOpType() == AssignmentType.EQUALS) {
+                buffer.remove(buffer.size() - 1);
+                buffer.remove(buffer.size() - 1);
+                buffer.add(new AssignmentOpToken(AssignmentType.MINUS_EQUALS, first.getStart(), second.getEnd()));
+            } else if (first instanceof OperatorToken && ((OperatorToken) first).getOpType() == BiOperatorType.MUL && second instanceof AssignmentOpToken && ((AssignmentOpToken) second).getOpType() == AssignmentType.EQUALS) {
+                buffer.remove(buffer.size() - 1);
+                buffer.remove(buffer.size() - 1);
+                buffer.add(new AssignmentOpToken(AssignmentType.TIMES_EQUALS, first.getStart(), second.getEnd()));
+            } else if (first instanceof OperatorToken && ((OperatorToken) first).getOpType() == BiOperatorType.DIV && second instanceof AssignmentOpToken && ((AssignmentOpToken) second).getOpType() == AssignmentType.EQUALS) {
+                buffer.remove(buffer.size() - 1);
+                buffer.remove(buffer.size() - 1);
+                buffer.add(new AssignmentOpToken(AssignmentType.DIVIDES_EQUALS, first.getStart(), second.getEnd()));
             }
         }
 
@@ -200,31 +212,31 @@ public class PESLTokenizer {
                     tokens.add(new PESLToken(TokenType.NOT, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '+') {
                     flush();
-                    tokens.add(new OperatorToken(OperatorType.ADD, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new OperatorToken(BiOperatorType.ADD, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '-') {
                     flush();
-                    tokens.add(new OperatorToken(OperatorType.SUB, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new OperatorToken(BiOperatorType.SUB, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '*') {
                     flush();
-                    tokens.add(new OperatorToken(OperatorType.MUL, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new OperatorToken(BiOperatorType.MUL, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '/') {
                     flush();
-                    tokens.add(new OperatorToken(OperatorType.DIV, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new OperatorToken(BiOperatorType.DIV, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '&') {
                     flush();
-                    tokens.add(new OperatorToken(OperatorType.AND, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new OperatorToken(BiOperatorType.AND, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '|') {
                     flush();
-                    tokens.add(new OperatorToken(OperatorType.OR, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new OperatorToken(BiOperatorType.OR, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '^') {
                     flush();
-                    tokens.add(new OperatorToken(OperatorType.XOR, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new OperatorToken(BiOperatorType.XOR, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '<') {
                     flush();
-                    tokens.add(new OperatorToken(OperatorType.LESS_THAN, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new OperatorToken(BiOperatorType.LESS_THAN, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '>') {
                     flush();
-                    tokens.add(new OperatorToken(OperatorType.MORE_THAN, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new OperatorToken(BiOperatorType.MORE_THAN, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '(') {
                     flush();
                     tokens.add(new PESLToken(TokenType.LEFT_PAREN, reader.getIndex(), reader.getIndex() + 1));
@@ -236,15 +248,12 @@ public class PESLTokenizer {
                     tokens.add(new PESLToken(TokenType.SEMICOLON, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '=') {
                     flush();
-                    tokens.add(new PESLToken(TokenType.EQUALS_SIGN, reader.getIndex(), reader.getIndex() + 1));
+                    tokens.add(new AssignmentOpToken(AssignmentType.EQUALS, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '.') {
-//                    System.out.println("DOT AT INDEX " + reader.getIndex());
                     flush();
-//                    System.out.println("FLUSHED");
                     if (tokens.size() > 0 && tokens.get(tokens.size() - 1).getType() == TokenType.NUMBER) {
                         NumToken first = (NumToken) tokens.get(tokens.size() - 1);
                         if (!first.isHasFP()) {
-//                            int start = reader.getIndex();
                             OptionalLong nextLong = parseSingleLong();
                             if (nextLong.isPresent()) {
                                 PESLToken original = tokens.remove(tokens.size() - 1);
@@ -253,7 +262,6 @@ public class PESLTokenizer {
                                 reader.setIndex(reader.getIndex() - 1);
                                 continue;
                             }
-
                         }
                     }
                     tokens.add(new PESLToken(TokenType.DOT, reader.getIndex(), reader.getIndex() + 1));

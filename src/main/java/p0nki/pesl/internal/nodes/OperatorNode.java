@@ -5,16 +5,16 @@ import p0nki.pesl.api.PESLEvalException;
 import p0nki.pesl.api.object.PESLObject;
 import p0nki.pesl.api.parse.ASTNode;
 import p0nki.pesl.api.parse.PESLIndentedLogger;
-import p0nki.pesl.internal.token.type.OperatorType;
+import p0nki.pesl.internal.token.type.BiOperatorType;
 
 import javax.annotation.Nonnull;
 
 public class OperatorNode implements ASTNode {
 
     private final ASTNode[] nodes;
-    private final OperatorType operatorType;
+    private final BiOperatorType operatorType;
 
-    public OperatorNode(ASTNode[] nodes, OperatorType operatorType) {
+    public OperatorNode(ASTNode[] nodes, BiOperatorType operatorType) {
         this.nodes = nodes;
         this.operatorType = operatorType;
     }

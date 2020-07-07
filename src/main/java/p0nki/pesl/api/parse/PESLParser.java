@@ -47,7 +47,7 @@ public class PESLParser {
         if (top == TokenType.NOT) {
             tokens.expect(TokenType.NOT);
             return new NotNode(parsePrimary(tokens));
-        } else if (top == TokenType.ADDITIVE_OP && ((OperatorToken) tokens.peek()).getOpType() == OperatorType.SUB) {
+        } else if (top == TokenType.ADDITIVE_OP && ((OperatorToken) tokens.peek()).getOpType() == BiOperatorType.SUB) {
             tokens.expect(TokenType.ADDITIVE_OP);
             return new NegateNode(parsePrimary(tokens));
         } else if (top == TokenType.UNDEFINED) {
@@ -262,9 +262,9 @@ public class PESLParser {
         if (let) tokens.expect(TokenType.LET);
         ASTNode left = parseBoolean(tokens);
         if (tokens.hasAny()) {
-            if (tokens.peek().getType() == TokenType.EQUALS_SIGN) {
-                tokens.expect(TokenType.EQUALS_SIGN);
-                return new EqualsNode(left, parseExpression(tokens), let);
+            if (tokens.peek().getType() == TokenType.ASSIGNMENT_OP) {
+                AssignmentOpToken opToken = tokens.expect(TokenType.ASSIGNMENT_OP);
+                return new EqualsNode(opToken.getOpType(), left, parseExpression(tokens), let);
             }
         }
         return left;

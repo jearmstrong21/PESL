@@ -18,6 +18,8 @@ public class PESLToken {
             throw new UnsupportedOperationException("Cannot initialize generic PESLToken with type " + type.toString());
         if (type == TokenType.LITERAL && !(this instanceof LiteralToken))
             throw new UnsupportedOperationException("Cannot initialize generic PESLToken with type UNQUOTED_LITERAL");
+        if (type == TokenType.ASSIGNMENT_OP && !(this instanceof AssignmentOpToken))
+            throw new UnsupportedOperationException("Cannot iniitalize generic PESLToken with type ASSIGNMENT_OP");
     }
 
     public int getStart() {

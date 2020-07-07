@@ -8,7 +8,7 @@ public enum TokenType {
     NUMBER,
     LEFT_PAREN,
     RIGHT_PAREN,
-    EQUALS_SIGN,
+    ASSIGNMENT_OP,
     SEMICOLON,
     LITERAL,
     DOT,
