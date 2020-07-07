@@ -1,7 +1,5 @@
 package p0nki.pesl.api.object;
 
-import p0nki.pesl.api.PESLEvalException;
-
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -77,7 +75,7 @@ public class MapObject extends PESLObject implements MapLikeObject {
     }
 
     @Override
-    public boolean compareEquals(@Nonnull PESLObject object) throws PESLEvalException {
+    public boolean compareEquals(@Nonnull PESLObject object) {
         return false;
     }
 }

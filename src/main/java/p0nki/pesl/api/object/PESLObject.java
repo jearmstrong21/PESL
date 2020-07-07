@@ -92,6 +92,6 @@ public abstract class PESLObject {
     }
 
     @CheckReturnValue
-    public abstract boolean compareEquals(@Nonnull PESLObject object) throws PESLEvalException;
+    public abstract boolean compareEquals(@Nonnull PESLObject object);
 
 }

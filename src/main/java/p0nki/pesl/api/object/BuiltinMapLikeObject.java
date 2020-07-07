@@ -68,7 +68,7 @@ public class BuiltinMapLikeObject extends PESLObject implements MapLikeObject {
     }
 
     @Override
-    public boolean compareEquals(@Nonnull PESLObject object) throws PESLEvalException {
+    public boolean compareEquals(@Nonnull PESLObject object) {
         return false;
     }
 

@@ -14,17 +14,21 @@ public class ArrayObject extends BuiltinMapLikeObject implements ArrayLikeObject
     public ArrayObject(@Nonnull List<PESLObject> values) {
         super("array");
         this.values = values;
-//        put("push", FunctionObject.of(false, arguments -> {
-//            PESLEvalException.validArgumentListLength(arguments, 1);
-//            values.add(arguments.get(0));
-//            return UndefinedObject.INSTANCE;
-//        }));
-//        put("pop", FunctionObject.of(false, arguments -> {
-//            PESLEvalException.validArgumentListLength(arguments, 0);
-//            if (values.size() == 0) throw PESLEvalException.indexOutOfBounds(-1, 0);
-//            values.remove(values.size() - 1);
-//            return UndefinedObject.INSTANCE;
-//        }));
+        put("pop", FunctionObject.of(false, arguments -> {
+            PESLEvalException.validArgumentListLength(arguments, 0);
+            if (values.size() == 0) throw PESLEvalException.indexOutOfBounds(-1, 0);
+            values.remove(values.size() - 1);
+            return UndefinedObject.INSTANCE;
+        }));
+        put("add", FunctionObject.of(false, arguments -> {
+            PESLEvalException.validArgumentListLength(arguments, 1, 2);
+            if (arguments.size() == 2) {
+                values.add(PESLEvalException.checkIndexOutOfBounds((int) arguments.get(0).asNumber().getValue(), values.size() + 1), arguments.get(1));
+            } else {
+                values.add(arguments.get(0));
+            }
+            return UndefinedObject.INSTANCE;
+        }));
         put("length", FunctionObject.of(false, arguments -> {
             PESLEvalException.validArgumentListLength(arguments, 0);
             return new NumberObject(values.size());
@@ -51,7 +55,7 @@ public class ArrayObject extends BuiltinMapLikeObject implements ArrayLikeObject
     }
 
     @Override
-    public boolean compareEquals(@Nonnull PESLObject object) throws PESLEvalException {
+    public boolean compareEquals(@Nonnull PESLObject object) {
         if (object instanceof ArrayObject) {
             return isEqual(this, (MapLikeObject) object);
         }
