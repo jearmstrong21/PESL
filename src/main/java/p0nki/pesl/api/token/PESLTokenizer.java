@@ -148,11 +148,15 @@ public class PESLTokenizer {
             if (buffer.size() < 2) return;
             PESLToken first = buffer.get(buffer.size() - 2);
             PESLToken second = buffer.get(buffer.size() - 1);
-            if (first instanceof OperatorToken && ((OperatorToken) first).getOpType() == BiOperatorType.LESS_THAN && second.getType() == TokenType.ASSIGNMENT_OP) {
+            if (first instanceof AssignmentOpToken && ((AssignmentOpToken) first).getOpType() == AssignmentType.EQUALS && second instanceof AssignmentOpToken && ((AssignmentOpToken) second).getOpType() == AssignmentType.EQUALS) {
+                buffer.remove(buffer.size() - 1);
+                buffer.remove(buffer.size() - 1);
+                buffer.add(new OperatorToken(BiOperatorType.EQUIVALENCE, first.getStart(), second.getEnd()));
+            } else if (first instanceof OperatorToken && ((OperatorToken) first).getOpType() == BiOperatorType.LESS_THAN && second instanceof AssignmentOpToken && ((AssignmentOpToken) second).getOpType() == AssignmentType.EQUALS) {
                 buffer.remove(buffer.size() - 1);
                 buffer.remove(buffer.size() - 1);
                 buffer.add(new OperatorToken(BiOperatorType.LESS_THAN_OR_EQUAL_TO, first.getStart(), second.getEnd()));
-            } else if (first instanceof OperatorToken && ((OperatorToken) first).getOpType() == BiOperatorType.MORE_THAN && second.getType() == TokenType.ASSIGNMENT_OP) {
+            } else if (first instanceof OperatorToken && ((OperatorToken) first).getOpType() == BiOperatorType.MORE_THAN && second instanceof AssignmentOpToken && ((AssignmentOpToken) second).getOpType() == AssignmentType.EQUALS) {
                 buffer.remove(buffer.size() - 1);
                 buffer.remove(buffer.size() - 1);
                 buffer.add(new OperatorToken(BiOperatorType.MORE_THAN_OR_EQUAL_TO, first.getStart(), second.getEnd()));
