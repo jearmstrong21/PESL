@@ -165,8 +165,8 @@ public class PESLTokenizer {
 
         private void postProcess() {
             List<PESLToken> buffer = new ArrayList<>();
-            for (int i = 0; i < tokens.size(); i++) {
-                buffer.add(tokens.get(i));
+            for (PESLToken token : tokens) {
+                buffer.add(token);
                 collapseBuffer(buffer);
             }
             tokens = buffer;
@@ -238,19 +238,22 @@ public class PESLTokenizer {
                     flush();
                     tokens.add(new PESLToken(TokenType.EQUALS_SIGN, reader.getIndex(), reader.getIndex() + 1));
                 } else if (ch == '.') {
+//                    System.out.println("DOT AT INDEX " + reader.getIndex());
                     flush();
+//                    System.out.println("FLUSHED");
                     if (tokens.size() > 0 && tokens.get(tokens.size() - 1).getType() == TokenType.NUMBER) {
                         NumToken first = (NumToken) tokens.get(tokens.size() - 1);
                         if (!first.isHasFP()) {
-                            int start = reader.getIndex();
+//                            int start = reader.getIndex();
                             OptionalLong nextLong = parseSingleLong();
                             if (nextLong.isPresent()) {
                                 PESLToken original = tokens.remove(tokens.size() - 1);
                                 tokens.add(new NumToken(Double.parseDouble(((int) first.getValue()) + "." + nextLong.getAsLong()), original.getStart(), reader.getIndex() + 1, true));
+                                flush();
+                                reader.setIndex(reader.getIndex() - 1);
                                 continue;
-                            } else {
-                                reader.setIndex(start);
                             }
+
                         }
                     }
                     tokens.add(new PESLToken(TokenType.DOT, reader.getIndex(), reader.getIndex() + 1));

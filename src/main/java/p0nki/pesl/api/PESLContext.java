@@ -59,14 +59,14 @@ public class PESLContext implements MapLikeObject {
 
     @Override
     public void setKey(@Nonnull String key, @Nonnull PESLObject value) {
-        PESLContext ctx = this;
-        while (ctx != null && !ctx.containsKey(key)) {
-            ctx = ctx.parent;
-        }
-        if (ctx == null) {
+        if (parent == null) {
             objects.put(key, value);
         } else {
-            ctx.objects.put(key, value);
+            if (objects.getOrDefault(key, UndefinedObject.INSTANCE) == UndefinedObject.INSTANCE) {
+                parent.setKey(key, value);
+            } else {
+                objects.put(key, value);
+            }
         }
     }
 

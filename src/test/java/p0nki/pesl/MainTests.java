@@ -3,6 +3,7 @@ package p0nki.pesl;
 import org.junit.Test;
 import p0nki.pesl.api.PESLContext;
 import p0nki.pesl.api.PESLEvalException;
+import p0nki.pesl.api.builtins.PESLBuiltins;
 import p0nki.pesl.api.object.PESLObject;
 import p0nki.pesl.api.parse.ASTNode;
 import p0nki.pesl.api.parse.PESLParseException;
@@ -20,9 +21,9 @@ public class MainTests {
         PESLTokenList tokens;
         try {
             tokens = tokenizer.tokenize(str);
-            for (int i = 0; i < tokens.getSize(); i++) {
-                System.out.println(tokens.get(i));
-            }
+//            for (int i = 0; i < tokens.getSize(); i++) {
+//                System.out.println(tokens.get(i));
+//            }
         } catch (PESLTokenizeException e) {
             int index = e.getIndex();
             System.out.print("   ");
@@ -88,6 +89,7 @@ public class MainTests {
     @Test
     public void test() throws PESLTokenizeException, PESLEvalException, PESLParseException {
         PESLContext ctx = new PESLContext();
+        ctx.setKey("println", PESLBuiltins.PRINTLN);
 //        run(ctx, "parseNumber(5)");
 //        run(ctx, "parseNumber(\"5\"+\"3\")");
 //        run(ctx, "5 is 3 + 4");
@@ -97,9 +99,17 @@ public class MainTests {
 //        run(ctx, "4 >= 5");
 //        run(ctx, "while(Math.random()<=0.5){println(\"hello world\")}");
 //        run(ctx, "5.4.0 + 3.2");
-//        run(ctx, "while(Math.random () <= 0.5){ println (\"hello world\") }");
-        run(ctx, "Math.random()<=0.5");
-        run(ctx, "Math.random()<=0.5)");
+        run(ctx, "count=0 total=1000 chance=900 for(i=0;i<total;i=i+1){if(Math.random()<chance/total){count=count+1}}count");
+        run(ctx, "count2=0 for(i=0;i<total;i=i+1){count2=count2+Math.random()*chance/total}count2");
+        run(ctx, "5.0+2.3");
+//        run(ctx, "x=0");
+//        run(ctx, "x=x+1");
+//        run(ctx, "x");
+//        run(ctx, "for(i=1;i<=10;i=i+1){x=x+1 println(i+\": \"+x)}");
+//        run(ctx, "x");
+//        run(ctx, "i");
+//        run(ctx, "Math.random()<=0.5");
+//        run(ctx, "Math.random()<=0.5)");
 //        run(ctx, "Math.random()<=0.5");
         // TODO: delete "is" token and replace with "EQUALS_BOOL_OP" or something to represent double tokens. once double tokens work do that for <= and >= and == and !=
 //        run(ctx, "x = {a: 4, ab: 5}");
