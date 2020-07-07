@@ -9,6 +9,15 @@ public interface ArrayLikeObject {
     @Nonnull
     PESLObject getElement(int index) throws PESLEvalException;
 
+    @Nonnull
+    default PESLObject getElementNoChecks(int index) {
+        try {
+            return getElement(index);
+        } catch (PESLEvalException e) {
+            throw new AssertionError(e);
+        }
+    }
+
     void setElement(int index, @Nonnull PESLObject object) throws PESLEvalException;
 
     @Nonnull

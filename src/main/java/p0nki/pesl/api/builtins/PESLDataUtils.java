@@ -141,4 +141,46 @@ public class PESLDataUtils {
         }
     }
 
+    public static boolean deepEqualsArray(@Nonnull ArrayLikeObject a, @Nonnull ArrayLikeObject b) {
+        if (a.arraySize() != b.arraySize()) return false;
+        for (int i = 0; i < a.arraySize(); i++) {
+            if (!deepEquals(a.getElementNoChecks(i), b.getElementNoChecks(i))) return false;
+        }
+        return true;
+    }
+
+    public static boolean deepEqualsMapLike(@Nonnull MapObject a, @Nonnull MapObject b) {
+        if (a.keys().size() != b.keys().size()) return false;
+        for (String key : a.keys()) {
+            if (!b.keys().contains(key)) return false;
+            if (!deepEquals(a.getKey(key), b.getKey(key))) return false;
+        }
+        return true;
+    }
+
+    public static boolean deepEquals(@Nonnull PESLObject a, @Nonnull PESLObject b) {
+        if (!a.getType().equals(b.getType())) return false;
+        if (a instanceof FunctionObject || b instanceof FunctionObject) return false;
+        if (a instanceof ArrayLikeObject && b instanceof ArrayLikeObject) {
+            return deepEqualsArray((ArrayLikeObject) a, (ArrayLikeObject) b);
+        } else if (a instanceof BooleanObject && b instanceof BooleanObject) {
+            return ((BooleanObject) a).getValue() == ((BooleanObject) b).getValue();
+        } else if (a instanceof StringObject && b instanceof StringObject) {
+            return ((StringObject) a).getValue().equals(((StringObject) b).getValue());
+        } else if (a instanceof MapObject && b instanceof MapObject) {
+            return deepEqualsMapLike((MapObject) a, (MapObject) b);
+        } else if (a instanceof NullObject && b instanceof NullObject) {
+            if (a != b) throw new AssertionError("Expected all instances of `null` to represent the same object");
+            return true;
+        } else if (a instanceof NumberObject && b instanceof NumberObject) {
+            return ((NumberObject) a).getValue() == ((NumberObject) b).getValue();
+        } else if (a instanceof UndefinedObject && b instanceof UndefinedObject) {
+            if (a != b) throw new AssertionError("Expected all instances of `undefined` to represent the same object");
+            return true;
+        } else {
+            System.err.println("[WARNING] cannot compare types " + a.getType() + " and " + b.getType());
+            return false;
+        }
+    }
+
 }

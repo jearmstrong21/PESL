@@ -125,6 +125,10 @@ public class PESLBuiltins {
             .put("copy", FunctionObject.of(false, arguments -> {
                 PESLEvalException.validArgumentListLength(arguments, 1);
                 return PESLDataUtils.copy(arguments.get(0));
+            }))
+            .put("deepEquals", FunctionObject.of(false, arguments -> {
+                PESLEvalException.validArgumentListLength(arguments, 2);
+                return new BooleanObject(PESLDataUtils.deepEquals(arguments.get(0), arguments.get(1)));
             }));
 
     public static final PESLObject PARSE_NUMBER = FunctionObject.of(false, arguments -> {
