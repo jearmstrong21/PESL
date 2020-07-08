@@ -182,7 +182,7 @@ public class PESLParser {
                 tokens.expect(TokenType.RIGHT_BRACKET);
                 return new ArrayNode(list);
             } else if (tokens.peek().getType() == TokenType.FOR) {
-                List<ArrayComprehensionNode.For> fors = new ArrayList<>();
+                List<ComprehensionFor> fors = new ArrayList<>();
                 while (tokens.peek().getType() == TokenType.FOR) {
                     tokens.expect(TokenType.FOR);
                     String first = tokens.literal();
@@ -191,17 +191,17 @@ public class PESLParser {
                         String second = tokens.literal();
                         tokens.expect(TokenType.IN);
                         ASTNode map = parseExpression(tokens);
-                        fors.add(new ArrayComprehensionNode.For(first, second, false, map));
+                        fors.add(new ComprehensionFor(first, second, false, map));
                     } else if (tokens.peek().getType() == TokenType.COMMA) {
                         tokens.expect(TokenType.COMMA);
                         String second = tokens.literal();
                         tokens.expect(TokenType.IN);
                         ASTNode list = parseExpression(tokens);
-                        fors.add(new ArrayComprehensionNode.For(first, second, true, list));
+                        fors.add(new ComprehensionFor(first, second, true, list));
                     } else {
                         tokens.expect(TokenType.IN);
                         ASTNode list = parseExpression(tokens);
-                        fors.add(new ArrayComprehensionNode.For(first, null, true, list));
+                        fors.add(new ComprehensionFor(first, null, true, list));
                     }
                 }
                 ASTNode predicate = null;

@@ -2,7 +2,10 @@ package p0nki.pesl.internal.nodes;
 
 import p0nki.pesl.api.PESLContext;
 import p0nki.pesl.api.PESLEvalException;
-import p0nki.pesl.api.object.*;
+import p0nki.pesl.api.object.ArrayObject;
+import p0nki.pesl.api.object.NumberObject;
+import p0nki.pesl.api.object.PESLObject;
+import p0nki.pesl.api.object.StringObject;
 import p0nki.pesl.api.parse.ASTNode;
 import p0nki.pesl.api.parse.PESLIndentedLogger;
 
@@ -14,10 +17,10 @@ import java.util.List;
 public class ArrayComprehensionNode implements ASTNode {
 
     private final ASTNode element;
-    private final List<For> fors;
+    private final List<ComprehensionFor> fors;
     private final ASTNode predicate;
 
-    public ArrayComprehensionNode(ASTNode element, List<For> fors, @Nullable ASTNode predicate) {
+    public ArrayComprehensionNode(ASTNode element, List<ComprehensionFor> fors, @Nullable ASTNode predicate) {
         this.element = element;
         this.fors = fors;
         this.predicate = predicate;
@@ -27,13 +30,13 @@ public class ArrayComprehensionNode implements ASTNode {
         if (currentIndices.size() == lists.size()) {
             for (int i = 0; i < fors.size(); i++) {
                 Object object = lists.get(i).get(currentIndices.get(i));
-                if (fors.get(i).isArray) {
-                    pushed.let(fors.get(i).first, (PESLObject) object);
-                    if (fors.get(i).second != null)
-                        pushed.let(fors.get(i).second, new NumberObject(currentIndices.get(i)));
+                if (fors.get(i).isArray()) {
+                    pushed.let(fors.get(i).getFirst(), (PESLObject) object);
+                    if (fors.get(i).getSecond() != null)
+                        pushed.let(fors.get(i).getSecond(), new NumberObject(currentIndices.get(i)));
                 } else {
-                    pushed.let(fors.get(i).first, new StringObject(((Entry) object).first));
-                    pushed.let(fors.get(i).second, ((Entry) object).second);
+                    pushed.let(fors.get(i).getFirst(), new StringObject(((ComprehensionFor.Entry) object).getFirst()));
+                    pushed.let(fors.get(i).getSecond(), ((ComprehensionFor.Entry) object).getSecond());
                 }
             }
             if (predicate == null || predicate.evaluate(pushed).asBoolean().getValue())
@@ -52,7 +55,7 @@ public class ArrayComprehensionNode implements ASTNode {
     public PESLObject evaluate(@Nonnull PESLContext context) throws PESLEvalException {
         List<PESLObject> result = new ArrayList<>();
         List<List<?>> lists = new ArrayList<>();
-        for (For f : fors) {
+        for (ComprehensionFor f : fors) {
             lists.add(f.asList(context));
         }
         iterate(lists, new ArrayList<>(), result, context.push());
@@ -63,57 +66,11 @@ public class ArrayComprehensionNode implements ASTNode {
     public void print(@Nonnull PESLIndentedLogger logger) {
         logger.println("ARRAY COMPREHENSION)");
         for (int i = 0; i < fors.size(); i++) {
-            logger.println("FOR " + i + ") " + (fors.get(i).isArray ? "ARRAY" : "MAP"));
-            logger.println(fors.get(i).first + ", " + fors.get(i).second);
-            logger.pushPrint(fors.get(i).value);
+            logger.println("FOR " + i + ") " + (fors.get(i).isArray() ? "ARRAY" : "MAP"));
+            logger.println(fors.get(i).getFirst() + ", " + fors.get(i).getSecond());
+            logger.pushPrint(fors.get(i).getValue());
         }
         logger.println("PREDICATE)");
         logger.pushPrint(predicate);
-    }
-
-    public static class For {
-
-        private final String first;
-        private final String second;
-        private final boolean isArray;
-        private final ASTNode value;
-
-        public For(String first, String second, boolean isArray, ASTNode value) {
-            this.first = first;
-            this.second = second;
-            this.isArray = isArray;
-            this.value = value;
-        }
-
-        public List<?> asList(PESLContext context) throws PESLEvalException {
-            PESLObject object = value.evaluate(context);
-            if (isArray) {
-                ArrayLikeObject arrayLikeObject = object.asArrayLike();
-                List<PESLObject> list = new ArrayList<>();
-                for (int i = 0; i < arrayLikeObject.arraySize(); i++) {
-                    list.add(arrayLikeObject.getElement(i));
-                }
-                return list;
-            } else {
-                MapLikeObject mapLikeObject = object.asMapLike();
-                List<Entry> list = new ArrayList<>();
-                for (String key : mapLikeObject.keys()) {
-                    list.add(new Entry(key, mapLikeObject.getKey(key)));
-                }
-                return list;
-            }
-        }
-
-    }
-
-    private static class Entry {
-
-        private final String first;
-        private final PESLObject second;
-
-        public Entry(String first, PESLObject second) {
-            this.first = first;
-            this.second = second;
-        }
     }
 }
