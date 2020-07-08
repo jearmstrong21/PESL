@@ -90,6 +90,11 @@ public class MainTests {
     public void test() throws PESLTokenizeException, PESLEvalException, PESLParseException {
         PESLContext ctx = new PESLContext();
         ctx.setKey("println", PESLBuiltins.PRINTLN);
+
+//        run(ctx, "value = [1, 2, 3, 4, 5]");
+//        run(ctx, "[println(x) for x in value]");
+        run(ctx, "[x+y for x in [\"a\", \"b\", \"c\"] for y in [1, 2, 3]]");
+
 //        run(ctx, "parseNumber(5)");
 //        run(ctx, "parseNumber(\"5\"+\"3\")");
 //        run(ctx, "5 is 3 + 4");
@@ -101,16 +106,16 @@ public class MainTests {
 //        run(ctx, "5.4.0 + 3.2");
 //        run(ctx, "count=0 total=1000 chance=900 for(i=0;i<total;i=i+1){if(Math.random()<chance/total){count=count+1}}count");
 //        run(ctx, "count2=0 for(i=0;i<total;i=i+1){if(count2=count2+Math.random()}count2");
-        run(ctx, "x = [2, 3]");
-        run(ctx, "delete x[0]");
-        run(ctx, "x");
-        run(ctx, "x.add({a:4})");
-        run(ctx, "x.add({b:5})");
-        run(ctx, "x");
-        run(ctx, "x.add(1, 5)");
-        run(ctx, "x");
-        run(ctx, "x.add(4, 69)");
-        run(ctx, "x");
+//        run(ctx, "x = [2, 3]");
+//        run(ctx, "delete x[0]");
+//        run(ctx, "x");
+//        run(ctx, "x.add({a:4})");
+//        run(ctx, "x.add({b:5})");
+//        run(ctx, "x");
+//        run(ctx, "x.add(1, 5)");
+//        run(ctx, "x");
+//        run(ctx, "x.add(4, 69)");
+//        run(ctx, "x");
 //        run(ctx, "5.0+2.3");
 //        run(ctx, "x=2");
 //        run(ctx, "x");

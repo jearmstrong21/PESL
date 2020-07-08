@@ -122,7 +122,7 @@ public class PESLParser {
                 LiteralToken indexNameToken = tokens.expect(TokenType.LITERAL);
                 indexName = indexNameToken.getValue();
             }
-            tokens.expect(TokenType.COLON);
+            tokens.expect(TokenType.IN);
             ASTNode array = parseExpression(tokens);
             tokens.expect(TokenType.RIGHT_PAREN);
             ASTNode body = parseBracketedCode(tokens, false);
@@ -165,15 +165,50 @@ public class PESLParser {
             return new MapNode(map);
         } else if (top == TokenType.LEFT_BRACKET) {
             tokens.expect(TokenType.LEFT_BRACKET);
-            List<ASTNode> list = new ArrayList<>();
-            while (true) {
-                if (tokens.peek().getType() == TokenType.RIGHT_BRACKET) break;
-                list.add(parseExpression(tokens));
-                if (tokens.peek().getType() == TokenType.RIGHT_BRACKET) break;
-                tokens.expect(TokenType.COMMA);
+            if (tokens.peek().getType() == TokenType.RIGHT_BRACKET)
+                return new ArrayNode(new ArrayList<>());
+            ASTNode firstExpression = parseExpression(tokens);
+            if (tokens.peek().getType() == TokenType.RIGHT_BRACKET) {
+                return new ArrayNode(new ArrayList<ASTNode>() {{
+                    add(firstExpression);
+                }});
+            } else if (tokens.peek().getType() == TokenType.COMMA) {
+                List<ASTNode> list = new ArrayList<>();
+                list.add(firstExpression);
+                while (tokens.peek().getType() == TokenType.COMMA) {
+                    tokens.expect(TokenType.COMMA);
+                    list.add(parseExpression(tokens));
+                }
+                tokens.expect(TokenType.RIGHT_BRACKET);
+                return new ArrayNode(list);
+            } else if (tokens.peek().getType() == TokenType.FOR) {
+                // FOR literal [, literal [, literal]] COLON EXPRESSION
+                List<ArrayComprehensionNode.For> fors = new ArrayList<>();
+                while (tokens.peek().getType() == TokenType.FOR) {
+                    tokens.expect(TokenType.FOR);
+                    LiteralToken valueToken = tokens.expect(TokenType.LITERAL);
+                    String value = valueToken.getValue();
+                    String index = null;
+                    if (tokens.peek().getType() == TokenType.COMMA) {
+                        tokens.expect(TokenType.COMMA);
+                        LiteralToken indexToken = tokens.expect(TokenType.LITERAL);
+                        index = indexToken.getValue();
+                    }
+                    tokens.expect(TokenType.IN);
+                    ASTNode list = parseExpression(tokens);
+                    fors.add(new ArrayComprehensionNode.For(value, index, list));
+                }
+                ASTNode predicate = null;
+                if (tokens.peek().getType() == TokenType.IF) {
+                    tokens.expect(TokenType.IF);
+                    predicate = parseExpression(tokens);
+                }
+                tokens.expect(TokenType.RIGHT_BRACKET);
+                return new ArrayComprehensionNode(firstExpression, fors, predicate);
+            } else {
+                tokens.expect(TokenType.RIGHT_BRACKET, TokenType.COMMA, TokenType.FOR);
+                throw new AssertionError("This will never be reached");
             }
-            tokens.expect(TokenType.RIGHT_BRACKET);
-            return new ArrayNode(list);
         } else if (top == TokenType.BEGIN_STRING) {
             tokens.expect(TokenType.BEGIN_STRING);
             LiteralToken token = tokens.expect(TokenType.LITERAL);

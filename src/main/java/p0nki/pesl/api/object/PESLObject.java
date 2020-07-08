@@ -57,6 +57,13 @@ public abstract class PESLObject {
 
     @Nonnull
     @CheckReturnValue
+    public final ArrayLikeObject asArrayLike() throws PESLEvalException {
+        if (this instanceof ArrayLikeObject) return (ArrayLikeObject) this;
+        throw new PESLEvalException("Cannot cast " + getType() + " to arraylike");
+    }
+
+    @Nonnull
+    @CheckReturnValue
     public final MapLikeObject asMapLike() throws PESLEvalException {
         if (this instanceof MapLikeObject) return (MapLikeObject) this;
         throw new PESLEvalException("Cannot cast " + getType() + " to maplike");

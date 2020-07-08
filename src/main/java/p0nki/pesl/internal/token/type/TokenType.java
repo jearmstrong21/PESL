@@ -37,5 +37,6 @@ public enum TokenType {
     FOREACH,
     DELETE,
     NOT,
-    WHILE
+    WHILE,
+    IN
 }

@@ -136,6 +136,9 @@ public class PESLTokenizer {
                     case "while":
                         tokens.add(new PESLToken(TokenType.WHILE, start() + 1, reader.getIndex() + 1));
                         break;
+                    case "in":
+                        tokens.add(new PESLToken(TokenType.IN, start() + 1, reader.getIndex() + 1));
+                        break;
                     default:
                         tokens.add(new LiteralToken(buffer.toString(), start() + 1, reader.getIndex() + 1));
                         break;
