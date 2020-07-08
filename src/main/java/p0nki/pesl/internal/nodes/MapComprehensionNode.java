@@ -2,7 +2,7 @@ package p0nki.pesl.internal.nodes;
 
 import p0nki.pesl.api.PESLContext;
 import p0nki.pesl.api.PESLEvalException;
-import p0nki.pesl.api.object.ArrayObject;
+import p0nki.pesl.api.object.MapObject;
 import p0nki.pesl.api.object.NumberObject;
 import p0nki.pesl.api.object.PESLObject;
 import p0nki.pesl.api.object.StringObject;
@@ -12,21 +12,25 @@ import p0nki.pesl.api.parse.PESLIndentedLogger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class ArrayComprehensionNode implements ASTNode {
+public class MapComprehensionNode implements ASTNode {
 
-    private final ASTNode element;
+    private final ASTNode key;
+    private final ASTNode value;
     private final List<ComprehensionFor> fors;
     private final ASTNode predicate;
 
-    public ArrayComprehensionNode(ASTNode element, List<ComprehensionFor> fors, @Nullable ASTNode predicate) {
-        this.element = element;
+    public MapComprehensionNode(ASTNode key, ASTNode value, List<ComprehensionFor> fors, @Nullable ASTNode predicate) {
+        this.key = key;
+        this.value = value;
         this.fors = fors;
         this.predicate = predicate;
     }
 
-    private void iterate(List<List<?>> lists, List<Integer> currentIndices, List<PESLObject> result, PESLContext pushed) throws PESLEvalException {
+    private void iterate(List<List<?>> lists, List<Integer> currentIndices, Map<String, PESLObject> result, PESLContext pushed) throws PESLEvalException {
         if (currentIndices.size() == lists.size()) {
             for (int i = 0; i < fors.size(); i++) {
                 Object object = lists.get(i).get(currentIndices.get(i));
@@ -40,7 +44,7 @@ public class ArrayComprehensionNode implements ASTNode {
                 }
             }
             if (predicate == null || predicate.evaluate(pushed).asBoolean().getValue())
-                result.add(element.evaluate(pushed));
+                result.put(key.evaluate(pushed).castToString(), value.evaluate(pushed));
         } else {
             for (int i = 0; i < lists.get(currentIndices.size()).size(); i++) {
                 List<Integer> newIndices = new ArrayList<>(currentIndices);
@@ -53,18 +57,18 @@ public class ArrayComprehensionNode implements ASTNode {
     @Nonnull
     @Override
     public PESLObject evaluate(@Nonnull PESLContext context) throws PESLEvalException {
-        List<PESLObject> result = new ArrayList<>();
+        Map<String, PESLObject> result = new HashMap<>();
         List<List<?>> lists = new ArrayList<>();
         for (ComprehensionFor f : fors) {
             lists.add(f.asList(context));
         }
         iterate(lists, new ArrayList<>(), result, context.push());
-        return new ArrayObject(result);
+        return new MapObject(result);
     }
 
     @Override
     public void print(@Nonnull PESLIndentedLogger logger) {
-        logger.println("ARRAY COMPREHENSION)");
+        logger.println("MAP COMPREHENSION)");
         for (int i = 0; i < fors.size(); i++) {
             logger.println("FOR " + i + ") " + (fors.get(i).isArray() ? "ARRAY" : "MAP"));
             logger.println(fors.get(i).getFirst() + ", " + fors.get(i).getSecond());
@@ -72,7 +76,9 @@ public class ArrayComprehensionNode implements ASTNode {
         }
         logger.println("PREDICATE)");
         logger.pushPrint(predicate);
-        logger.println("ELEMENT)");
-        logger.pushPrint(element);
+        logger.println("KEY");
+        logger.pushPrint(key);
+        logger.println("VALUE");
+        logger.pushPrint(value);
     }
 }

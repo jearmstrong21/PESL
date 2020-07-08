@@ -146,21 +146,62 @@ public class PESLParser {
             return new AccessPropertyNode(null, new LiteralNode(new StringObject(token.getValue())));
         } else if (top == TokenType.LEFT_BRACE) {
             tokens.expect(TokenType.LEFT_BRACE);
-            Map<ASTNode, ASTNode> map = new HashMap<>();
-            while (true) {
-                ASTNode key = parseExpression(tokens);
-                tokens.expect(TokenType.COLON);
-                ASTNode value = parseExpression(tokens);
-                map.put(key, value);
-                if (tokens.peek().getType() == TokenType.RIGHT_BRACE) break;
-                tokens.expect(TokenType.COMMA);
+            if (tokens.peek().getType() == TokenType.RIGHT_BRACKET) return new MapNode(new HashMap<>());
+            ASTNode firstKey = parseExpression(tokens);
+            tokens.expect(TokenType.COLON);
+            ASTNode firstValue = parseExpression(tokens);
+            if (tokens.peek().getType() == TokenType.RIGHT_BRACKET) {
+                return new MapNode(new HashMap<ASTNode, ASTNode>() {{
+                    put(firstKey, firstValue);
+                }});
+            } else if (tokens.peek().getType() == TokenType.COMMA) {
+                Map<ASTNode, ASTNode> map = new HashMap<>();
+                map.put(firstKey, firstValue);
+                while (tokens.peek().getType() == TokenType.COMMA) {
+                    tokens.expect(TokenType.COMMA);
+                    ASTNode key = parseExpression(tokens);
+                    tokens.expect(TokenType.COLON);
+                    map.put(key, parseExpression(tokens));
+                }
+                tokens.expect(TokenType.RIGHT_BRACE);
+                return new MapNode(map);
+            } else if (tokens.peek().getType() == TokenType.FOR) {
+                List<ComprehensionFor> fors = new ArrayList<>();
+                while (tokens.peek().getType() == TokenType.FOR) {
+                    tokens.expect(TokenType.FOR);
+                    String first = tokens.literal();
+                    if (tokens.peek().getType() == TokenType.COLON) {
+                        tokens.expect(TokenType.COLON);
+                        String second = tokens.literal();
+                        tokens.expect(TokenType.IN);
+                        ASTNode map = parseExpression(tokens);
+                        fors.add(new ComprehensionFor(first, second, false, map));
+                    } else if (tokens.peek().getType() == TokenType.COMMA) {
+                        tokens.expect(TokenType.COMMA);
+                        String second = tokens.literal();
+                        tokens.expect(TokenType.IN);
+                        ASTNode list = parseExpression(tokens);
+                        fors.add(new ComprehensionFor(first, second, true, list));
+                    } else {
+                        tokens.expect(TokenType.IN);
+                        ASTNode list = parseExpression(tokens);
+                        fors.add(new ComprehensionFor(first, null, true, list));
+                    }
+                }
+                ASTNode predicate = null;
+                if (tokens.peek().getType() == TokenType.IF) {
+                    tokens.expect(TokenType.IF);
+                    predicate = parseExpression(tokens);
+                }
+                tokens.expect(TokenType.RIGHT_BRACE);
+                return new MapComprehensionNode(firstKey, firstValue, fors, predicate);
+            } else {
+                tokens.expect(TokenType.RIGHT_BRACE, TokenType.COMMA, TokenType.FOR);
+                throw new AssertionError("This will never be reached");
             }
-            tokens.expect(TokenType.RIGHT_BRACE);
-            return new MapNode(map);
         } else if (top == TokenType.LEFT_BRACKET) {
             tokens.expect(TokenType.LEFT_BRACKET);
-            if (tokens.peek().getType() == TokenType.RIGHT_BRACKET)
-                return new ArrayNode(new ArrayList<>());
+            if (tokens.peek().getType() == TokenType.RIGHT_BRACKET) return new ArrayNode(new ArrayList<>());
             ASTNode firstExpression = parseExpression(tokens);
             if (tokens.peek().getType() == TokenType.RIGHT_BRACKET) {
                 return new ArrayNode(new ArrayList<ASTNode>() {{
