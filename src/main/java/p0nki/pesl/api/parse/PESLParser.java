@@ -146,18 +146,12 @@ public class PESLParser {
             return new AccessPropertyNode(null, new LiteralNode(new StringObject(token.getValue())));
         } else if (top == TokenType.LEFT_BRACE) {
             tokens.expect(TokenType.LEFT_BRACE);
-            Map<String, ASTNode> map = new HashMap<>();
+            Map<ASTNode, ASTNode> map = new HashMap<>();
             while (true) {
-                boolean quotedKey = false;
-                if (tokens.peek().getType() == TokenType.BEGIN_STRING) {
-                    quotedKey = true;
-                    tokens.expect(TokenType.BEGIN_STRING);
-                }
-                LiteralToken token = tokens.expect(TokenType.LITERAL);
-                if (quotedKey) tokens.expect(TokenType.END_STRING);
+                ASTNode key = parseExpression(tokens);
                 tokens.expect(TokenType.COLON);
                 ASTNode value = parseExpression(tokens);
-                map.put(token.getValue(), value);
+                map.put(key, value);
                 if (tokens.peek().getType() == TokenType.RIGHT_BRACE) break;
                 tokens.expect(TokenType.COMMA);
             }

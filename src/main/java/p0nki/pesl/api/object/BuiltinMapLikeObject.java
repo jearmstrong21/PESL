@@ -55,7 +55,7 @@ public class BuiltinMapLikeObject extends PESLObject implements MapLikeObject {
     public String stringify() {
         return "{" +
                 values.entrySet().stream().map(entry ->
-                        entry.getKey() + ": " + entry.getValue().stringify())
+                        "\"" + entry.getKey() + "\": " + entry.getValue().stringify())
                         .collect(Collectors.joining(", ")) +
                 "}";
     }

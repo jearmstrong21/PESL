@@ -13,9 +13,9 @@ import java.util.Map;
 
 public class MapNode implements ASTNode {
 
-    private final Map<String, ASTNode> nodes;
+    private final Map<ASTNode, ASTNode> nodes;
 
-    public MapNode(Map<String, ASTNode> nodes) {
+    public MapNode(Map<ASTNode, ASTNode> nodes) {
         this.nodes = nodes;
     }
 
@@ -23,8 +23,10 @@ public class MapNode implements ASTNode {
     public @javax.annotation.Nonnull
     PESLObject evaluate(@Nonnull PESLContext context) throws PESLEvalException {
         Map<String, PESLObject> map = new HashMap<>();
-        for (String s : nodes.keySet()) {
-            map.put(s, nodes.get(s).evaluate(context));
+        for (Map.Entry<ASTNode, ASTNode> entry : nodes.entrySet()) {
+            ASTNode key = entry.getKey();
+            ASTNode value = entry.getValue();
+            map.put(key.evaluate(context).castToString(), value.evaluate(context));
         }
         return new MapObject(map);
     }

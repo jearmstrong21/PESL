@@ -96,6 +96,8 @@ public class MainTests {
 //        run(ctx, "[x+y for x in [\"a\", \"b\", \"c\"] for y in [1, 2, 3]]");
 
         run(ctx, "[x + y + \"-\" + z + w for x, y in [2, 1, 0] for z: w in {a: 5, b: 3, c: 4}]");
+        run(ctx, "{\"a\"+\" \"+\"b\": 5+4}");
+        run(ctx, "Math");
 //        run(ctx, "{x: y for x in ")
 
 //        run(ctx, "parseNumber(5)");
