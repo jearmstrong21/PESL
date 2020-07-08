@@ -18,6 +18,7 @@ public class PESLContext implements MapLikeObject {
     public PESLContext() {
         this.parent = null;
         objects = new HashMap<>();
+        objects.put("range", PESLBuiltins.RANGE);
         objects.put("typeof", PESLBuiltins.TYPEOF);
         objects.put("dir", PESLBuiltins.DIR);
         objects.put("Math", PESLBuiltins.MATH);

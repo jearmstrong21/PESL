@@ -93,7 +93,8 @@ public class MainTests {
 
 //        run(ctx, "value = [1, 2, 3, 4, 5]");
 //        run(ctx, "[println(x) for x in value]");
-        run(ctx, "[x+y for x in [\"a\", \"b\", \"c\"] for y in [1, 2, 3]]");
+//        run(ctx, "[x+y for x in [\"a\", \"b\", \"c\"] for y in [1, 2, 3]]");
+        run(ctx, "[x for x in range(1,1001) if Math.floor(Math.sqrt(x))*Math.floor(Math.sqrt(x)) == x]");
 
 //        run(ctx, "parseNumber(5)");
 //        run(ctx, "parseNumber(\"5\"+\"3\")");

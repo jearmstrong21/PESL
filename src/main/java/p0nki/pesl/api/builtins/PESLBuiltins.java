@@ -6,8 +6,18 @@ import p0nki.pesl.api.object.*;
 import java.io.*;
 import java.util.Date;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class PESLBuiltins {
+
+    public static final PESLObject RANGE = FunctionObject.of(false, arguments -> {
+        PESLEvalException.validArgumentListLength(arguments, 1, 2);
+        if (arguments.size() == 1) {
+            return new ArrayObject(IntStream.range(0, (int) arguments.get(0).asNumber().getValue()).boxed().map(NumberObject::new).collect(Collectors.toList()));
+        } else {
+            return new ArrayObject(IntStream.range((int) arguments.get(0).asNumber().getValue(), (int) arguments.get(1).asNumber().getValue()).boxed().map(NumberObject::new).collect(Collectors.toList()));
+        }
+    });
 
     public static final PESLObject PRINTLN = FunctionObject.of(false, arguments -> {
         System.out.print("stdout >> ");
