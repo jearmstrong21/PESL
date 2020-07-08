@@ -182,21 +182,27 @@ public class PESLParser {
                 tokens.expect(TokenType.RIGHT_BRACKET);
                 return new ArrayNode(list);
             } else if (tokens.peek().getType() == TokenType.FOR) {
-                // FOR literal [, literal [, literal]] COLON EXPRESSION
                 List<ArrayComprehensionNode.For> fors = new ArrayList<>();
                 while (tokens.peek().getType() == TokenType.FOR) {
                     tokens.expect(TokenType.FOR);
-                    LiteralToken valueToken = tokens.expect(TokenType.LITERAL);
-                    String value = valueToken.getValue();
-                    String index = null;
-                    if (tokens.peek().getType() == TokenType.COMMA) {
+                    String first = tokens.literal();
+                    if (tokens.peek().getType() == TokenType.COLON) {
+                        tokens.expect(TokenType.COLON);
+                        String second = tokens.literal();
+                        tokens.expect(TokenType.IN);
+                        ASTNode map = parseExpression(tokens);
+                        fors.add(new ArrayComprehensionNode.For(first, second, false, map));
+                    } else if (tokens.peek().getType() == TokenType.COMMA) {
                         tokens.expect(TokenType.COMMA);
-                        LiteralToken indexToken = tokens.expect(TokenType.LITERAL);
-                        index = indexToken.getValue();
+                        String second = tokens.literal();
+                        tokens.expect(TokenType.IN);
+                        ASTNode list = parseExpression(tokens);
+                        fors.add(new ArrayComprehensionNode.For(first, second, true, list));
+                    } else {
+                        tokens.expect(TokenType.IN);
+                        ASTNode list = parseExpression(tokens);
+                        fors.add(new ArrayComprehensionNode.For(first, null, true, list));
                     }
-                    tokens.expect(TokenType.IN);
-                    ASTNode list = parseExpression(tokens);
-                    fors.add(new ArrayComprehensionNode.For(value, index, list));
                 }
                 ASTNode predicate = null;
                 if (tokens.peek().getType() == TokenType.IF) {

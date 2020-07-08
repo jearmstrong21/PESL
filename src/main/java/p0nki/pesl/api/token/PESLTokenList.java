@@ -1,6 +1,7 @@
 package p0nki.pesl.api.token;
 
 import p0nki.pesl.api.parse.PESLParseException;
+import p0nki.pesl.internal.token.type.LiteralToken;
 import p0nki.pesl.internal.token.type.PESLToken;
 import p0nki.pesl.internal.token.type.TokenType;
 
@@ -57,6 +58,11 @@ public class PESLTokenList {
         }
         lastPoppedToken = tokens.remove(0);
         return lastPoppedToken;
+    }
+
+    public String literal() throws PESLParseException {
+        LiteralToken token = expect(TokenType.LITERAL);
+        return token.getValue();
     }
 
     @Nonnull
