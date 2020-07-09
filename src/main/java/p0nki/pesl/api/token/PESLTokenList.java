@@ -51,6 +51,17 @@ public class PESLTokenList {
         return (T) tokens.get(0);
     }
 
+    public boolean consumeType(TokenType... types) throws PESLParseException {
+        PESLToken token = peek();
+        for (TokenType type : types) {
+            if (token.getType() == type) {
+                pop();
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Nonnull
     public PESLToken pop() throws PESLParseException {
         if (tokens.size() == 0) {
