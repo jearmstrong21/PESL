@@ -37,6 +37,30 @@ public class PESLParser {
         throw tokens.invalidToken("ACCESS");
     }
 
+    private List<ComprehensionFor> parseComprehensionFors(PESLTokenList tokens) throws PESLParseException {
+        List<ComprehensionFor> fors = new ArrayList<>();
+        while (tokens.consumeIfPresent(TokenType.FOR)) {
+            String first = tokens.literal();
+            if (tokens.consumeIfPresent(TokenType.COLON)) {
+                String second = tokens.literal();
+                tokens.expect(TokenType.IN);
+                ASTNode map = parseExpression(tokens);
+                fors.add(new ComprehensionFor(first, second, false, map));
+            } else if (tokens.consumeIfPresent(TokenType.COMMA)) {
+                String second = tokens.literal();
+                tokens.expect(TokenType.IN);
+                ASTNode list = parseExpression(tokens);
+                fors.add(new ComprehensionFor(first, second, true, list));
+            } else if (tokens.consumeIfPresent(TokenType.IN)) {
+                ASTNode list = parseExpression(tokens);
+                fors.add(new ComprehensionFor(first, null, true, list));
+            } else {
+                throw tokens.invalidToken("COMPREHENSION FOR");
+            }
+        }
+        return fors;
+    }
+
     private ASTNode parseValue(PESLTokenList tokens) throws PESLParseException {
         if (tokens.consumeIfPresent(TokenType.NOT)) {
             return new NotNode(parsePrimary(tokens));
@@ -143,26 +167,7 @@ public class PESLParser {
                 tokens.expect(TokenType.RIGHT_BRACE);
                 return new MapNode(map);
             } else if (tokens.peek().getType() == TokenType.FOR) {
-                List<ComprehensionFor> fors = new ArrayList<>();
-                while (tokens.consumeIfPresent(TokenType.FOR)) {
-                    String first = tokens.literal();
-                    if (tokens.consumeIfPresent(TokenType.COLON)) {
-                        String second = tokens.literal();
-                        tokens.expect(TokenType.IN);
-                        ASTNode map = parseExpression(tokens);
-                        fors.add(new ComprehensionFor(first, second, false, map));
-                    } else if (tokens.consumeIfPresent(TokenType.COMMA)) {
-                        String second = tokens.literal();
-                        tokens.expect(TokenType.IN);
-                        ASTNode list = parseExpression(tokens);
-                        fors.add(new ComprehensionFor(first, second, true, list));
-                    } else if (tokens.consumeIfPresent(TokenType.IN)) {
-                        ASTNode list = parseExpression(tokens);
-                        fors.add(new ComprehensionFor(first, null, true, list));
-                    } else {
-                        throw tokens.invalidToken("COMPREHENSION FOR");
-                    }
-                }
+                List<ComprehensionFor> fors = parseComprehensionFors(tokens);
                 ASTNode predicate = tokens.consumeIfPresent(TokenType.IF) ? parseExpression(tokens) : null;
                 return new MapComprehensionNode(firstKey, firstValue, fors, predicate);
             } else {
@@ -186,26 +191,7 @@ public class PESLParser {
                 tokens.expect(TokenType.RIGHT_BRACKET);
                 return new ArrayNode(list);
             } else if (tokens.peek().getType() == TokenType.FOR) {
-                List<ComprehensionFor> fors = new ArrayList<>();
-                while (tokens.consumeIfPresent(TokenType.FOR)) {
-                    String first = tokens.literal();
-                    if (tokens.consumeIfPresent(TokenType.COLON)) {
-                        String second = tokens.literal();
-                        tokens.expect(TokenType.IN);
-                        ASTNode map = parseExpression(tokens);
-                        fors.add(new ComprehensionFor(first, second, false, map));
-                    } else if (tokens.consumeIfPresent(TokenType.COMMA)) {
-                        String second = tokens.literal();
-                        tokens.expect(TokenType.IN);
-                        ASTNode list = parseExpression(tokens);
-                        fors.add(new ComprehensionFor(first, second, true, list));
-                    } else if (tokens.consumeIfPresent(TokenType.IN)) {
-                        ASTNode list = parseExpression(tokens);
-                        fors.add(new ComprehensionFor(first, null, true, list));
-                    } else {
-                        throw tokens.invalidToken("COMPREHENSION FOR");
-                    }
-                }
+                List<ComprehensionFor> fors = parseComprehensionFors(tokens);
                 ASTNode predicate = tokens.consumeIfPresent(TokenType.IF) ? parseExpression(tokens) : null;
                 tokens.expect(TokenType.RIGHT_BRACKET);
                 return new ArrayComprehensionNode(firstExpression, fors, predicate);
