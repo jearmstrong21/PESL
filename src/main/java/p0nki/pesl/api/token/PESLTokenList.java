@@ -5,6 +5,7 @@ import p0nki.pesl.internal.token.type.LiteralToken;
 import p0nki.pesl.internal.token.type.PESLToken;
 import p0nki.pesl.internal.token.type.TokenType;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +52,7 @@ public class PESLTokenList {
         return (T) tokens.get(0);
     }
 
-    public boolean consumeType(TokenType... types) throws PESLParseException {
+    public boolean consumeIfPresent(TokenType... types) throws PESLParseException {
         PESLToken token = peek();
         for (TokenType type : types) {
             if (token.getType() == type) {
@@ -69,6 +70,11 @@ public class PESLTokenList {
         }
         lastPoppedToken = tokens.remove(0);
         return lastPoppedToken;
+    }
+
+    @CheckReturnValue
+    public PESLParseException invalidToken(String element) throws PESLParseException {
+        return new PESLParseException("Invalid token " + peek().getType() + " at element " + element, peek());
     }
 
     public String literal() throws PESLParseException {

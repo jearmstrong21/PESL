@@ -93,7 +93,7 @@ public class MainTests {
 
 //        run(ctx, "value = [1, 2, 3, 4, 5]");
 //        run(ctx, "[println(x) for x in value]");
-//        run(ctx, "[x+y for x in [\"a\", \"b\", \"c\"] for y in [1, 2, 3]]");
+        run(ctx, "[x+y for x in [\"a\", \"b\", \"c\"] for y in [\"1\", \"2\", \"3\"]]");
 
 //        run(ctx, "[x + \" \" + y + \"-\" + z + w for x, y in [\"2\", \"1\", \"0\"] for z: w in {\"a\": \"5\", \"b\": \"3\", \"c\": \"4\"}]");
 //        run(ctx, "{x + \"+\" + y: x + y for x in [\"0\", \"1\", \"2\"] for y in [\"0\", \"1\", \"2\"]}");
@@ -106,8 +106,8 @@ public class MainTests {
 //        run(ctx, "4 * 5 >= Math.sqrt(400)");
 //        run(ctx, "4 * 5 >= Math.sqrt(400) + 1");
 
-        run(ctx, "x = {}");
-        run(ctx, "x");
+//        run(ctx, "x = {}");
+//        run(ctx, "x");
 
 //        run(ctx, "parseNumber(5)");
 //        run(ctx, "parseNumber(\"5\"+\"3\")");
