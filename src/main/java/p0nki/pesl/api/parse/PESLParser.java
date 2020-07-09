@@ -150,7 +150,7 @@ public class PESLParser {
             ASTNode firstKey = parseExpression(tokens);
             tokens.expect(TokenType.COLON);
             ASTNode firstValue = parseExpression(tokens);
-            if (tokens.peek().getType() == TokenType.RIGHT_BRACKET) {
+            if (tokens.peek().getType() == TokenType.RIGHT_BRACE) {
                 return new MapNode(new HashMap<ASTNode, ASTNode>() {{
                     put(firstKey, firstValue);
                 }});
