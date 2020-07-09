@@ -5,12 +5,14 @@ import p0nki.pesl.api.PESLEvalException;
 import p0nki.pesl.api.object.ArrayLikeObject;
 import p0nki.pesl.api.object.MapLikeObject;
 import p0nki.pesl.api.object.PESLObject;
-import p0nki.pesl.api.parse.ASTNode;
+import p0nki.pesl.api.parse.*;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-public class ComprehensionFor {
+public class ComprehensionFor implements PESLVerifiable {
 
     private final String first;
     private final String second;
@@ -57,6 +59,20 @@ public class ComprehensionFor {
             }
             return list;
         }
+    }
+
+    @Override
+    public void validate(Set<TreeRequirement> requirements) throws PESLValidateException {
+        if (isArray) value.validate(TreeRequirement.ARRAYLIKE);
+        else value.validate(TreeRequirement.MAPLIKE);
+        if (requirements.size() > 0)
+            throw validateError("Cannot require anything of ComprehensionFor since it does not produce value");
+    }
+
+    @Override
+    public void print(@Nonnull PESLIndentedLogger logger) {
+        logger.println(String.format("FOR) %s, %s, %s", first, second, isArray ? "array" : "map"));
+        logger.pushPrint(value);
     }
 
 

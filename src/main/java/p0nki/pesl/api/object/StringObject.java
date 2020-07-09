@@ -10,6 +10,8 @@ import java.util.Set;
 
 public class StringObject extends BuiltinMapLikeObject {
 
+    public static final String TYPE = "string";
+
     public static final Set<String> KEYS = Collections.unmodifiableSet(new HashSet<String>() {{
         add("charAt");
         add("substring");
@@ -18,7 +20,7 @@ public class StringObject extends BuiltinMapLikeObject {
     private final String value;
 
     public StringObject(String value) {
-        super("string");
+        super(TYPE);
         this.value = value;
         put("charAt", FunctionObject.of(false, arguments -> {
             PESLEvalException.validArgumentListLength(arguments, 1);

@@ -7,8 +7,11 @@ import p0nki.pesl.api.object.NumberObject;
 import p0nki.pesl.api.object.PESLObject;
 import p0nki.pesl.api.parse.ASTNode;
 import p0nki.pesl.api.parse.PESLIndentedLogger;
+import p0nki.pesl.api.parse.PESLValidateException;
+import p0nki.pesl.api.parse.TreeRequirement;
 
 import javax.annotation.Nonnull;
+import java.util.Set;
 
 public class AccessPropertyNode implements ASTNode {
 
@@ -49,6 +52,11 @@ public class AccessPropertyNode implements ASTNode {
         logger.pushPrint(value);
         logger.println("KEY)");
         logger.pushPrint(key);
+    }
+
+    @Override
+    public void validate(Set<TreeRequirement> requirements) throws PESLValidateException {
+        if (value != null) value.validate(TreeRequirement.MAPLIKE);
     }
 
 }

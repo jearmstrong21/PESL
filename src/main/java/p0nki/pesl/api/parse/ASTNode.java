@@ -6,11 +6,9 @@ import p0nki.pesl.api.object.PESLObject;
 
 import javax.annotation.Nonnull;
 
-public interface ASTNode {
+public interface ASTNode extends PESLVerifiable {
 
     @Nonnull
     PESLObject evaluate(@Nonnull PESLContext context) throws PESLEvalException;
-
-    void print(@Nonnull PESLIndentedLogger logger);
 
 }

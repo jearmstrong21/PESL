@@ -2,12 +2,16 @@ package p0nki.pesl.internal.nodes;
 
 import p0nki.pesl.api.PESLContext;
 import p0nki.pesl.api.object.FunctionObject;
+import p0nki.pesl.api.object.ObjectType;
 import p0nki.pesl.api.object.PESLObject;
 import p0nki.pesl.api.parse.ASTNode;
 import p0nki.pesl.api.parse.PESLIndentedLogger;
+import p0nki.pesl.api.parse.PESLValidateException;
+import p0nki.pesl.api.parse.TreeRequirement;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Set;
 
 public class FunctionDeclarationNode implements ASTNode {
 
@@ -23,6 +27,12 @@ public class FunctionDeclarationNode implements ASTNode {
     public @javax.annotation.Nonnull
     PESLObject evaluate(@Nonnull PESLContext context) {
         return new FunctionObject(null, argumentNames, body);
+    }
+
+    @Override
+    public void validate(Set<TreeRequirement> requirements) throws PESLValidateException {
+        body.validate();
+        check(requirements, ObjectType.FUNCTION);
     }
 
     @Override

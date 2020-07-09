@@ -5,10 +5,12 @@ import javax.annotation.Nonnull;
 
 public class UndefinedObject extends PESLObject {
 
+    public static final String TYPE = "undefined";
+
     public static final UndefinedObject INSTANCE = new UndefinedObject();
 
     private UndefinedObject() {
-        super("undefined");
+        super(TYPE);
     }
 
     @CheckReturnValue

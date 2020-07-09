@@ -5,9 +5,12 @@ import p0nki.pesl.api.PESLEvalException;
 import p0nki.pesl.api.object.PESLObject;
 import p0nki.pesl.api.parse.ASTNode;
 import p0nki.pesl.api.parse.PESLIndentedLogger;
+import p0nki.pesl.api.parse.PESLValidateException;
+import p0nki.pesl.api.parse.TreeRequirement;
 import p0nki.pesl.internal.token.type.BiOperatorType;
 
 import javax.annotation.Nonnull;
+import java.util.Set;
 
 public class OperatorNode implements ASTNode {
 
@@ -28,6 +31,13 @@ public class OperatorNode implements ASTNode {
             value = operatorType.apply(value, nodes[i].evaluate(context));
         }
         return value;
+    }
+
+    @Override
+    public void validate(Set<TreeRequirement> requirements) throws PESLValidateException {
+        for (ASTNode node : nodes) {
+            node.validate();
+        }
     }
 
     @Override

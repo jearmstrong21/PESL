@@ -2,19 +2,15 @@ package p0nki.pesl.internal.nodes;
 
 import p0nki.pesl.api.PESLContext;
 import p0nki.pesl.api.PESLEvalException;
-import p0nki.pesl.api.object.MapObject;
-import p0nki.pesl.api.object.NumberObject;
-import p0nki.pesl.api.object.PESLObject;
-import p0nki.pesl.api.object.StringObject;
+import p0nki.pesl.api.object.*;
 import p0nki.pesl.api.parse.ASTNode;
 import p0nki.pesl.api.parse.PESLIndentedLogger;
+import p0nki.pesl.api.parse.PESLValidateException;
+import p0nki.pesl.api.parse.TreeRequirement;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MapComprehensionNode implements ASTNode {
 
@@ -64,6 +60,14 @@ public class MapComprehensionNode implements ASTNode {
         }
         iterate(lists, new ArrayList<>(), result, context.push());
         return new MapObject(result);
+    }
+
+    @Override
+    public void validate(Set<TreeRequirement> requirements) throws PESLValidateException {
+        for (ComprehensionFor f : fors) {
+            f.validate();
+        }
+        check(requirements, ObjectType.MAP);
     }
 
     @Override

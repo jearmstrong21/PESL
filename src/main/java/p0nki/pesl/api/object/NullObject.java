@@ -7,6 +7,8 @@ public class NullObject extends PESLObject {
 
     public static final NullObject INSTANCE = new NullObject();
 
+    public static final String TYPE = "null";
+
     private NullObject() {
         super("null");
     }

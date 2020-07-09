@@ -9,10 +9,12 @@ import java.util.stream.Collectors;
 
 public class ArrayObject extends BuiltinMapLikeObject implements ArrayLikeObject {
 
+    public static final String TYPE = "array";
+
     private final List<PESLObject> values;
 
     public ArrayObject(@Nonnull List<PESLObject> values) {
-        super("array");
+        super(TYPE);
         this.values = values;
         put("pop", FunctionObject.of(false, arguments -> {
             PESLEvalException.validArgumentListLength(arguments, 0);

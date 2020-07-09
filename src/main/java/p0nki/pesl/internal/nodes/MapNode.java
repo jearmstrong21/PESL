@@ -3,13 +3,17 @@ package p0nki.pesl.internal.nodes;
 import p0nki.pesl.api.PESLContext;
 import p0nki.pesl.api.PESLEvalException;
 import p0nki.pesl.api.object.MapObject;
+import p0nki.pesl.api.object.ObjectType;
 import p0nki.pesl.api.object.PESLObject;
 import p0nki.pesl.api.parse.ASTNode;
 import p0nki.pesl.api.parse.PESLIndentedLogger;
+import p0nki.pesl.api.parse.PESLValidateException;
+import p0nki.pesl.api.parse.TreeRequirement;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class MapNode implements ASTNode {
 
@@ -19,9 +23,9 @@ public class MapNode implements ASTNode {
         this.nodes = nodes;
     }
 
+    @Nonnull
     @Override
-    public @javax.annotation.Nonnull
-    PESLObject evaluate(@Nonnull PESLContext context) throws PESLEvalException {
+    public PESLObject evaluate(@Nonnull PESLContext context) throws PESLEvalException {
         Map<String, PESLObject> map = new HashMap<>();
         for (Map.Entry<ASTNode, ASTNode> entry : nodes.entrySet()) {
             ASTNode key = entry.getKey();
@@ -29,6 +33,15 @@ public class MapNode implements ASTNode {
             map.put(key.evaluate(context).castToString(), value.evaluate(context));
         }
         return new MapObject(map);
+    }
+
+    @Override
+    public void validate(Set<TreeRequirement> requirements) throws PESLValidateException {
+        for (Map.Entry<ASTNode, ASTNode> entry : nodes.entrySet()) {
+            entry.getKey().validate();
+            entry.getValue().validate();
+        }
+        check(requirements, ObjectType.MAP);
     }
 
     @Override

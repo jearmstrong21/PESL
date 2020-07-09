@@ -8,13 +8,14 @@ import p0nki.pesl.api.object.PESLObject;
 import p0nki.pesl.api.parse.ASTNode;
 import p0nki.pesl.api.parse.PESLParseException;
 import p0nki.pesl.api.parse.PESLParser;
+import p0nki.pesl.api.parse.PESLValidateException;
 import p0nki.pesl.api.token.PESLTokenList;
 import p0nki.pesl.api.token.PESLTokenizeException;
 import p0nki.pesl.api.token.PESLTokenizer;
 
 public class MainTests {
 
-    private PESLObject run(PESLContext ctx, String str) throws PESLTokenizeException, PESLEvalException, PESLParseException {
+    private PESLObject run(PESLContext ctx, String str) throws PESLTokenizeException, PESLEvalException, PESLParseException, PESLValidateException {
         PESLTokenizer tokenizer = new PESLTokenizer();
         System.out.println();
         System.out.println("<- " + str);
@@ -37,6 +38,7 @@ public class MainTests {
             PESLObject lastObject = null;
             while (tokens.hasAny()) {
                 ASTNode node = astCreator.parseExpression(tokens);
+                node.validate();
                 lastObject = node.evaluate(ctx);
                 System.out.println("-> " + lastObject.castToString());
             }
@@ -56,6 +58,10 @@ public class MainTests {
         } catch (PESLEvalException e) {
             System.out.println("Eval error");
             System.out.println(e.getObject().toString());
+            throw e;
+        } catch (PESLValidateException e) {
+            System.out.println("Validate error " + e.getMessage());
+            System.out.println(e.getNode());
             throw e;
         }
     }
@@ -87,13 +93,15 @@ public class MainTests {
     }
 
     @Test
-    public void test() throws PESLTokenizeException, PESLEvalException, PESLParseException {
+    public void test() throws PESLTokenizeException, PESLEvalException, PESLParseException, PESLValidateException {
         PESLContext ctx = new PESLContext();
         ctx.setKey("println", PESLBuiltins.PRINTLN);
 
 //        run(ctx, "value = [1, 2, 3, 4, 5]");
 //        run(ctx, "[println(x) for x in value]");
-        run(ctx, "[x+y for x in [\"a\", \"b\", \"c\"] for y in [\"1\", \"2\", \"3\"]]");
+//        run(ctx, "[x+y for x in [\"a\", \"b\", \"c\"] for y in [\"1\", \"2\", \"3\"]]");
+
+        run(ctx, "[x for x in {\"a\": 5, \"b\": 3}]");
 
 //        run(ctx, "[x + \" \" + y + \"-\" + z + w for x, y in [\"2\", \"1\", \"0\"] for z: w in {\"a\": \"5\", \"b\": \"3\", \"c\": \"4\"}]");
 //        run(ctx, "{x + \"+\" + y: x + y for x in [\"0\", \"1\", \"2\"] for y in [\"0\", \"1\", \"2\"]}");

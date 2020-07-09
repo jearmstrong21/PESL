@@ -16,8 +16,10 @@ public class MapObject extends PESLObject implements MapLikeObject {
         this(new HashMap<>());
     }
 
+    public static final String TYPE = "map";
+
     public MapObject(Map<String, PESLObject> values) {
-        super("map");
+        super(TYPE);
         this.values = values;
     }
 

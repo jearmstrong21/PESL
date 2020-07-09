@@ -5,10 +5,12 @@ import javax.annotation.Nonnull;
 
 public class BooleanObject extends PESLObject {
 
+    public static final String TYPE = "boolean";
+
     private final boolean value;
 
     public BooleanObject(boolean value) {
-        super("boolean");
+        super(TYPE);
         this.value = value;
     }
 

@@ -4,12 +4,14 @@ import p0nki.pesl.api.PESLContext;
 import p0nki.pesl.api.PESLEvalException;
 import p0nki.pesl.api.parse.ASTNode;
 import p0nki.pesl.api.parse.PESLIndentedLogger;
+import p0nki.pesl.api.parse.TreeRequirement;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class FunctionObject extends PESLObject {
 
@@ -17,8 +19,10 @@ public class FunctionObject extends PESLObject {
     private final ASTNode node;
     private final List<String> argumentNames;
 
+    public static final String TYPE = "function";
+
     public FunctionObject(@Nullable PESLObject thisObject, @Nonnull List<String> argumentNames, @Nonnull ASTNode node) {
-        super("function");
+        super(TYPE);
         this.thisObject = thisObject;
         this.argumentNames = argumentNames;
         this.node = node;
@@ -37,6 +41,11 @@ public class FunctionObject extends PESLObject {
                     arguments.remove(0);
                 }
                 return value.operate(arguments);
+            }
+
+            @Override
+            public void validate(Set<TreeRequirement> requirements) {
+
             }
 
             @Override

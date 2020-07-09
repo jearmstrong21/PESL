@@ -8,10 +8,13 @@ import p0nki.pesl.api.object.PESLObject;
 import p0nki.pesl.api.object.UndefinedObject;
 import p0nki.pesl.api.parse.ASTNode;
 import p0nki.pesl.api.parse.PESLIndentedLogger;
+import p0nki.pesl.api.parse.PESLValidateException;
+import p0nki.pesl.api.parse.TreeRequirement;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class FunctionInvokeNode implements ASTNode {
 
@@ -44,6 +47,14 @@ public class FunctionInvokeNode implements ASTNode {
         }
         newContext.setKey("arguments", new ArrayObject(evaluatedArguments));
         return functionValue.getNode().evaluate(newContext);
+    }
+
+    @Override
+    public void validate(Set<TreeRequirement> requirements) throws PESLValidateException {
+        for (ASTNode node : arguments) {
+            node.validate();
+        }
+        function.validate(TreeRequirement.FUNCTION);
     }
 
     @Override

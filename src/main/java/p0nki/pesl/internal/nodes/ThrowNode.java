@@ -5,8 +5,11 @@ import p0nki.pesl.api.PESLEvalException;
 import p0nki.pesl.api.object.PESLObject;
 import p0nki.pesl.api.parse.ASTNode;
 import p0nki.pesl.api.parse.PESLIndentedLogger;
+import p0nki.pesl.api.parse.PESLValidateException;
+import p0nki.pesl.api.parse.TreeRequirement;
 
 import javax.annotation.Nonnull;
+import java.util.Set;
 
 public class ThrowNode implements ASTNode {
 
@@ -16,10 +19,15 @@ public class ThrowNode implements ASTNode {
         this.node = node;
     }
 
+    @Nonnull
     @Override
-    public @javax.annotation.Nonnull
-    PESLObject evaluate(@Nonnull PESLContext context) throws PESLEvalException {
+    public PESLObject evaluate(@Nonnull PESLContext context) throws PESLEvalException {
         throw new PESLEvalException(node.evaluate(context));
+    }
+
+    @Override
+    public void validate(Set<TreeRequirement> requirements) throws PESLValidateException {
+        node.validate();
     }
 
     @Override

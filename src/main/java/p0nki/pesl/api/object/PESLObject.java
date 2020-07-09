@@ -26,6 +26,10 @@ public abstract class PESLObject {
     @CheckReturnValue
     public abstract String castToString();
 
+    public final ObjectType getFullType() {
+        return new ObjectType(this);
+    }
+
     public static boolean isEqual(MapLikeObject a, MapLikeObject b) {
         if (a.keys().size() != b.keys().size()) return false;
         for (String k : a.keys()) {

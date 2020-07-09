@@ -7,8 +7,10 @@ public class NumberObject extends PESLObject {
 
     private final double value;
 
+    public static final String TYPE = "number";
+
     public NumberObject(double value) {
-        super("number");
+        super(TYPE);
         this.value = value;
     }
 
