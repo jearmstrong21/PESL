@@ -106,7 +106,7 @@ public class MainTests {
 //        run(ctx, "4 * 5 >= Math.sqrt(400)");
 //        run(ctx, "4 * 5 >= Math.sqrt(400) + 1");
 
-        run(ctx, "x = []");
+        run(ctx, "x = {}");
         run(ctx, "x");
 
 //        run(ctx, "parseNumber(5)");

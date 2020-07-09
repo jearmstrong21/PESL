@@ -146,7 +146,7 @@ public class PESLParser {
             return new AccessPropertyNode(null, new LiteralNode(new StringObject(token.getValue())));
         } else if (top == TokenType.LEFT_BRACE) {
             tokens.expect(TokenType.LEFT_BRACE);
-            if (tokens.consumeType(TokenType.RIGHT_BRACKET)) return new MapNode(new HashMap<>());
+            if (tokens.consumeType(TokenType.RIGHT_BRACE)) return new MapNode(new HashMap<>());
             ASTNode firstKey = parseExpression(tokens);
             tokens.expect(TokenType.COLON);
             ASTNode firstValue = parseExpression(tokens);
