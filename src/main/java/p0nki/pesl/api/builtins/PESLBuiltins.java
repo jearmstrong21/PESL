@@ -2,6 +2,7 @@ package p0nki.pesl.api.builtins;
 
 import p0nki.pesl.api.PESLEvalException;
 import p0nki.pesl.api.object.*;
+import p0nki.pesl.util.OpenSimplexNoise;
 
 import java.io.*;
 import java.util.Date;
@@ -110,6 +111,12 @@ public class PESLBuiltins {
                     value = arguments.get(i).asBoolean().getValue();
                 }
                 return new BooleanObject(value);
+            }))
+            .put("noise", FunctionObject.of(false, arguments -> {
+                PESLEvalException.validArgumentListLength(arguments, 1, 2);
+                double y = 0;
+                if (arguments.size() == 2) y = arguments.get(0).asNumber().getValue();
+                return new NumberObject(OpenSimplexNoise.PESL_INSTANCE.sample(arguments.get(0).asNumber().getValue()));
             }));
 
     public static final PESLObject DATA = BuiltinMapLikeObject.builtinBuilder()
