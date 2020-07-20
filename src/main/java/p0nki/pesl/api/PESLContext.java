@@ -27,6 +27,11 @@ public class PESLContext implements MapLikeObject {
         objects.put("System", PESLBuiltins.SYSTEM);
     }
 
+    public PESLContext(Map<String, PESLObject> objects) {
+        this();
+        this.objects.putAll(objects);
+    }
+
     private PESLContext(@Nonnull PESLContext parent, Map<String, PESLObject> objects) {
         this.parent = Objects.requireNonNull(parent);
         this.objects = objects;
